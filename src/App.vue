@@ -1,85 +1,65 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div :class="$style.container">
+        <header>header</header>
+        <section>
+            <aside :class="$style['aside-left']">
+                <nav>nav</nav>
+                <p></p>
+                <footer>footer</footer>
+            </aside>
+            <main>main</main>
+        </section>
     </div>
-  </header>
-
-  <RouterView />
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script lang="ts">
+import {defineComponent} from 'vue'
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+export default defineComponent({
+    name: 'App',
+    components: {},
+})
+</script>
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+<style module lang="scss">
+.container {
+  min-height: 100vh;
+  background: #ccc;
+  display: flex;
+  flex-direction: column;
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
   header {
+    height: 3rem;
+    background: #777;
+    color: white;
+  }
+
+  section {
     display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+    flex: 1;
+    background: #999;
+    color: #000;
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+    aside {
+      flex: 0 100px;
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+      display: flex;
+      flex-direction: column;
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+      > * {
+        flex: 1;
+      }
+    }
 
-    padding: 1rem 0;
-    margin-top: 1rem;
+    main {
+      flex: 1;
+    }
+
+    @media screen and (min-width: $middle-size) {
+      aside {
+        flex: 0 250px;
+      }
+    }
   }
 }
 </style>
