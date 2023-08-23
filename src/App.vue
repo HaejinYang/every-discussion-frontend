@@ -1,12 +1,8 @@
 <template>
     <div :class="$style.container">
-        <header>header</header>
+        <Header :class="$style.header"/>
         <section>
-            <aside :class="$style['aside-left']">
-                <nav>nav</nav>
-                <p></p>
-                <footer>footer</footer>
-            </aside>
+            <Aside :class="$style.aside"/>
             <main>main</main>
         </section>
     </div>
@@ -14,49 +10,39 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue'
+import Header from "@/components/layouts/Header.vue";
+import Aside from "@/components/layouts/Aside.vue";
 
 export default defineComponent({
     name: 'App',
-    components: {},
+    components: {Aside, Header},
 })
 </script>
 
 <style module lang="scss">
 .container {
   min-height: 100vh;
-  background: #ccc;
   display: flex;
   flex-direction: column;
 
-  header {
+  .header {
     height: 3rem;
-    background: #777;
-    color: white;
   }
 
   section {
     display: flex;
     flex: 1;
-    background: #999;
-    color: #000;
-
-    aside {
-      flex: 0 100px;
-
-      display: flex;
-      flex-direction: column;
-
-      > * {
-        flex: 1;
-      }
-    }
 
     main {
       flex: 1;
     }
 
+    .aside {
+      flex: 0 75px;
+    }
+
     @media screen and (min-width: $middle-size) {
-      aside {
+      .aside {
         flex: 0 250px;
       }
     }
