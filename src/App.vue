@@ -3,7 +3,9 @@
         <Header :class="$style.header"/>
         <section>
             <Aside :class="$style.aside"/>
-            <main>main</main>
+            <main>
+                <RouterView/>
+            </main>
         </section>
     </div>
 </template>
@@ -12,10 +14,11 @@
 import {defineComponent} from 'vue'
 import Header from "@/components/layouts/Header.vue";
 import Aside from "@/components/layouts/Aside.vue";
+import {RouterView} from "vue-router";
 
 export default defineComponent({
     name: 'App',
-    components: {Aside, Header},
+    components: {Aside, Header, RouterView},
 })
 </script>
 
