@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <header>
       <p>모든토론주제</p>
-      <input type="text" placeholder="검색" />
+      <SearchBar :onInputSearch="onInputSearch" @on-search-complete="onSearchCompleted" />
     </header>
     <div :class="$style['topic-list']">
       <TopicPreview
@@ -13,60 +13,70 @@
       />
     </div>
     <div>
-      <button :class="$style.more" @mousedown.left="MoreTopics">더보기</button>
+      <button :class="$style.more" @mousedown.left="moreTopics">더보기</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import TopicPreview from '@/components/topics/TopicPreview.vue'
+import { defineComponent } from 'vue';
+import TopicPreview from '@/components/topics/TopicPreview.vue';
+import SearchBar from '@/components/SearchBar.vue';
 
 export default defineComponent({
   name: 'HomeView',
-  components: { TopicPreview },
+  components: { SearchBar, TopicPreview },
   data() {
     return {
       topics: [],
       selectedTopicIndex: -1
-    }
+    };
   },
   methods: {
-    SelectTopicIndex(index: number) {
-      this.selectedTopicIndex = index
+    moreTopics() {
+      this.selectedTopicIndex = -1;
+      this.addTopics();
     },
-
-    MoreTopics() {
-      this.selectedTopicIndex = -1
-      this.AddTopics()
-    },
-    AddTopics() {
+    addTopics() {
       this.topics.push({
         title: '토픽1. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
         opinionsCount: 123
-      })
+      });
 
       this.topics.push({
         title: '토픽2. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
         opinionsCount: 123
-      })
+      });
 
       this.topics.push({
         title: '토픽3. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
         opinionsCount: 123
-      })
+      });
+    },
+    onSearchCompleted(val: any) {
+      console.log('onSearchCompleted', val);
+    },
+    onInputSearch(keyword: string) {
+      return [
+        {
+          title: '토픽N. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
+          host: '생성자1',
+          participantsCount: 102,
+          opinionsCount: 123
+        }
+      ];
     }
   },
   mounted() {
-    this.AddTopics()
+    this.addTopics();
   }
-})
+});
 </script>
 
 <style module lang="scss">
