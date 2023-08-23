@@ -13,7 +13,7 @@
         :key="topic"
       />
     </div>
-    <div>
+    <div :class="$style['more-wrapper']" ref="more-button">
       <button :class="$style.more" @mousedown.left="moreTopics">더보기</button>
     </div>
   </div>
@@ -40,6 +40,9 @@ export default defineComponent({
     moreTopics() {
       this.selectedTopicIndex = -1;
       this.addTopics();
+      setTimeout(() => {
+        this.$refs['more-button'].scrollIntoView({ behavior: 'smooth' });
+      }, 0);
     },
     addTopics() {
       this.topics.push({
@@ -85,8 +88,6 @@ export default defineComponent({
 
 <style module lang="scss">
 .container {
-  box-shadow: inset 0px 0px 5px red;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -105,7 +106,13 @@ export default defineComponent({
     margin-top: 1rem;
   }
 
+  .more-wrapper {
+    width: 300px;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+  }
+
   .more {
+    width: 100%;
     text-align: center;
     font-weight: bold;
     padding: 0.5rem;
