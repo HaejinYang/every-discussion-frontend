@@ -4,7 +4,9 @@
     <section>
       <Aside :class="$style.aside" />
       <main>
-        <RouterView />
+        <div :class="$style['main-item']">
+          <RouterView />
+        </div>
       </main>
     </section>
   </div>
@@ -38,6 +40,20 @@ export default defineComponent({
 
     main {
       flex: 1;
+      position: relative;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .main-item {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        border-top: 0;
+      }
     }
 
     .aside {
