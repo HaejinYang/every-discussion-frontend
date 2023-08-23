@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { debounce } from '@/util';
+import { debounce } from '@/util/timing';
 
 export default defineComponent({
   name: 'SearchBar',
