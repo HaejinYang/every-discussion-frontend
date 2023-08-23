@@ -8,6 +8,7 @@
       <TopicPreview
         :topic="topic"
         :isShowTopicInfo="index === selectedTopicIndex"
+        @mouseover="selectTopicIndex(index)"
         v-for="(topic, index) in topics"
         :key="topic"
       />
@@ -33,6 +34,9 @@ export default defineComponent({
     };
   },
   methods: {
+    selectTopicIndex(index: number) {
+      this.selectedTopicIndex = index;
+    },
     moreTopics() {
       this.selectedTopicIndex = -1;
       this.addTopics();
