@@ -18,7 +18,10 @@
       />
     </div>
     <div :class="$style['more-wrapper']" ref="more-button">
-      <button :class="$style.more" @mousedown.left="moreTopics">더보기</button>
+      <button :class="$style.more" @mousedown.left="moreTopics">
+        {{ isWaitingMoreTopics ? '' : '더보기' }}
+      </button>
+      <img src="@/assets/spinner-black.svg" alt="spinner" v-show="isWaitingMoreTopics" />
     </div>
   </div>
 </template>
@@ -35,7 +38,8 @@ export default defineComponent({
   data() {
     return {
       topics: [] as Topic[],
-      selectedTopicIndex: -1
+      selectedTopicIndex: -1,
+      isWaitingMoreTopics: false
     };
   },
   methods: {
@@ -44,13 +48,17 @@ export default defineComponent({
     },
     moreTopics() {
       this.selectedTopicIndex = -1;
-      this.addTopics();
+      this.isWaitingMoreTopics = true;
       setTimeout(() => {
-        const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
-        if (buttonRef) {
-          buttonRef.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 0);
+        this.addTopics();
+        setTimeout(() => {
+          const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
+          if (buttonRef) {
+            buttonRef.scrollIntoView({ behavior: 'smooth' });
+          }
+          this.isWaitingMoreTopics = false;
+        }, 0);
+      }, 500);
     },
     addTopics() {
       this.topics.push({
@@ -115,21 +123,29 @@ export default defineComponent({
   }
 
   .more-wrapper {
+    position: relative;
     width: 300px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
-  }
 
-  .more {
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-    padding: 0.5rem;
-    border-radius: 10px;
-    background-color: transparent;
-    border: none;
+    .more {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      padding: 0.5rem;
+      border-radius: 10px;
+      background-color: transparent;
+      border: none;
 
-    &:hover {
-      cursor: pointer;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    > img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 }
