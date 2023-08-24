@@ -1,11 +1,6 @@
 <template>
   <div :class="$style.container">
-    <input
-      :value="searchText"
-      @input="updateSearchText"
-      type="text"
-      placeholder="토론 주제를 입력하세요"
-    />
+    <input :value="searchText" @input="updateSearchText" type="text" :placeholder="placeholder" />
     <img :class="$style['search-icon']" src="@/assets/search.svg" />
     <img
       :class="$style['spinner-icon']"
@@ -25,13 +20,17 @@ export default defineComponent({
     onInputSearch: {
       type: Function,
       required: true
+    },
+    placeholder: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
       searchText: '',
       debouncedSearch: (...args: any[]): void => {},
-      searchDelay: 1000,
+      searchDelay: 500,
       isShowSearchWaiting: false
     };
   },

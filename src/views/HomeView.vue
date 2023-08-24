@@ -2,7 +2,11 @@
   <div :class="$style.container">
     <header>
       <p>모든토론주제</p>
-      <SearchBar :onInputSearch="onInputSearch" @on-search-complete="onSearchCompleted" />
+      <SearchBar
+        :onInputSearch="onInputSearch"
+        @on-search-complete="onSearchCompleted"
+        placeholder="토론 주제를 입력하세요"
+      />
     </header>
     <div :class="$style['topic-list']">
       <TopicPreview
@@ -70,8 +74,8 @@ export default defineComponent({
         opinionsCount: 123
       });
     },
-    onSearchCompleted(val: any) {
-      console.log('onSearchCompleted', val);
+    onSearchCompleted(searchedTopics: Topic[]) {
+      this.topics = searchedTopics;
     },
     onInputSearch(keyword: string) {
       return [
