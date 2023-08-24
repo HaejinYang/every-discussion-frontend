@@ -2,7 +2,11 @@
   <div :class="$style.container">
     <header>
       <p>모든토론주제</p>
-      <SearchBar :onInputSearch="onInputSearch" @on-search-complete="onSearchCompleted" />
+      <SearchBar
+        :onInputSearch="onInputSearch"
+        @on-search-complete="onSearchCompleted"
+        placeholder="토론 주제를 입력하세요"
+      />
     </header>
     <div :class="$style['topic-list']">
       <TopicPreview
@@ -10,11 +14,14 @@
         :isShowTopicInfo="index === selectedTopicIndex"
         @mouseover="selectTopicIndex(index)"
         v-for="(topic, index) in topics"
-        :key="topic"
+        :key="index"
       />
     </div>
     <div :class="$style['more-wrapper']" ref="more-button">
-      <button :class="$style.more" @mousedown.left="moreTopics">더보기</button>
+      <button :class="$style.more" @mousedown.left="moreTopics">
+        {{ isWaitingMoreTopics ? '' : '더보기' }}
+      </button>
+      <img src="@/assets/spinner-black.svg" alt="spinner" v-show="isWaitingMoreTopics" />
     </div>
   </div>
 </template>
@@ -23,14 +30,16 @@
 import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
+import type { Topic } from '@/services/topics';
 
 export default defineComponent({
   name: 'HomeView',
   components: { SearchBar, TopicPreview },
   data() {
     return {
-      topics: [],
-      selectedTopicIndex: -1
+      topics: [] as Topic[],
+      selectedTopicIndex: -1,
+      isWaitingMoreTopics: false
     };
   },
   methods: {
@@ -39,10 +48,17 @@ export default defineComponent({
     },
     moreTopics() {
       this.selectedTopicIndex = -1;
-      this.addTopics();
+      this.isWaitingMoreTopics = true;
       setTimeout(() => {
-        this.$refs['more-button'].scrollIntoView({ behavior: 'smooth' });
-      }, 0);
+        this.addTopics();
+        setTimeout(() => {
+          const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
+          if (buttonRef) {
+            buttonRef.scrollIntoView({ behavior: 'smooth' });
+          }
+          this.isWaitingMoreTopics = false;
+        }, 0);
+      }, 500);
     },
     addTopics() {
       this.topics.push({
@@ -66,8 +82,8 @@ export default defineComponent({
         opinionsCount: 123
       });
     },
-    onSearchCompleted(val: any) {
-      console.log('onSearchCompleted', val);
+    onSearchCompleted(searchedTopics: Topic[]) {
+      this.topics = searchedTopics;
     },
     onInputSearch(keyword: string) {
       return [
@@ -107,21 +123,29 @@ export default defineComponent({
   }
 
   .more-wrapper {
+    position: relative;
     width: 300px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
-  }
 
-  .more {
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-    padding: 0.5rem;
-    border-radius: 10px;
-    background-color: transparent;
-    border: none;
+    .more {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      padding: 0.5rem;
+      border-radius: 10px;
+      background-color: transparent;
+      border: none;
 
-    &:hover {
-      cursor: pointer;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    > img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 }
