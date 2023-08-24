@@ -10,7 +10,7 @@
         :isShowTopicInfo="index === selectedTopicIndex"
         @mouseover="selectTopicIndex(index)"
         v-for="(topic, index) in topics"
-        :key="topic"
+        :key="index"
       />
     </div>
     <div :class="$style['more-wrapper']" ref="more-button">
@@ -23,13 +23,14 @@
 import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
+import type { Topic } from '@/services/topics';
 
 export default defineComponent({
   name: 'HomeView',
   components: { SearchBar, TopicPreview },
   data() {
     return {
-      topics: [],
+      topics: [] as Topic[],
       selectedTopicIndex: -1
     };
   },
@@ -41,7 +42,10 @@ export default defineComponent({
       this.selectedTopicIndex = -1;
       this.addTopics();
       setTimeout(() => {
-        this.$refs['more-button'].scrollIntoView({ behavior: 'smooth' });
+        const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
+        if (buttonRef) {
+          buttonRef.scrollIntoView({ behavior: 'smooth' });
+        }
       }, 0);
     },
     addTopics() {

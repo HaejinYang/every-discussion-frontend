@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <input
       :value="searchText"
-      @input="searchText = $event.target.value"
+      @input="updateSearchText"
       type="text"
       placeholder="토론 주제를 입력하세요"
     />
@@ -34,6 +34,11 @@ export default defineComponent({
       searchDelay: 1000,
       isShowSearchWaiting: false
     };
+  },
+  methods: {
+    updateSearchText(e: Event) {
+      this.searchText = (e.target as HTMLInputElement).value;
+    }
   },
   watch: {
     searchText(keyword) {
