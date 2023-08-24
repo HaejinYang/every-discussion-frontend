@@ -1,8 +1,6 @@
 <template>
-  <div :class="$style.container">
-    <p :class="$style.title">
-      {{ topic.title }}
-    </p>
+  <div :class="$style.container" @mousedown.left="moveToDiscussion">
+    <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
     <div :class="[$style.info, isShowTopicInfo ? $style.show : null]">
       <p>생성자: {{ topic.host }}</p>
       <p>
@@ -26,6 +24,11 @@ export default defineComponent({
     isShowTopicInfo: {
       type: Boolean,
       required: true
+    }
+  },
+  methods: {
+    moveToDiscussion() {
+      this.$router.push({ path: `/discussion/${this.topic.id}` });
     }
   }
 });
