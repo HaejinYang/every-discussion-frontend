@@ -62,6 +62,7 @@ export default defineComponent({
     },
     addTopics() {
       this.topics.push({
+        id: 1,
         title: '토픽1. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
@@ -69,6 +70,7 @@ export default defineComponent({
       });
 
       this.topics.push({
+        id: 2,
         title: '토픽2. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
@@ -76,6 +78,7 @@ export default defineComponent({
       });
 
       this.topics.push({
+        id: 3,
         title: '토픽3. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
         host: '생성자1',
         participantsCount: 102,
@@ -88,6 +91,7 @@ export default defineComponent({
     onInputSearch(keyword: string) {
       return [
         {
+          id: 4,
           title: '토픽N. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
           host: '생성자1',
           participantsCount: 102,
