@@ -54,6 +54,7 @@ export default defineComponent({
 
   .opinions {
     display: flex;
+    flex-direction: column;
 
     .agree {
       padding: 1rem;
@@ -70,6 +71,14 @@ export default defineComponent({
       padding: 1rem;
       margin: 1rem;
       text-align: center;
+    }
+  }
+}
+
+@media screen and (min-width: $middle-size) {
+  .container {
+    .opinions {
+      flex-direction: row;
     }
   }
 }
