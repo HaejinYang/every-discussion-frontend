@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
-    <main ref="main">
-      <div>
+    <main ref="main" @wheel="handleWheel($event)">
+      <div :class="$style['opinion-info']">
         <p>
           Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
           dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
@@ -15,43 +15,9 @@
         <p>
           Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
           dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>추천10, 비추천20</p>
-      </div>
-      <div>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>추천10, 비추천20</p>
-      </div>
-      <div>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
+          odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora quas ut rerum
+          delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum sint qui
+          voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
         </p>
         <p>추천10, 비추천20</p>
       </div>
@@ -77,6 +43,9 @@ export default defineComponent({
   methods: {
     onClickPage() {
       this.$emit('on-click-anywhere');
+    },
+    handleWheel(event) {
+      event.stopPropagation();
     }
   },
   mounted() {
@@ -99,13 +68,19 @@ export default defineComponent({
   transition: all 1s ease-in-out;
 
   main {
-    position: sticky;
+    position: absolute;
     left: 50%;
     top: 50%;
     transform: translateX(-50%);
     max-height: 400px;
     max-width: 300px;
     background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+
+    .opinion-info {
+      overflow-y: auto;
+    }
   }
 }
 </style>
