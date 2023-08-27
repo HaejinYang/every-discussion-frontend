@@ -88,6 +88,7 @@ export default defineComponent({
       const mainWheelHandler = useMainWheelHandler();
       mainWheelHandler.enableWheel();
       this.isDisplayOpinionDetail = false;
+      this.lastSelectedOpinion = -1;
     },
     onResize() {
       if (this.lastSelectedOpinion === -1) {

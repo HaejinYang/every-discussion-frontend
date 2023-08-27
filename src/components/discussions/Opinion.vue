@@ -64,7 +64,6 @@ export default defineComponent({
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.2);
   transition: all 1s ease-in-out;
 
   main {
@@ -74,7 +73,8 @@ export default defineComponent({
     transform: translateX(-50%);
     max-height: 400px;
     max-width: 300px;
-    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    background-color: white;
 
     display: flex;
 
