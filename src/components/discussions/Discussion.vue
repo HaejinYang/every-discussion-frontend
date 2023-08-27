@@ -21,6 +21,8 @@
   </div>
   <div>
     <Opinion
+      @on-click-anywhere="onClickDetailOpinion"
+      v-if="isDisplayOpinionDetail"
       :left="leftDetailOpinion"
       :top="topDetailOpinion"
     />
