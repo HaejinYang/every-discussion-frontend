@@ -3,7 +3,7 @@
     <Header :class="$style.header" />
     <section>
       <Aside :class="$style.aside" />
-      <main>
+      <main @wheel="handleWheel($event)" ref="main">
         <div :class="$style['main-item']">
           <RouterView />
         </div>
@@ -17,10 +17,43 @@ import { defineComponent } from 'vue';
 import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
+import { useMainWheelHandler } from '@/stores/MainWheel';
 
 export default defineComponent({
   name: 'App',
-  components: { Aside, Header, RouterView }
+  components: { Aside, Header, RouterView },
+  computed: {
+    isDisabledWheel() {
+      const mainWheelHandler = useMainWheelHandler();
+      return mainWheelHandler.isDisabled;
+    }
+  },
+  methods: {
+    handleWheel(event) {
+      if (this.isDisabledWheel) {
+        event.preventDefault();
+
+        return;
+      }
+
+      this.adjustWheelTop();
+    },
+    onResize() {
+      this.adjustWheelTop();
+    },
+    adjustWheelTop() {
+      const mainItem = this.$refs['main'] as HTMLElement | undefined;
+      if (mainItem) {
+        setTimeout(() => {
+          const mainWheelHandler = useMainWheelHandler();
+          mainWheelHandler.changeTop(mainItem.scrollTop);
+        }, 200);
+      }
+    }
+  },
+  created() {
+    window.addEventListener('resize', this.onResize);
+  }
 });
 </script>
 
@@ -58,6 +91,7 @@ export default defineComponent({
 
     .aside {
       flex: 0 75px;
+      overflow-y: unset;
     }
 
     @media screen and (min-width: $middle-size) {
