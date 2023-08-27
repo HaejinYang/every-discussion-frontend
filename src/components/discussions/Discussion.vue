@@ -3,7 +3,13 @@
     <div :class="$style.title">
       <span>{{ agreeingType === 'agree' ? '찬성' : '반대' }}</span>
     </div>
-    <div :class="$style.opinion" v-for="opinion in displayedOpinions" :key="opinion.id">
+    <div
+      :class="$style.opinion"
+      v-for="(opinion, index) in displayedOpinions"
+      :key="opinion.id"
+      @mousedown.left.stop="onClickOpinion(index)"
+      ref="opinions"
+    >
       <p>
         {{ opinion.title }}
       </p>
@@ -13,14 +19,26 @@
       <img src="@/assets/caret.svg" />
     </div>
   </div>
+  <div>
+    <Opinion
+      @on-click-anywhere="onClickDetailOpinion"
+      v-if="isDisplayOpinionDetail"
+      :left="leftDetailOpinion"
+      :top="topDetailOpinion"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { Opinion } from '@/services/opinions';
+import Opinion from '@/components/discussions/Opinion.vue';
+import { useMainWheelHandler } from '@/stores/MainWheel';
+import { debounce } from '@/util/timing';
 
 export default defineComponent({
   name: 'Discussion',
+  components: { Opinion },
   props: {
     agreeingType: {
       type: String,
@@ -31,7 +49,12 @@ export default defineComponent({
     return {
       opinions: [] as Opinion[],
       displayedOpinions: [] as Opinion[],
-      displayCursor: 0
+      displayCursor: 0,
+      leftDetailOpinion: 0,
+      topDetailOpinion: 0,
+      isDisplayOpinionDetail: false,
+      lastSelectedOpinion: -1,
+      debouncedResizeHandler: (...args: any[]): any => {}
     };
   },
   methods: {
@@ -56,11 +79,44 @@ export default defineComponent({
     },
     moreOpinions() {
       this.displayOpinions();
+    },
+    onClickOpinion(index: number) {
+      this.displayOpinion(index);
+      this.lastSelectedOpinion = index;
+    },
+    onClickDetailOpinion() {
+      const mainWheelHandler = useMainWheelHandler();
+      mainWheelHandler.enableWheel();
+      this.isDisplayOpinionDetail = false;
+    },
+    onResize() {
+      if (this.lastSelectedOpinion === -1) {
+        return;
+      }
+
+      this.isDisplayOpinionDetail = false;
+      this.debouncedResizeHandler();
+    },
+    displayOpinion(index: number) {
+      const opinions = this.$refs['opinions'] as HTMLElement[];
+      const opinion = opinions[index];
+      if (opinion) {
+        const rect = opinion.getBoundingClientRect();
+        const mainWheelHandler = useMainWheelHandler();
+        this.topDetailOpinion = mainWheelHandler.top + 100;
+        this.isDisplayOpinionDetail = true;
+        mainWheelHandler.disableWheel();
+      }
     }
   },
   created() {
     this.addOpinions();
     this.displayOpinions();
+    this.debouncedResizeHandler = debounce(() => {
+      this.displayOpinion(this.lastSelectedOpinion);
+    }, 300);
+
+    window.addEventListener('resize', this.onResize);
   }
 });
 </script>
