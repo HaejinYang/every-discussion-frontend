@@ -35,24 +35,7 @@ export default defineComponent({
 
         return;
       }
-
-      this.adjustWheelTop();
-    },
-    onResize() {
-      this.adjustWheelTop();
-    },
-    adjustWheelTop() {
-      const mainItem = this.$refs['main'] as HTMLElement | undefined;
-      if (mainItem) {
-        setTimeout(() => {
-          const mainWheelHandler = useMainWheelHandler();
-          mainWheelHandler.changeTop(mainItem.scrollTop);
-        }, 200);
-      }
     }
-  },
-  created() {
-    window.addEventListener('resize', this.onResize);
   }
 });
 </script>

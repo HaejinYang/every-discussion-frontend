@@ -1,25 +1,69 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
-    <main ref="main" @wheel="handleWheel($event)">
-      <div :class="$style['opinion-info']">
+    <main ref="main">
+      <div :class="$style['refer-opinion']" @wheel.prevent>
         <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
+          타이틀: Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam
+          qui dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque
+          ut odio esse eum fugiat officiis.
+        </p>
+        <p>추천 1, 비추천 20</p>
+      </div>
+      <div :class="$style['opinion-info']" @wheel="handleWheel($event)">
+        <p>
+          타이틀: Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam
+          qui dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque
+          ut odio esse eum fugiat officiis.
+        </p>
+        <p>
+          요약: Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
           dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
           odio esse eum fugiat officiis.
         </p>
         <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam qui
-          dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque ut
-          odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora quas ut rerum
+          콘텐츠: Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam
+          qui dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque
+          ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora quas ut rerum
           delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum sint qui
           voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
         </p>
         <p>추천10, 비추천20</p>
+      </div>
+      <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
+        <ul>
+          <li>
+            <p>
+              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
+              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
+              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
+            </p>
+            <p>추천1, 비추천20</p>
+          </li>
+          <li>
+            <p>
+              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
+              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
+              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
+            </p>
+            <p>추천1, 비추천20</p>
+          </li>
+          <li>
+            <p>
+              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
+              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
+              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
+            </p>
+            <p>추천1, 비추천20</p>
+          </li>
+          <li>
+            <p>
+              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
+              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
+              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
+            </p>
+            <p>추천1, 비추천20</p>
+          </li>
+        </ul>
       </div>
     </main>
   </div>
@@ -68,18 +112,63 @@ export default defineComponent({
 
   main {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%);
-    max-height: 400px;
-    max-width: 300px;
-    padding: 1rem;
-    background-color: white;
-
+    transform: translateY(-50%);
+    height: 600px;
+    width: 100%;
+    padding: 2rem;
+    background-color: orange;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    > * {
+      width: 300px;
+      background-color: white;
+    }
+
+    .refer-opinion {
+      min-height: 150px;
+      overflow-y: auto;
+    }
 
     .opinion-info {
+      min-height: 150px;
+      margin-top: 3rem;
       overflow-y: auto;
+    }
+
+    .related-opinions {
+      min-height: 150px;
+      margin-top: 3rem;
+      overflow-y: auto;
+
+      ul {
+        li {
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: $large-size) {
+    main {
+      flex-direction: row;
+
+      > * {
+        height: 200px;
+      }
+
+      .opinion-info {
+        margin: 1rem 3rem;
+      }
+
+      .refer-opinion {
+        margin: 1rem 3rem;
+      }
+
+      .related-opinions {
+        margin: 1rem 3rem;
+      }
     }
   }
 }
