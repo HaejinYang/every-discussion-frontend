@@ -4,8 +4,10 @@ interface Opinion {
   id: number;
   title: string;
   content: string;
+  summary: string;
   like: number;
   dislike: number;
+  agreeingType: AgreeingType;
 }
 
 interface ReferredOpinion {
