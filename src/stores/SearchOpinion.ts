@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
+import type { Opinion } from '@/services/opinions';
 
 export const useSearchOpinionHandler = defineStore('search-opinion', {
   state: () => {
     return {
-      isDisplayingSearchedOpinions: false
+      isDisplayingSearchedOpinions: false,
+      opinions: [] as Opinion[]
     };
   },
   actions: {
@@ -12,6 +14,9 @@ export const useSearchOpinionHandler = defineStore('search-opinion', {
     },
     hideSearchedOpinions() {
       this.isDisplayingSearchedOpinions = false;
+    },
+    replaceOpinions(opinions: Opinion[]) {
+      this.opinions = opinions;
     }
   }
 });

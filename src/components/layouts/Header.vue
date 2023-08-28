@@ -20,6 +20,7 @@
 import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
+import type { Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Header',
@@ -62,10 +63,10 @@ export default defineComponent({
         }
       ];
     },
-    onSearchCompleted(val: any) {
+    onSearchCompleted(opinions: Opinion[]) {
       const SearchOpinionHandler = useSearchOpinionHandler();
       SearchOpinionHandler.showSearchedOpinions();
-      console.log(val);
+      SearchOpinionHandler.replaceOpinions(opinions);
     }
   }
 });
