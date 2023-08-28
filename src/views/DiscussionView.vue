@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container">
+  <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
     <div :class="$style.title">
       <h1>토픽주제입니다</h1>
     </div>
@@ -19,11 +19,13 @@
       </div>
     </div>
   </div>
+  <div v-else>temp</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
+import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -32,6 +34,12 @@ export default defineComponent({
     topicId: {
       type: Number,
       required: true
+    }
+  },
+  computed: {
+    isDisplayingSearchedOpinions() {
+      const handler = useSearchOpinionHandler();
+      return handler.isDisplayingSearchedOpinions;
     }
   },
   mounted() {
