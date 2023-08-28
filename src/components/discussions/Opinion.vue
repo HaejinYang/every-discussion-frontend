@@ -30,40 +30,7 @@
         <p>추천10, 비추천20</p>
       </div>
       <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
-        <ul>
-          <li>
-            <p>
-              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
-              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
-              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
-            </p>
-            <p>추천1, 비추천20</p>
-          </li>
-          <li>
-            <p>
-              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
-              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
-              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
-            </p>
-            <p>추천1, 비추천20</p>
-          </li>
-          <li>
-            <p>
-              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
-              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
-              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
-            </p>
-            <p>추천1, 비추천20</p>
-          </li>
-          <li>
-            <p>
-              타이틀 : ut odio esse eum fugiat officiis. Lorem ipsum dolor sit amet. Aut tempora
-              quas ut rerum delectus ea rerum quisquam qui dolorem quibusdam. In Quis sunt ut ipsum
-              sint qui voluptates voluptatum et dolor neque ut odio esse eum fugiat officiis.
-            </p>
-            <p>추천1, 비추천20</p>
-          </li>
-        </ul>
+        <ReferredOpinion :referredOpinions="referredOpinions" />
       </div>
     </main>
   </div>
@@ -71,9 +38,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import ReferredOpinion from '@/components/discussions/ReferredOpinion.vue';
 
 export default defineComponent({
   name: 'Opinion',
+  components: { ReferredOpinion },
   props: {
     left: {
       type: Number,
@@ -84,12 +53,34 @@ export default defineComponent({
       required: true
     }
   },
+  data() {
+    return {
+      referredOpinions: [] as ReferredOpinion[]
+    };
+  },
   methods: {
     onClickPage() {
       this.$emit('on-click-anywhere');
     },
     handleWheel(event) {
       event.stopPropagation();
+    },
+    addReferredOpinions() {
+      for (let i = 0; i < 4; i++) {
+        let agreeingType = 'disagree';
+        if (i % 2 === 0) {
+          agreeingType = 'agree';
+        }
+
+        this.referredOpinions.push({
+          id: i,
+          title:
+            'Lorem ipsum dolor sit amet. Ea nihil amet vel Quis voluptate est repellat tempora in labore assumenda et magnam dolor. Et vero autem est unde quia qui molestias quod. Sit dolorem quidem et perferendis facere non consectetur labore eos atque omnis ut porro quae. Nam facere quis aut velit tempore quo accusantium veritatis est repudiandae dolor eos animi facere cum consectetur fuga sit facere eligendi.',
+          like: 10,
+          dislike: 20,
+          agreeingType: agreeingType
+        });
+      }
     }
   },
   mounted() {
@@ -97,6 +88,8 @@ export default defineComponent({
     if (main) {
       main.style.top = `${this.top}px`;
     }
+
+    this.addReferredOpinions();
   }
 });
 </script>
@@ -124,7 +117,6 @@ export default defineComponent({
 
     > * {
       width: 300px;
-      background-color: white;
     }
 
     .refer-opinion {
