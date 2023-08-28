@@ -95,7 +95,6 @@ export default defineComponent({
         return;
       }
 
-      this.isDisplayOpinionDetail = false;
       this.debouncedResizeHandler();
     },
     displayOpinion(index: number) {
@@ -104,7 +103,7 @@ export default defineComponent({
       if (opinion) {
         const rect = opinion.getBoundingClientRect();
         const mainWheelHandler = useMainWheelHandler();
-        this.topDetailOpinion = mainWheelHandler.top + 100;
+        this.topDetailOpinion = window.innerHeight / 2;
         this.isDisplayOpinionDetail = true;
         mainWheelHandler.disableWheel();
       }
