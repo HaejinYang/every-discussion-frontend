@@ -123,7 +123,7 @@ export default defineComponent({
   left: 0;
   right: 0;
   bottom: 0;
-  transition: all 1s ease-in-out;
+  backdrop-filter: blur(5px);
 
   main {
     position: absolute;
@@ -131,7 +131,6 @@ export default defineComponent({
     height: 600px;
     width: 100%;
     padding: 2rem;
-    background-color: orange;
     display: flex;
     flex-direction: column;
     justify-content: center;
