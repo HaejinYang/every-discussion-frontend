@@ -1,13 +1,8 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
     <main ref="main">
-      <div :class="$style['refer-opinion']" @wheel.prevent>
-        <p>
-          타이틀: Lorem ipsum dolor sit amet. Aut tempora quas ut rerum delectus ea rerum quisquam
-          qui dolorem quibusdam. In Quis sunt ut ipsum sint qui voluptates voluptatum et dolor neque
-          ut odio esse eum fugiat officiis.
-        </p>
-        <p>추천 1, 비추천 20</p>
+      <div :class="$style['refer-opinion']" @wheel="handleWheel($event)">
+        <ReferToOpinionComponent v-if="referToOpinion !== null" :opinion="referToOpinion" />
       </div>
       <div :class="$style['opinion-info']" @wheel="handleWheel($event)">
         <p>
@@ -30,7 +25,7 @@
         <p>추천10, 비추천20</p>
       </div>
       <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
-        <ReferredOpinion :referredOpinions="referredOpinions" />
+        <ReferredOpinionComponent :referredOpinions="referredOpinions" />
       </div>
     </main>
   </div>
@@ -38,11 +33,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ReferredOpinion from '@/components/discussions/ReferredOpinion.vue';
+import ReferredOpinionComponent from '@/components/discussions/ReferredOpinion.vue';
+import ReferToOpinionComponent from '@/components/discussions/ReferToOpinion.vue';
+import { type AgreeingType, type ReferredOpinion, type ReferToOpinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Opinion',
-  components: { ReferredOpinion },
+  components: { ReferToOpinionComponent, ReferredOpinionComponent },
   props: {
     left: {
       type: Number,
@@ -55,7 +52,8 @@ export default defineComponent({
   },
   data() {
     return {
-      referredOpinions: [] as ReferredOpinion[]
+      referredOpinions: [] as ReferredOpinion[],
+      referToOpinion: null as ReferToOpinion | null
     };
   },
   methods: {
@@ -67,7 +65,7 @@ export default defineComponent({
     },
     addReferredOpinions() {
       for (let i = 0; i < 4; i++) {
-        let agreeingType = 'disagree';
+        let agreeingType: AgreeingType = 'disagree';
         if (i % 2 === 0) {
           agreeingType = 'agree';
         }
@@ -81,6 +79,17 @@ export default defineComponent({
           agreeingType: agreeingType
         });
       }
+    },
+    addReferToOpinion() {
+      this.referToOpinion = {
+        id: 10,
+        title:
+          'Lorem ipsum dolor sit amet. Ea nihil amet vel Quis voluptate est repellat tempora in labore assumenda et magnam dolor. Et vero autem est unde quia qui molestias quod. Sit dolorem quidem et perferendis facere non consectetur labore eos atque omnis ut porro quae. Nam facere quis aut velit tempore quo accusantium veritatis est repudiandae dolor eos animi facere cum consectetur fuga sit facere eligendi.',
+        summary: '서머리입니다.',
+        like: 10,
+        dislike: 20,
+        agreeingType: 'agree'
+      };
     }
   },
   mounted() {
@@ -90,6 +99,7 @@ export default defineComponent({
     }
 
     this.addReferredOpinions();
+    this.addReferToOpinion();
   }
 });
 </script>

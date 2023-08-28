@@ -16,4 +16,13 @@ interface ReferredOpinion {
   agreeingType: AgreeingType;
 }
 
-export { type Opinion, type ReferredOpinion, type AgreeingType };
+interface ReferToOpinion {
+  id: number;
+  title: string;
+  summary: string;
+  like: number;
+  dislike: number;
+  agreeingType: AgreeingType;
+}
+
+export { type Opinion, type ReferredOpinion, type AgreeingType, type ReferToOpinion };
