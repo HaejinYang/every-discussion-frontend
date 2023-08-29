@@ -1,44 +1,50 @@
 <template>
-    <aside :class="$style.container">
-        <nav>
-            <ul>
-                <li>
-                    <img src="@/assets/home.svg">
-                    <span>처음 화면</span>
-                </li>
-                <li>
-                    <img src="@/assets/bookshelf.svg">
-                    <span>참여한 토론</span>
-                </li>
-                <li>
-                    <img src="@/assets/book.svg">
-                    <span>작성한 의견</span>
-                </li>
-                <li>
-                    <img src="@/assets/pencil.svg">
-                    <span>토론 생성</span>
-                </li>
-            </ul>
-        </nav>
-        <div :class="$style['register-topic']">
-            <p>안녕하세요?</p>
-            <span>
-                <button>로그인로그아웃혹은다른것</button>
-            </span>
-        </div>
-        <footer>
-            Lorem ipsum dolor sit amet. Et pariatur dolorem qui incidunt corporis ut exercitationem facere quo adipisci
-            sunt. Rem atque fugiat ea voluptas possimus est quos excepturi vel dolor earum et sequi
-        </footer>
-    </aside>
+  <aside :class="$style.container">
+    <nav>
+      <ul>
+        <li @mousedown.left="onClickHomePage">
+          <img src="@/assets/home.svg" />
+          <span>처음 화면</span>
+        </li>
+        <li>
+          <img src="@/assets/bookshelf.svg" />
+          <span>참여한 토론</span>
+        </li>
+        <li>
+          <img src="@/assets/book.svg" />
+          <span>작성한 의견</span>
+        </li>
+        <li>
+          <img src="@/assets/pencil.svg" />
+          <span>토론 생성</span>
+        </li>
+      </ul>
+    </nav>
+    <div :class="$style['register-topic']">
+      <p>안녕하세요?</p>
+      <span>
+        <button>로그인로그아웃혹은다른것</button>
+      </span>
+    </div>
+    <footer>
+      Lorem ipsum dolor sit amet. Et pariatur dolorem qui incidunt corporis ut exercitationem facere
+      quo adipisci sunt. Rem atque fugiat ea voluptas possimus est quos excepturi vel dolor earum et
+      sequi
+    </footer>
+  </aside>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-    name: 'Aside'
-})
+  name: 'Aside',
+  methods: {
+    onClickHomePage() {
+      this.$router.push('/');
+    }
+  }
+});
 </script>
 
 <style module lang="scss">
@@ -54,7 +60,6 @@ export default defineComponent({
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
   }
 
   nav {
@@ -68,6 +73,10 @@ export default defineComponent({
           vertical-align: middle;
           display: none;
         }
+
+        &:hover {
+          box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+        }
       }
     }
   }
@@ -78,7 +87,6 @@ export default defineComponent({
 
   .register-topic {
     visibility: hidden;
-
   }
 
   @media screen and (min-width: $middle-size) {
