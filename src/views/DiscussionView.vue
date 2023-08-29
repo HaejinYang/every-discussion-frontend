@@ -7,20 +7,23 @@
       <div :class="$style.agree">
         <Discussion agreeingType="agree" />
         <div :class="$style['submit-agree']">
-          <button>의견제시</button>
+          <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
         </div>
       </div>
 
       <div :class="$style.disagree">
         <Discussion agreeingType="disagree" />
         <div :class="$style['submit-disagree']">
-          <button>의견제시</button>
+          <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
         </div>
       </div>
     </div>
   </div>
   <div v-else :class="$style.container">
     <OpinionList :opinions="searchedOpinions" />
+  </div>
+  <div v-if="isDisplayingRegisterForm" :class="$style.register">
+    <RegisterOpinion agreeing-type="agree" @remove-form="disableRegisterForm" />
   </div>
 </template>
 
@@ -29,15 +32,22 @@ import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
+import type { AgreeingType } from '@/services/opinions';
+import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 
 export default defineComponent({
   name: 'DiscussionView',
-  components: { OpinionList, Discussion },
+  components: { RegisterOpinion, OpinionList, Discussion },
   props: {
     topicId: {
       type: Number,
       required: true
     }
+  },
+  data() {
+    return {
+      isDisplayingRegisterForm: false
+    };
   },
   computed: {
     isDisplayingSearchedOpinions() {
@@ -47,6 +57,14 @@ export default defineComponent({
     searchedOpinions() {
       const handler = useSearchOpinionHandler();
       return handler.opinions;
+    }
+  },
+  methods: {
+    displayRegisterOpinion(type: AgreeingType) {
+      this.isDisplayingRegisterForm = true;
+    },
+    disableRegisterForm() {
+      this.isDisplayingRegisterForm = false;
     }
   },
   mounted() {
@@ -88,6 +106,14 @@ export default defineComponent({
       text-align: center;
     }
   }
+}
+
+.register {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 @media screen and (min-width: $middle-size) {

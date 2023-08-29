@@ -1,14 +1,26 @@
 <template>
-  <div :class="[$style.container, agreeingType === 'agree' ? $style.agree : $style.disagree]">
-    <input type="text" placeholder="제목" />
-    <input type="text" placeholder="본문" />
-    <input type="radio" id="agree" value="agree" v-model="picked" />
-    <label for="one">보강</label>
-
-    <input type="radio" id="disagree" value="disagree" v-model="picked" />
-    <label for="two">반박</label>
+  <div :class="$style.container" @mousedown.left="disableForm">
     <div>
-      {{ pickedAgreeOrDisagree }}
+      <div :style="{ textAlign: 'center' }">
+        {{ pickedAgreeOrDisagree === 'agree' ? '찬성' : '반대' }}
+      </div>
+
+      <div>
+        <textarea type="text" placeholder="제목" />
+      </div>
+      <div>
+        <textarea placeholder="본문" />
+      </div>
+      <div :style="{ textAlign: 'right' }">
+        <input type="radio" id="agree" value="agree" v-model="pickedAgreeOrDisagree" />
+        <label for="one">보강</label>
+
+        <input type="radio" id="disagree" value="disagree" v-model="pickedAgreeOrDisagree" />
+        <label for="two">반박</label>
+      </div>
+      <div :style="{ textAlign: 'center' }">
+        <button :class="agreeingType === 'agree' ? $style.agree : $style.disagree">제출</button>
+      </div>
     </div>
   </div>
 </template>
@@ -26,14 +38,59 @@ export default defineComponent({
   },
   data() {
     return {
-      pickedAgreeOrDisagree: ''
+      pickedAgreeOrDisagree: 'agree'
     };
+  },
+  methods: {
+    disableForm() {
+      this.$emit('remove-form');
+    }
   }
 });
 </script>
 
 <style module lang="scss">
 .container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  > div {
+    padding: 1rem;
+    width: 60%;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+
+    > div {
+      padding: 1rem;
+      border-bottom: $border-weak-line;
+
+      > textarea {
+        width: 100%;
+        height: 100px;
+        border: 1px solid gray;
+      }
+
+      > input {
+        margin-left: 0.5rem;
+      }
+
+      > button {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+    }
+  }
 }
 
 .agree {
