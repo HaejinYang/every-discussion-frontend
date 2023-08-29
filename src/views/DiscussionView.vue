@@ -28,7 +28,7 @@
 import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
-import OpinionList from '@/components/discussions/OpinionList.vue';
+import OpinionList from '@/components/opinions/OpinionList.vue';
 
 export default defineComponent({
   name: 'DiscussionView',

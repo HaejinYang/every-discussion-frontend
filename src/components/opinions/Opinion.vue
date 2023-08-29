@@ -26,8 +26,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ReferredOpinionComponent from '@/components/discussions/ReferredOpinion.vue';
-import ReferToOpinionComponent from '@/components/discussions/ReferToOpinion.vue';
+import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
+import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
 import {
   type AgreeingType,
   type Opinion,
