@@ -32,7 +32,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { Opinion } from '@/services/opinions';
-import Opinion from '@/components/discussions/Opinion.vue';
+import Opinion from '@/components/opinions/Opinion.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
 
