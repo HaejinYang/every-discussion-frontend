@@ -1,6 +1,6 @@
 <template>
   <header :class="$style.container">
-    <div>
+    <div :class="$style.title" @mousedown.left="onClickTitle">
       <span>모두의토론</span>
     </div>
     <div v-if="isDisplaySearchBar">
@@ -67,6 +67,9 @@ export default defineComponent({
       const SearchOpinionHandler = useSearchOpinionHandler();
       SearchOpinionHandler.showSearchedOpinions();
       SearchOpinionHandler.replaceOpinions(opinions);
+    },
+    onClickTitle() {
+      this.$router.push('/');
     }
   }
 });
@@ -81,5 +84,11 @@ export default defineComponent({
   padding: 1rem;
 
   border-bottom: $border-weak-line;
+
+  .title {
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+    }
+  }
 }
 </style>
