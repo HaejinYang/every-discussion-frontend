@@ -54,7 +54,9 @@ export default defineComponent({
     onClickMyOpinions() {
       this.$router.push('/my-opinions');
     },
-    onClickRegisterTopic() {}
+    onClickRegisterTopic() {
+      this.$router.push('/topic-register');
+    }
   }
 });
 </script>
