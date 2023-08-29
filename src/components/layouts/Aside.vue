@@ -14,7 +14,7 @@
           <img src="@/assets/book.svg" />
           <span>작성한 의견</span>
         </li>
-        <li>
+        <li @mousedown.left="onClickRegisterTopic">
           <img src="@/assets/pencil.svg" />
           <span>토론 생성</span>
         </li>
@@ -39,16 +39,22 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Aside',
+  data() {
+    return {
+      isDisplayRegisterTopicForm: false
+    };
+  },
   methods: {
     onClickHomePage() {
       this.$router.push('/');
     },
     onClickMyTopics() {
-      this.$router.push('/mytopics');
+      this.$router.push('/my-topics');
     },
     onClickMyOpinions() {
-      this.$router.push('/myopinions');
-    }
+      this.$router.push('/my-opinions');
+    },
+    onClickRegisterTopic() {}
   }
 });
 </script>
