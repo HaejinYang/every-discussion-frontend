@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <Header :class="$style.header" />
+    <Header :class="$style.header" @show-login="showAuthForm" />
     <section>
       <Aside :class="$style.aside" />
       <main @wheel="handleWheel($event)" ref="main">
@@ -9,6 +9,10 @@
         </div>
       </main>
     </section>
+    <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
+      <RegisterForm @switch-login-form="switchLoginForm" v-show="!isShowLoginForm" />
+      <LoginForm @switch-register-form="switchRegisterForm" v-show="isShowLoginForm" />
+    </div>
   </div>
 </template>
 
@@ -18,15 +22,23 @@ import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
 import { useMainWheelHandler } from '@/stores/MainWheel';
+import LoginForm from '@/components/auth/LoginForm.vue';
+import RegisterForm from '@/components/auth/RegisterForm.vue';
 
 export default defineComponent({
   name: 'App',
-  components: { Aside, Header, RouterView },
+  components: { RegisterForm, LoginForm, Aside, Header, RouterView },
   computed: {
     isDisabledWheel() {
       const mainWheelHandler = useMainWheelHandler();
       return mainWheelHandler.isDisabled;
     }
+  },
+  data() {
+    return {
+      isShowLoginForm: true,
+      isShowAuthForm: false
+    };
   },
   methods: {
     handleWheel(event) {
@@ -35,6 +47,18 @@ export default defineComponent({
 
         return;
       }
+    },
+    switchLoginForm() {
+      this.isShowLoginForm = true;
+    },
+    switchRegisterForm() {
+      this.isShowLoginForm = false;
+    },
+    showAuthForm() {
+      this.isShowAuthForm = true;
+    },
+    hideAuthForm() {
+      this.isShowAuthForm = false;
     }
   }
 });
