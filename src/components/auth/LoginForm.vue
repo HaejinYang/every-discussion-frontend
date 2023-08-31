@@ -13,7 +13,7 @@
         <label for="password"><small>비밀번호</small></label>
       </div>
       <div :class="$style['login-from-footer']">
-        <span><small>회원가입</small></span>
+        <span @mousedown.left="switchRegisterForm"><small>회원가입</small></span>
         <span><small>아이디 / 비밀번호 찾기</small></span>
       </div>
       <div :class="$style['login-btn-wrapper']">
@@ -27,7 +27,12 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'LoginForm'
+  name: 'LoginForm',
+  methods: {
+    switchRegisterForm() {
+      this.$emit('switch-register-form');
+    }
+  }
 });
 </script>
 

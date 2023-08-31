@@ -9,7 +9,8 @@
         </div>
       </main>
     </section>
-    <RegisterForm />
+    <RegisterForm @switch-login-form="switchLoginForm" v-show="!isShowLoginForm" />
+    <LoginForm @switch-register-form="switchRegisterForm" v-show="isShowLoginForm" />
   </div>
 </template>
 
@@ -31,6 +32,11 @@ export default defineComponent({
       return mainWheelHandler.isDisabled;
     }
   },
+  data() {
+    return {
+      isShowLoginForm: true
+    };
+  },
   methods: {
     handleWheel(event) {
       if (this.isDisabledWheel) {
@@ -38,6 +44,12 @@ export default defineComponent({
 
         return;
       }
+    },
+    switchLoginForm() {
+      this.isShowLoginForm = true;
+    },
+    switchRegisterForm() {
+      this.isShowLoginForm = false;
     }
   }
 });

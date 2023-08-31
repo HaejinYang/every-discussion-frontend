@@ -1,25 +1,23 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style['container']">
-      <div :class="$style['register-form']">
-        <div>
-          <p :class="$style.title">모두의토론</p>
-        </div>
-        <div :class="$style['account-wrapper']">
-          <input :class="$style.account" type="text" id="account" placeholder=" " />
-          <label ref="account-label" for="account"><small>계정</small></label>
-        </div>
-        <div :class="$style['password-wrapper']">
-          <input :class="$style.password" type="password" id="password" placeholder=" " />
-          <label for="password"><small>비밀번호</small></label>
-        </div>
-        <div :class="$style['register-from-footer']">
-          <span><small>로그인</small></span>
-          <span><small>아이디 / 비밀번호 찾기</small></span>
-        </div>
-        <div :class="$style['register-btn-wrapper']">
-          <button :class="$style['register-form-btn']">회원가입</button>
-        </div>
+    <div :class="$style['register-form']">
+      <div>
+        <p :class="$style.title">모두의토론</p>
+      </div>
+      <div :class="$style['account-wrapper']">
+        <input :class="$style.account" type="text" id="account" placeholder=" " />
+        <label ref="account-label" for="account"><small>계정</small></label>
+      </div>
+      <div :class="$style['password-wrapper']">
+        <input :class="$style.password" type="password" id="password" placeholder=" " />
+        <label for="password"><small>비밀번호</small></label>
+      </div>
+      <div :class="$style['register-from-footer']">
+        <span @mousedown.left="switchToLoginForm"><small>로그인</small></span>
+        <span><small>아이디 / 비밀번호 찾기</small></span>
+      </div>
+      <div :class="$style['register-btn-wrapper']">
+        <button :class="$style['register-form-btn']">회원가입</button>
       </div>
     </div>
   </div>
@@ -29,7 +27,12 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'RegisterForm'
+  name: 'RegisterForm',
+  methods: {
+    switchToLoginForm() {
+      this.$emit('switch-login-form');
+    }
+  }
 });
 </script>
 
