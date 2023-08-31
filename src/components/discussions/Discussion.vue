@@ -160,10 +160,10 @@ export default defineComponent({
 }
 
 .agree {
-  background-color: deepskyblue;
+  background-color: $agree-background-color;
 }
 
 .disagree {
-  background-color: palevioletred;
+  background-color: $disagree-background-color;
 }
 </style>
