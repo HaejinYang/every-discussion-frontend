@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <Header :class="$style.header" />
+    <Header :class="$style.header" @show-login="showAuthForm" />
     <section>
       <Aside :class="$style.aside" />
       <main @wheel="handleWheel($event)" ref="main">
@@ -9,8 +9,10 @@
         </div>
       </main>
     </section>
-    <RegisterForm @switch-login-form="switchLoginForm" v-show="!isShowLoginForm" />
-    <LoginForm @switch-register-form="switchRegisterForm" v-show="isShowLoginForm" />
+    <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
+      <RegisterForm @switch-login-form="switchLoginForm" v-show="!isShowLoginForm" />
+      <LoginForm @switch-register-form="switchRegisterForm" v-show="isShowLoginForm" />
+    </div>
   </div>
 </template>
 
@@ -34,7 +36,8 @@ export default defineComponent({
   },
   data() {
     return {
-      isShowLoginForm: true
+      isShowLoginForm: true,
+      isShowAuthForm: false
     };
   },
   methods: {
@@ -50,6 +53,12 @@ export default defineComponent({
     },
     switchRegisterForm() {
       this.isShowLoginForm = false;
+    },
+    showAuthForm() {
+      this.isShowAuthForm = true;
+    },
+    hideAuthForm() {
+      this.isShowAuthForm = false;
     }
   }
 });

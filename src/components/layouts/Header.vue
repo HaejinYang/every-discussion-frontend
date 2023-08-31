@@ -11,7 +11,7 @@
       />
     </div>
     <div>
-      <button>로그인</button>
+      <button :class="$style['login-btn']" @mousedown.left="onClickLogin">로그인</button>
     </div>
   </header>
 </template>
@@ -70,6 +70,9 @@ export default defineComponent({
     },
     onClickTitle() {
       this.$router.push('/');
+    },
+    onClickLogin() {
+      this.$emit('show-login');
     }
   }
 });
@@ -89,6 +92,14 @@ export default defineComponent({
     &:hover {
       box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
     }
+  }
+
+  .login-btn {
+    border: none;
+    background-color: $primary-color;
+    padding: 0.5rem;
+    border-radius: 5px;
+    color: white;
   }
 }
 </style>

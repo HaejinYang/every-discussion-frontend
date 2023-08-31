@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style['register-form']">
+    <div :class="$style['register-form']" @mousedown.left.stop>
       <div>
         <p :class="$style.title">모두의토론</p>
       </div>
