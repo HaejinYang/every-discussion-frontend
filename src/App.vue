@@ -9,7 +9,7 @@
         </div>
       </main>
     </section>
-    <LoginForm />
+    <RegisterForm />
   </div>
 </template>
 
@@ -20,10 +20,11 @@ import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import LoginForm from '@/components/auth/LoginForm.vue';
+import RegisterForm from '@/components/auth/RegisterForm.vue';
 
 export default defineComponent({
   name: 'App',
-  components: { LoginForm, Aside, Header, RouterView },
+  components: { RegisterForm, LoginForm, Aside, Header, RouterView },
   computed: {
     isDisabledWheel() {
       const mainWheelHandler = useMainWheelHandler();
