@@ -127,8 +127,25 @@ export default defineComponent({
           padding: 1rem;
           border-bottom: $border-weak-line;
 
-          > span {
-            float: right;
+          &:last-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            > span {
+              > button {
+                border: none;
+                background-color: $primary-color;
+                color: white;
+                padding: 0.5rem;
+                border-radius: 5px;
+
+                &:hover {
+                  cursor: pointer;
+                  box-shadow: $box-shadow-strong;
+                }
+              }
+            }
           }
         }
       }
