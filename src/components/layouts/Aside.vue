@@ -89,7 +89,7 @@ export default defineComponent({
         }
 
         &:hover {
-          box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+          box-shadow: $box-shadow-normal;
         }
       }
     }

@@ -65,7 +65,7 @@ export default defineComponent({
     padding: 1rem;
     width: 60%;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+    box-shadow: $box-shadow-normal;
 
     > div {
       padding: 1rem;
