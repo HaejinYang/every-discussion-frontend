@@ -37,7 +37,7 @@ export default defineComponent({
 <style module lang="scss">
 .container {
   max-width: 300px;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+  box-shadow: $box-shadow-normal;
 
   .title {
     padding: 1rem;
