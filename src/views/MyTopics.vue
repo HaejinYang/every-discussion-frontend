@@ -1,21 +1,46 @@
 <template>
   <div :class="$style.container">
-    <div v-for="index in 10">
+    <div v-for="topic in topics" @mousedown.left="switchToDiscussion(topic.id)">
       <p>
-        Lorem ipsum dolor sit amet. Qui quis rerum ut quis dolorem et ullam esse ad quas illum aut
-        consequatur consequuntur et aliquid voluptas id quia autem.
+        {{ topic.title }}
       </p>
-      <p>참여자수 11</p>
-      <p>의견수 12</p>
+      <p>참여자수 {{ topic.participantsCount }}</p>
+      <p>의견수 {{ topic.opinionsCount }}</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import type { Topic } from '@/services/topics';
 
 export default defineComponent({
-  name: 'MyTopics'
+  name: 'MyTopics',
+  data() {
+    return {
+      topics: [] as Topic[]
+    };
+  },
+  methods: {
+    addTopics() {
+      for (let index = 0; index < 5; index++) {
+        this.topics.push({
+          id: index,
+          title:
+            'Lorem ipsum dolor sit amet. Qui quis rerum ut quis dolorem et ullam esse ad quas illum aut consequatur consequuntur et aliquid voluptas id quia autem.',
+          host: '홍길동',
+          participantsCount: 10 * index,
+          opinionsCount: 5 * index
+        });
+      }
+    },
+    switchToDiscussion(id: number) {
+      this.$router.push(`/discussion/${id}`);
+    }
+  },
+  created() {
+    this.addTopics();
+  }
 });
 </script>
 
