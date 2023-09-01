@@ -1,3 +1,5 @@
+import type { Opinion } from '@/services/opinions';
+
 interface Topic {
   id: number;
   title: string;
@@ -6,4 +8,9 @@ interface Topic {
   opinionsCount: number;
 }
 
-export { type Topic };
+interface OpinionsInTopic {
+  topic: Topic;
+  opinions: Opinion[];
+}
+
+export { type Topic, type OpinionsInTopic };
