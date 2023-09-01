@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div v-for="topic in topics" @mousedown.left="switchToDiscussion(topic.id)">
+    <div v-for="topic in topics" :key="topic.id" @mousedown.left="switchToDiscussion(topic.id)">
       <p>
         {{ topic.title }}
       </p>
