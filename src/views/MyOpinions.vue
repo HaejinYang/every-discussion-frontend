@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.container">
     <div :class="$style['info']" v-for="item in opinionsInTopic" :key="item.topic.id">
-      <div :class="$style['topic-info']">
+      <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
         <p>{{ item.topic.title }}</p>
         <p>참여자수{{ item.topic.participantsCount }}</p>
         <p>의견정보{{ item.topic.opinionsCount }}</p>
@@ -81,6 +81,9 @@ export default defineComponent({
           opinions: opinions
         });
       }
+    },
+    switchToDiscussion(id: number) {
+      this.$router.push(`/discussion/${id}`);
     }
   },
   created() {
@@ -102,6 +105,12 @@ export default defineComponent({
       flex-direction: column;
       justify-content: center;
       max-width: 200px;
+      padding: 1rem;
+
+      &:hover {
+        cursor: pointer;
+        box-shadow: $box-shadow-strong;
+      }
     }
 
     .opinions-wrapper {
