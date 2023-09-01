@@ -1,37 +1,17 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style['info']" v-for="index in 5" :key="index">
-      <div :class="$style['topics-info']">
-        <p>토론제목</p>
-        <p>참여자수</p>
-        <p>의견정보</p>
+    <div :class="$style['info']" v-for="item in opinionsInTopic" :key="item.topic.id">
+      <div :class="$style['topic-info']">
+        <p>{{ item.topic.title }}</p>
+        <p>참여자수{{ item.topic.participantsCount }}</p>
+        <p>의견정보{{ item.topic.opinionsCount }}</p>
       </div>
       <div :class="$style['opinions-wrapper']">
-        <div :class="$style.opinions">
+        <div :class="$style.opinions" v-for="opinion in item.opinions" :key="opinion.id">
+          <p>의견 내용 : {{ opinion.title }}</p>
           <p>
-            의견 내용 : Lorem ipsum dolor sit amet. Vel saepe quisquam et quod nisi in autem neque
-            ab qui
-          </p>
-          <p>
-            추천 10, 비추천 10 <span><button>수정</button></span> <span><button>삭제</button></span>
-          </p>
-        </div>
-        <div :class="$style.opinions">
-          <p>
-            의견 내용 : Lorem ipsum dolor sit amet. Vel saepe quisquam et quod nisi in autem neque
-            ab qui
-          </p>
-          <p>
-            추천 10, 비추천 10 <span><button>수정</button></span> <span><button>삭제</button></span>
-          </p>
-        </div>
-        <div :class="$style.opinions">
-          <p>
-            의견 내용 : Lorem ipsum dolor sit amet. Vel saepe quisquam et quod nisi in autem neque
-            ab qui
-          </p>
-          <p>
-            추천 10, 비추천 10 <span><button>수정</button></span> <span><button>삭제</button></span>
+            추천 {{ opinion.like }}, 비추천 {{ opinion.dislike }}
+            <span><button>수정</button></span> <span><button>삭제</button></span>
           </p>
         </div>
       </div>
@@ -42,9 +22,70 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import type { OpinionsInTopic, Topic } from '@/services/topics';
+import type { AgreeingType, Opinion } from '@/services/opinions';
 
 export default defineComponent({
-  name: 'MyOpinions'
+  name: 'MyOpinions',
+  data() {
+    return {
+      opinionsInTopic: [] as OpinionsInTopic[]
+    };
+  },
+  methods: {
+    addItem() {
+      for (let index = 0; index < 5; index++) {
+        const topic: Topic = {
+          id: index,
+          title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+          host: `홍길동${index}`,
+          participantsCount: index * 2,
+          opinionsCount: index * 4
+        };
+
+        const opinions: Opinion[] = [
+          {
+            id: index * 3 + 0,
+            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            content:
+              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            summary: 'asdasdasdad',
+            like: 10,
+            dislike: 20,
+            agreeingType: index % 2 === 0 ? 'agree' : ('disagree' as AgreeingType)
+          },
+          {
+            id: index * 3 + 1,
+            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            content:
+              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            summary: 'asdasdasdad',
+            like: 10,
+            dislike: 20,
+            agreeingType: index % 2 === 0 ? 'agree' : 'disagree'
+          },
+          {
+            id: index * 3 + 2,
+            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            content:
+              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
+            summary: 'asdasdasdad',
+            like: 10,
+            dislike: 20,
+            agreeingType: index % 2 === 0 ? 'agree' : 'disagree'
+          }
+        ];
+
+        this.opinionsInTopic.push({
+          topic: topic,
+          opinions: opinions
+        });
+      }
+    }
+  },
+  created() {
+    this.addItem();
+  }
 });
 </script>
 
@@ -54,12 +95,13 @@ export default defineComponent({
     display: flex;
     justify-content: space-around;
     padding: 1rem;
+    box-shadow: $box-shadow-normal;
 
-    .topics-info {
+    .topic-info {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
+      max-width: 200px;
     }
 
     .opinions-wrapper {
