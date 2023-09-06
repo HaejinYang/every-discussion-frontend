@@ -21,7 +21,7 @@
       <button :class="$style.more" @mousedown.left="moreTopics">
         {{ isWaitingMoreTopics ? '' : '더보기' }}
       </button>
-      <img src="@/assets/spinner-black.svg" alt="spinner" v-show="isWaitingMoreTopics" />
+      <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWaitingMoreTopics" />
     </div>
   </div>
 </template>
@@ -31,6 +31,8 @@ import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import type { Topic } from '@/services/topics';
+import { nextTopTopics, TopTopics, topTopics } from '@/services/topics';
+import { searchTopics } from '@/services/searches';
 
 export default defineComponent({
   name: 'HomeView',
@@ -39,70 +41,67 @@ export default defineComponent({
     return {
       topics: [] as Topic[],
       selectedTopicIndex: -1,
-      isWaitingMoreTopics: false
+      isWaitingMoreTopics: false,
+      nextTopicsUrl: '',
+      searchKeyword: ''
     };
   },
   methods: {
     selectTopicIndex(index: number) {
       this.selectedTopicIndex = index;
     },
-    moreTopics() {
+    async moreTopics() {
+      if (!this.nextTopicsUrl) {
+        this.isWaitingMoreTopics = true;
+        setTimeout(() => {
+          this.isWaitingMoreTopics = false;
+        }, 500);
+        return;
+      }
+
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
+
+      const topics = await nextTopTopics(
+        this.nextTopicsUrl + (this.searchKeyword.length > 0 ? `&keyword=${this.searchKeyword}` : '')
+      );
+      this.topics.push(...topics.data);
+      this.isWaitingMoreTopics = false;
+      this.nextTopicsUrl = topics.nextPageUrl;
+
       setTimeout(() => {
-        this.addTopics();
-        setTimeout(() => {
-          const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
-          if (buttonRef) {
-            buttonRef.scrollIntoView({ behavior: 'smooth' });
-          }
-          this.isWaitingMoreTopics = false;
-        }, 0);
-      }, 500);
+        this.moveMouseIntoMoreButton();
+      }, 0);
     },
-    addTopics() {
-      this.topics.push({
-        id: 1,
-        title: '토픽1. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
-
-      this.topics.push({
-        id: 2,
-        title: '토픽2. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
-
-      this.topics.push({
-        id: 3,
-        title: '토픽3. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
+    moveMouseIntoMoreButton() {
+      const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
+      if (buttonRef) {
+        console.log('move');
+        buttonRef.scrollIntoView({ behavior: 'smooth' });
+      }
     },
-    onSearchCompleted(searchedTopics: Topic[]) {
-      this.topics = searchedTopics;
+    onSearchCompleted(topTopics: TopTopics | null) {
+      if (topTopics === null) {
+        return;
+      }
+
+      this.topics = topTopics.data;
+      this.nextTopicsUrl = topTopics.nextPageUrl;
     },
     onInputSearch(keyword: string) {
-      return [
-        {
-          id: 4,
-          title: '토픽N. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-          host: '생성자1',
-          participantsCount: 102,
-          opinionsCount: 123
-        }
-      ];
+      this.searchKeyword = keyword;
+      return searchTopics(keyword);
     }
   },
-  mounted() {
-    this.addTopics();
-  }
+  created() {
+    this.isWaitingMoreTopics = true;
+    topTopics().then((topTopics: TopTopics) => {
+      this.topics = topTopics.data;
+      this.isWaitingMoreTopics = false;
+      this.nextTopicsUrl = topTopics.nextPageUrl;
+    });
+  },
+  mounted() {}
 });
 </script>
 
@@ -129,24 +128,31 @@ export default defineComponent({
   .more-wrapper {
     position: relative;
     width: 300px;
-    box-shadow: $box-shadow-normal;
+    background-color: $primary-color;
+    margin-bottom: 1rem;
 
     .more {
+      min-height: 50px;
       width: 100%;
+      color: white;
       text-align: center;
       font-weight: bold;
-      padding: 0.5rem;
+      padding: 1rem;
       border-radius: 10px;
       background-color: transparent;
       border: none;
 
       &:hover {
         cursor: pointer;
+        box-shadow: $box-shadow-normal;
       }
     }
 
     > img {
       position: absolute;
+      object-fit: contain;
+      height: 100%;
+      width: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);

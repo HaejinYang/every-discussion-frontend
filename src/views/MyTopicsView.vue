@@ -15,7 +15,7 @@ import { defineComponent } from 'vue';
 import type { Topic } from '@/services/topics';
 
 export default defineComponent({
-  name: 'MyTopics',
+  name: 'MyTopicsView',
   data() {
     return {
       topics: [] as Topic[]

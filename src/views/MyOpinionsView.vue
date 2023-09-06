@@ -26,7 +26,7 @@ import type { OpinionsInTopic, Topic } from '@/services/topics';
 import type { AgreeingType, Opinion } from '@/services/opinions';
 
 export default defineComponent({
-  name: 'MyOpinions',
+  name: 'MyOpinionsView',
   data() {
     return {
       opinionsInTopic: [] as OpinionsInTopic[]
