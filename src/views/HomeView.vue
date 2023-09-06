@@ -32,6 +32,7 @@ import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import type { Topic } from '@/services/topics';
 import { nextTopTopics, TopTopics, topTopics } from '@/services/topics';
+import { searchTopics } from '@/services/searches';
 
 export default defineComponent({
   name: 'HomeView',
@@ -41,7 +42,8 @@ export default defineComponent({
       topics: [] as Topic[],
       selectedTopicIndex: -1,
       isWaitingMoreTopics: false,
-      nextTopicsUrl: ''
+      nextTopicsUrl: '',
+      searchKeyword: ''
     };
   },
   methods: {
@@ -49,35 +51,46 @@ export default defineComponent({
       this.selectedTopicIndex = index;
     },
     async moreTopics() {
+      if (!this.nextTopicsUrl) {
+        this.isWaitingMoreTopics = true;
+        setTimeout(() => {
+          this.isWaitingMoreTopics = false;
+        }, 500);
+        return;
+      }
+
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
 
-      const topics = await nextTopTopics(this.nextTopicsUrl);
+      const topics = await nextTopTopics(
+        this.nextTopicsUrl + (this.searchKeyword.length > 0 ? `&keyword=${this.searchKeyword}` : '')
+      );
       this.topics.push(...topics.data);
       this.isWaitingMoreTopics = false;
       this.nextTopicsUrl = topics.nextPageUrl;
 
-      this.moveMouseIntoMoreButton();
+      setTimeout(() => {
+        this.moveMouseIntoMoreButton();
+      }, 0);
     },
     moveMouseIntoMoreButton() {
       const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
       if (buttonRef) {
+        console.log('move');
         buttonRef.scrollIntoView({ behavior: 'smooth' });
       }
     },
-    onSearchCompleted(searchedTopics: Topic[]) {
-      this.topics = searchedTopics;
+    onSearchCompleted(topTopics: TopTopics | null) {
+      if (topTopics === null) {
+        return;
+      }
+
+      this.topics = topTopics.data;
+      this.nextTopicsUrl = topTopics.nextPageUrl;
     },
     onInputSearch(keyword: string) {
-      return [
-        {
-          id: 4,
-          title: '토픽N. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-          host: '생성자1',
-          participantsCount: 102,
-          opinionsCount: 123
-        }
-      ];
+      this.searchKeyword = keyword;
+      return searchTopics(keyword);
     }
   },
   created() {

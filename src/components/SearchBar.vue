@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
+import { getErrorMessage } from '@/util/error';
 
 export default defineComponent({
   name: 'SearchBar',
@@ -30,7 +31,7 @@ export default defineComponent({
     return {
       searchText: '',
       debouncedSearch: (...args: any[]): void => {},
-      searchDelay: 500,
+      searchDelay: 250,
       isShowSearchWaiting: false
     };
   },
@@ -41,15 +42,26 @@ export default defineComponent({
   },
   watch: {
     searchText(keyword) {
-      this.isShowSearchWaiting = true;
       this.debouncedSearch(keyword);
     }
   },
   created() {
-    this.debouncedSearch = debounce((keyword: string) => {
-      const result = this.onInputSearch(keyword);
-      this.$emit('on-search-complete', result);
-      this.isShowSearchWaiting = false;
+    this.debouncedSearch = debounce(async (keyword: string) => {
+      if (keyword.length < 1) {
+        return;
+      }
+
+      this.isShowSearchWaiting = true;
+
+      try {
+        const result = await this.onInputSearch(keyword);
+        this.$emit('on-search-complete', result);
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.$emit('on-search-complete', null);
+      } finally {
+        this.isShowSearchWaiting = false;
+      }
     }, this.searchDelay);
   }
 });

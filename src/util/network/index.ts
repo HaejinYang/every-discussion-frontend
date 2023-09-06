@@ -5,7 +5,6 @@
  */
 const fetchApi = (input: RequestInfo, init?: RequestInit) => {
   const apiUrl = `${import.meta.env.VITE_API_BASE_URL}${input}`;
-
   return fetch(apiUrl, init);
 };
 

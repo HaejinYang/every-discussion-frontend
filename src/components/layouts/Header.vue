@@ -27,7 +27,6 @@ export default defineComponent({
   components: { SearchBar },
   computed: {
     isDisplaySearchBar() {
-      console.log(this.$router.path);
       return this.$route.name === 'discussion';
     }
   },
