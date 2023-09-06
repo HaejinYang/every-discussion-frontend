@@ -21,7 +21,7 @@
       <button :class="$style.more" @mousedown.left="moreTopics">
         {{ isWaitingMoreTopics ? '' : '더보기' }}
       </button>
-      <img src="@/assets/spinner-black.svg" alt="spinner" v-show="isWaitingMoreTopics" />
+      <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWaitingMoreTopics" />
     </div>
   </div>
 </template>
@@ -102,13 +102,13 @@ export default defineComponent({
     }
   },
   created() {
+    this.isWaitingMoreTopics = true;
     topTopics().then((topTopics: TopTopics) => {
       this.topics = topTopics.data;
+      this.isWaitingMoreTopics = false;
     });
   },
-  mounted() {
-    this.addTopics();
-  }
+  mounted() {}
 });
 </script>
 
@@ -135,24 +135,31 @@ export default defineComponent({
   .more-wrapper {
     position: relative;
     width: 300px;
-    box-shadow: $box-shadow-normal;
+    background-color: $primary-color;
+    margin-bottom: 1rem;
 
     .more {
+      min-height: 50px;
       width: 100%;
+      color: white;
       text-align: center;
       font-weight: bold;
-      padding: 0.5rem;
+      padding: 1rem;
       border-radius: 10px;
       background-color: transparent;
       border: none;
 
       &:hover {
         cursor: pointer;
+        box-shadow: $box-shadow-normal;
       }
     }
 
     > img {
       position: absolute;
+      object-fit: contain;
+      height: 100%;
+      width: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
