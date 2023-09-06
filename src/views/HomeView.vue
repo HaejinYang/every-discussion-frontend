@@ -31,7 +31,7 @@ import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import type { Topic } from '@/services/topics';
-import { TopTopics, topTopics } from '@/services/topics';
+import { nextTopTopics, TopTopics, topTopics } from '@/services/topics';
 
 export default defineComponent({
   name: 'HomeView',
@@ -40,51 +40,30 @@ export default defineComponent({
     return {
       topics: [] as Topic[],
       selectedTopicIndex: -1,
-      isWaitingMoreTopics: false
+      isWaitingMoreTopics: false,
+      nextTopicsUrl: ''
     };
   },
   methods: {
     selectTopicIndex(index: number) {
       this.selectedTopicIndex = index;
     },
-    moreTopics() {
+    async moreTopics() {
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
-      setTimeout(() => {
-        this.addTopics();
-        setTimeout(() => {
-          const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
-          if (buttonRef) {
-            buttonRef.scrollIntoView({ behavior: 'smooth' });
-          }
-          this.isWaitingMoreTopics = false;
-        }, 0);
-      }, 500);
+
+      const topics = await nextTopTopics(this.nextTopicsUrl);
+      this.topics.push(...topics.data);
+      this.isWaitingMoreTopics = false;
+      this.nextTopicsUrl = topics.nextPageUrl;
+
+      this.moveMouseIntoMoreButton();
     },
-    addTopics() {
-      this.topics.push({
-        id: 1,
-        title: '토픽1. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
-
-      this.topics.push({
-        id: 2,
-        title: '토픽2. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
-
-      this.topics.push({
-        id: 3,
-        title: '토픽3. 매우긴내용 하지만 내용은 없는. 내용을 채우기 위한',
-        host: '생성자1',
-        participantsCount: 102,
-        opinionsCount: 123
-      });
+    moveMouseIntoMoreButton() {
+      const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
+      if (buttonRef) {
+        buttonRef.scrollIntoView({ behavior: 'smooth' });
+      }
     },
     onSearchCompleted(searchedTopics: Topic[]) {
       this.topics = searchedTopics;
@@ -106,6 +85,7 @@ export default defineComponent({
     topTopics().then((topTopics: TopTopics) => {
       this.topics = topTopics.data;
       this.isWaitingMoreTopics = false;
+      this.nextTopicsUrl = topTopics.nextPageUrl;
     });
   },
   mounted() {}

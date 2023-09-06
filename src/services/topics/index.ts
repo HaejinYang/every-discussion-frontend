@@ -78,4 +78,17 @@ const topTopics = async () => {
   return topics;
 };
 
-export { type Topic, type OpinionsInTopic, topTopics, Topic, TopTopics };
+const nextTopTopics = async (pageUrlFromServer: string) => {
+  const response = await fetch(pageUrlFromServer, {
+    method: 'GET',
+    credentials: 'include'
+  });
+
+  throwErrorWhenResponseNotOk(response);
+
+  const result = await response.json();
+  const topics: TopTopics = plainToInstance(TopTopics, result.data);
+  return topics;
+};
+
+export { type Topic, type OpinionsInTopic, topTopics, Topic, TopTopics, nextTopTopics };
