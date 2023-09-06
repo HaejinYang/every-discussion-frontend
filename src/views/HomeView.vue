@@ -31,6 +31,7 @@ import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import type { Topic } from '@/services/topics';
+import { TopTopics, topTopics } from '@/services/topics';
 
 export default defineComponent({
   name: 'HomeView',
@@ -99,6 +100,11 @@ export default defineComponent({
         }
       ];
     }
+  },
+  created() {
+    topTopics().then((topTopics: TopTopics) => {
+      this.topics = topTopics.data;
+    });
   },
   mounted() {
     this.addTopics();
