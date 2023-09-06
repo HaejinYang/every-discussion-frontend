@@ -26,7 +26,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'RegisterTopic'
+  name: 'RegisterTopicView'
 });
 </script>
 

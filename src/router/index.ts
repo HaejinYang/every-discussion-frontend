@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import DiscussionView from '@/views/DiscussionView.vue';
-import MyOpinions from '@/views/MyOpinions.vue';
-import MyTopics from '@/views/MyTopics.vue';
-import RegisterTopic from '@/views/RegisterTopic.vue';
+import MyTopicsView from '@/views/MyTopicsView.vue';
+import MyOpinionsView from '@/views/MyOpinionsView.vue';
+import RegisterTopicView from '@/views/RegisterTopicView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,17 +22,17 @@ const router = createRouter({
     {
       path: '/my-topics',
       name: 'my-topics',
-      component: MyTopics
+      component: MyTopicsView
     },
     {
       path: '/my-opinions',
       name: 'my-opinions',
-      component: MyOpinions
+      component: MyOpinionsView
     },
     {
       path: '/topic-register',
       name: 'topic-register',
-      component: RegisterTopic
+      component: RegisterTopicView
     }
   ]
 });
