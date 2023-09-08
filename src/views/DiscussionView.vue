@@ -69,6 +69,10 @@ export default defineComponent({
       this.isDisplayingRegisterForm = false;
     }
   },
+  beforeCreate() {
+    const handler = useSearchOpinionHandler();
+    handler.hideSearchedOpinions();
+  },
   async created() {
     const topic = await getTopic(this.topicId);
     this.topic = topic;
