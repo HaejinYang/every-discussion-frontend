@@ -32,9 +32,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { Opinion } from '@/services/opinions';
+import { getOpinions } from '@/services/opinions';
 import Opinion from '@/components/opinions/Opinion.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
+import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 
 export default defineComponent({
   name: 'Discussion',
@@ -42,6 +44,10 @@ export default defineComponent({
   props: {
     agreeingType: {
       type: String,
+      required: true
+    },
+    topicId: {
+      type: Number,
       required: true
     }
   },
@@ -58,18 +64,11 @@ export default defineComponent({
     };
   },
   methods: {
-    addOpinions() {
-      for (let i = 0; i < 10; i++) {
-        this.opinions.push({
-          id: i,
-          title:
-            'Lorem ipsum dolor sit amet. Sed illo molestiae quo pariatur sint sed officiis voluptatem At officia consectetur. Non necessitatibus dignissimos ab ',
-          content:
-            'Lorem ipsum dolor sit amet. Sed illo molestiae quo pariatur sint sed officiis voluptatem At officia consectetur. Non necessitatibus dignissimos ab ',
-          like: 10,
-          dislike: 5
-        });
-      }
+    async initializeOpinions() {
+      const opinions = await getOpinions(this.topicId);
+      this.opinions = opinions.filter((opinion: Opinion) => {
+        return opinion.agreeType === this.agreeingType;
+      });
     },
     displayOpinions() {
       this.displayedOpinions.push(
@@ -109,8 +108,10 @@ export default defineComponent({
       }
     }
   },
-  created() {
-    this.addOpinions();
+  async created() {
+    const searchOpinionHandler = useSearchOpinionHandler();
+    searchOpinionHandler.selectTopic(this.topicId);
+    await this.initializeOpinions();
     this.displayOpinions();
     this.debouncedResizeHandler = debounce(() => {
       this.displayOpinion(this.lastSelectedOpinion);

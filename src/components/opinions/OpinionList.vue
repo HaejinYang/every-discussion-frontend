@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <ul>
       <li
-        :class="opinion.agreeingType === 'agree' ? $style.agree : $style.disagree"
+        :class="opinion.agreeType === 'agree' ? $style.agree : $style.disagree"
         v-for="(opinion, index) in opinions"
         :key="opinion.id"
         @mousedown.left="displayOpinion(index)"
@@ -69,8 +69,14 @@ export default defineComponent({
 <style module lang="scss">
 .container {
   > ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     > li {
       list-style: none;
+      width: 50%;
+      margin: 1rem;
 
       > p {
         padding: 0.5rem;

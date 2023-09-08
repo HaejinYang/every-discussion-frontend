@@ -1,18 +1,18 @@
 <template>
   <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
     <div :class="$style.title">
-      <h1>토픽주제입니다</h1>
+      <h1>{{ topic?.title }}</h1>
     </div>
     <div :class="$style.opinions">
       <div :class="$style.agree">
-        <Discussion agreeingType="agree" />
+        <Discussion agreeingType="agree" :topicId="topicId" />
         <div :class="$style['submit-agree']">
           <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
         </div>
       </div>
 
       <div :class="$style.disagree">
-        <Discussion agreeingType="disagree" />
+        <Discussion agreeingType="disagree" :topicId="topicId" />
         <div :class="$style['submit-disagree']">
           <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
         </div>
@@ -34,6 +34,7 @@ import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
+import { getTopic, Topic } from '@/services/topics';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -46,7 +47,8 @@ export default defineComponent({
   },
   data() {
     return {
-      isDisplayingRegisterForm: false
+      isDisplayingRegisterForm: false,
+      topic: null as Topic | null
     };
   },
   computed: {
@@ -67,9 +69,15 @@ export default defineComponent({
       this.isDisplayingRegisterForm = false;
     }
   },
-  mounted() {
-    // get topic id
-  }
+  beforeCreate() {
+    const handler = useSearchOpinionHandler();
+    handler.hideSearchedOpinions();
+  },
+  async created() {
+    const topic = await getTopic(this.topicId);
+    this.topic = topic;
+  },
+  mounted() {}
 });
 </script>
 

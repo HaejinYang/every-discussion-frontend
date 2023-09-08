@@ -5,7 +5,8 @@ export const useSearchOpinionHandler = defineStore('search-opinion', {
   state: () => {
     return {
       isDisplayingSearchedOpinions: false,
-      opinions: [] as Opinion[]
+      opinions: [] as Opinion[],
+      topicId: -1
     };
   },
   actions: {
@@ -17,6 +18,9 @@ export const useSearchOpinionHandler = defineStore('search-opinion', {
     },
     replaceOpinions(opinions: Opinion[]) {
       this.opinions = opinions;
+    },
+    selectTopic(topicId: number) {
+      this.topicId = topicId;
     }
   }
 });

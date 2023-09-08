@@ -76,7 +76,6 @@ export default defineComponent({
     moveMouseIntoMoreButton() {
       const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
       if (buttonRef) {
-        console.log('move');
         buttonRef.scrollIntoView({ behavior: 'smooth' });
       }
     },
