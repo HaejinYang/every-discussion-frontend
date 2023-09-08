@@ -36,6 +36,7 @@ import { getOpinions } from '@/services/opinions';
 import Opinion from '@/components/opinions/Opinion.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
+import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 
 export default defineComponent({
   name: 'Discussion',
@@ -68,16 +69,12 @@ export default defineComponent({
       this.opinions = opinions.filter((opinion: Opinion) => {
         return opinion.agreeType === this.agreeingType;
       });
-
-      console.log(this.opinions);
     },
     displayOpinions() {
       this.displayedOpinions.push(
         ...this.opinions.slice(this.displayCursor, this.displayCursor + 3)
       );
       this.displayCursor += 3;
-
-      console.log(this.displayedOpinions);
     },
     moreOpinions() {
       this.displayOpinions();
@@ -112,6 +109,8 @@ export default defineComponent({
     }
   },
   async created() {
+    const searchOpinionHandler = useSearchOpinionHandler();
+    searchOpinionHandler.selectTopic(this.topicId);
     await this.initializeOpinions();
     this.displayOpinions();
     this.debouncedResizeHandler = debounce(() => {

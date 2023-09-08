@@ -50,8 +50,13 @@ interface ReferToOpinion {
   agreeingType: AgreeingType;
 }
 
-const getOpinions = async (topicId: number) => {
-  const response = await fetchApi(`/api/topics/${topicId}/opinions`, {
+const getOpinions = async (topicId: number, keyword = '') => {
+  let url = `/api/topics/${topicId}/opinions`;
+  if (keyword.length > 0) {
+    url += `?keyword=${keyword}`;
+  }
+
+  const response = await fetchApi(url, {
     method: 'GET',
     credentials: 'include'
   });

@@ -21,6 +21,7 @@ import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import type { Opinion } from '@/services/opinions';
+import { getOpinions } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Header',
@@ -31,41 +32,17 @@ export default defineComponent({
     }
   },
   methods: {
-    onInputSearch() {
-      return [
-        {
-          id: 1,
-          title: 'abc',
-          summary: 'abc',
-          content: 'abc',
-          like: 10,
-          dislike: 20,
-          agreeingType: 'agree'
-        },
-        {
-          id: 2,
-          title: 'abc',
-          summary: 'abc',
-          content: 'abc',
-          like: 10,
-          dislike: 20,
-          agreeingType: 'disagree'
-        },
-        {
-          id: 3,
-          title: 'abc',
-          summary: 'abc',
-          content: 'abc',
-          like: 10,
-          dislike: 20,
-          agreeingType: 'agree'
-        }
-      ];
+    async onInputSearch(keyword: string) {
+      const searchOpinionHandler = useSearchOpinionHandler();
+      const opinions = await getOpinions(searchOpinionHandler.topicId, keyword);
+
+      return opinions;
     },
     onSearchCompleted(opinions: Opinion[]) {
-      const SearchOpinionHandler = useSearchOpinionHandler();
-      SearchOpinionHandler.showSearchedOpinions();
-      SearchOpinionHandler.replaceOpinions(opinions);
+      const searchOpinionHandler = useSearchOpinionHandler();
+      searchOpinionHandler.showSearchedOpinions();
+      searchOpinionHandler.replaceOpinions(opinions);
+      console.log(opinions);
     },
     onClickTitle() {
       this.$router.push('/');
