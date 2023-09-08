@@ -1,18 +1,18 @@
 <template>
   <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
     <div :class="$style.title">
-      <h1>{{ topic.title }}</h1>
+      <h1>{{ topic?.title }}</h1>
     </div>
     <div :class="$style.opinions">
       <div :class="$style.agree">
-        <Discussion agreeingType="agree" />
+        <Discussion agreeingType="agree" :topicId="topicId" />
         <div :class="$style['submit-agree']">
           <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
         </div>
       </div>
 
       <div :class="$style.disagree">
-        <Discussion agreeingType="disagree" />
+        <Discussion agreeingType="disagree" :topicId="topicId" />
         <div :class="$style['submit-disagree']">
           <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
         </div>

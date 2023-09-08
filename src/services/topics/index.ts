@@ -100,7 +100,7 @@ const getTopic = async (topicId: number) => {
   throwErrorWhenResponseNotOk(response);
 
   const result = await response.json();
-  const topic: Topic = plainToInstance(Topic, result);
+  const topic: Topic = plainToInstance(Topic, result.data);
   return topic;
 };
 
