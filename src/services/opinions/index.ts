@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import fetchApi from '@/util/network';
 import { Expose, plainToInstance } from 'class-transformer';
+import { throwErrorWhenResponseNotOk } from '@/util/error';
 
 type AgreeingType = 'agree' | 'disagree';
 
@@ -50,6 +51,13 @@ interface ReferToOpinion {
   agreeingType: AgreeingType;
 }
 
+interface RegisterOpinion {
+  topicId: number;
+  title: string;
+  content: string;
+  agreeingType: AgreeingType;
+}
+
 const getOpinions = async (topicId: number, keyword = '') => {
   let url = `/api/topics/${topicId}/opinions`;
   if (keyword.length > 0) {
@@ -61,9 +69,33 @@ const getOpinions = async (topicId: number, keyword = '') => {
     credentials: 'include'
   });
 
+  throwErrorWhenResponseNotOk(response);
+
   const result = await response.json();
   const opinions: Opinion[] = plainToInstance(Opinion, result.data);
   return opinions;
 };
 
-export { type Opinion, type ReferredOpinion, type AgreeingType, type ReferToOpinion, getOpinions };
+const registerOpinion = async (opinion: RegisterOpinion) => {
+  const response = await fetchApi('/api/opinions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify(opinion)
+  });
+
+  throwErrorWhenResponseNotOk(response);
+
+  return true;
+};
+
+export {
+  type Opinion,
+  type ReferredOpinion,
+  type AgreeingType,
+  type ReferToOpinion,
+  getOpinions,
+  registerOpinion
+};

@@ -23,7 +23,12 @@
     <OpinionList :opinions="searchedOpinions" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
-    <RegisterOpinion agreeing-type="agree" @remove-form="disableRegisterForm" />
+    <RegisterOpinion
+      :agreeingType="opinionTypeOfRegistering"
+      :isShowReference="isShowReferenceOfRegistering"
+      :topicId="topicId"
+      @remove-form="disableRegisterForm"
+    />
   </div>
 </template>
 
@@ -48,7 +53,9 @@ export default defineComponent({
   data() {
     return {
       isDisplayingRegisterForm: false,
-      topic: null as Topic | null
+      topic: null as Topic | null,
+      opinionTypeOfRegistering: 'agree',
+      isShowReferenceOfRegistering: false
     };
   },
   computed: {
@@ -64,6 +71,7 @@ export default defineComponent({
   methods: {
     displayRegisterOpinion(type: AgreeingType) {
       this.isDisplayingRegisterForm = true;
+      this.opinionTypeOfRegistering = type;
     },
     disableRegisterForm() {
       this.isDisplayingRegisterForm = false;
@@ -109,9 +117,25 @@ export default defineComponent({
 
     .submit-agree,
     .submit-disagree {
-      padding: 1rem;
-      margin: 1rem;
       text-align: center;
+      margin-top: 1rem;
+
+      > button {
+        width: 100%;
+        padding: 0.5rem;
+        background-color: transparent;
+        border: none;
+        color: white;
+        font-weight: bold;
+      }
+    }
+
+    .submit-agree {
+      background-color: $agree-background-color;
+    }
+
+    .submit-disagree {
+      background-color: $disagree-background-color;
     }
   }
 }
