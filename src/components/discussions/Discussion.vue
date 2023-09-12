@@ -7,7 +7,7 @@
       :class="$style.opinion"
       v-for="(opinion, index) in displayedOpinions"
       :key="opinion.id"
-      @mousedown.left.stop="onClickOpinion(index)"
+      @mousedown.left.stop="onClickOpinion(index, opinion.id)"
       ref="opinions"
     >
       <p>
@@ -25,6 +25,7 @@
       v-if="isDisplayOpinionDetail"
       :left="leftDetailOpinion"
       :top="topDetailOpinion"
+      :opinionId="lastSelectedOpinionId"
     />
   </div>
 </template>
@@ -32,7 +33,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { Opinion } from '@/services/opinions';
-import { getOpinions } from '@/services/opinions';
+import { getOpinionsInDiscussion } from '@/services/opinions';
 import Opinion from '@/components/opinions/Opinion.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
@@ -60,12 +61,13 @@ export default defineComponent({
       topDetailOpinion: 0,
       isDisplayOpinionDetail: false,
       lastSelectedOpinion: -1,
+      lastSelectedOpinionId: -1,
       debouncedResizeHandler: (...args: any[]): any => {}
     };
   },
   methods: {
     async initializeOpinions() {
-      const opinions = await getOpinions(this.topicId);
+      const opinions = await getOpinionsInDiscussion(this.topicId);
       this.opinions = opinions.filter((opinion: Opinion) => {
         return opinion.agreeType === this.agreeingType;
       });
@@ -79,9 +81,10 @@ export default defineComponent({
     moreOpinions() {
       this.displayOpinions();
     },
-    onClickOpinion(index: number) {
+    onClickOpinion(index: number, opinionId: number) {
       this.displayOpinion(index);
       this.lastSelectedOpinion = index;
+      this.lastSelectedOpinionId = opinionId;
     },
     onClickDetailOpinion() {
       const mainWheelHandler = useMainWheelHandler();

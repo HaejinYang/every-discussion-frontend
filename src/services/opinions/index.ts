@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import fetchApi from '@/util/network';
-import { Expose, plainToInstance } from 'class-transformer';
+import { Expose, plainToInstance, Type } from 'class-transformer';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 
 type AgreeingType = 'agree' | 'disagree';
@@ -34,6 +34,15 @@ class Opinion {
   updatedAt: string;
 }
 
+class OpinionWithReference extends Opinion {
+  @Expose({ name: 'refer_to' })
+  referTo: Opinion;
+
+  @Type(() => Opinion)
+  @Expose()
+  referred: Opinion[];
+}
+
 interface ReferredOpinion {
   id: number;
   title: string;
@@ -58,7 +67,7 @@ interface RegisterOpinion {
   agreeingType: AgreeingType;
 }
 
-const getOpinions = async (topicId: number, keyword = '') => {
+const getOpinionsInDiscussion = async (topicId: number, keyword = '') => {
   let url = `/api/topics/${topicId}/opinions`;
   if (keyword.length > 0) {
     url += `?keyword=${keyword}`;
@@ -91,11 +100,27 @@ const registerOpinion = async (opinion: RegisterOpinion) => {
   return true;
 };
 
+const getOpinionsWithReference = async (opinionId: number) => {
+  const response = await fetchApi(`/api/opinions/${opinionId}`, {
+    method: 'GET',
+    credentials: 'include'
+  });
+
+  throwErrorWhenResponseNotOk(response);
+
+  const result = await response.json();
+  const opinion: OpinionWithReference = plainToInstance(OpinionWithReference, result.data);
+
+  return opinion;
+};
+
 export {
   type Opinion,
   type ReferredOpinion,
   type AgreeingType,
   type ReferToOpinion,
-  getOpinions,
-  registerOpinion
+  type OpinionWithReference,
+  getOpinionsInDiscussion,
+  registerOpinion,
+  getOpinionsWithReference
 };

@@ -30,6 +30,7 @@ import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue'
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
 import {
   type AgreeingType,
+  getOpinionsWithReference,
   type Opinion,
   type ReferredOpinion,
   type ReferToOpinion
@@ -44,6 +45,10 @@ export default defineComponent({
       required: true
     },
     top: {
+      type: Number,
+      required: true
+    },
+    opinionId: {
       type: Number,
       required: true
     }
@@ -103,6 +108,9 @@ export default defineComponent({
       };
     }
   },
+  async created() {
+    const opinion = await getOpinionsWithReference(this.opinionId);
+  },
   mounted() {
     const main = this.$refs['main'] as HTMLElement | undefined;
     if (main) {
@@ -137,7 +145,7 @@ export default defineComponent({
     align-items: center;
 
     > * {
-      width: 300px;
+      width: 400px;
     }
 
     .refer-opinion {

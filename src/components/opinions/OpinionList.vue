@@ -5,7 +5,7 @@
         :class="opinion.agreeType === 'agree' ? $style.agree : $style.disagree"
         v-for="(opinion, index) in opinions"
         :key="opinion.id"
-        @mousedown.left="displayOpinion(index)"
+        @mousedown.left="displayOpinion(index, opinion.id)"
         ref="opinions"
       >
         <p>{{ opinion.title }}</p>
@@ -19,6 +19,7 @@
       v-if="isDisplayOpinionDetail"
       :left="leftDetailOpinion"
       :top="topDetailOpinion"
+      :opinionId="selectedOpinionId"
     />
   </div>
 </template>
@@ -42,17 +43,19 @@ export default defineComponent({
     return {
       isDisplayOpinionDetail: false,
       leftDetailOpinion: 0,
-      topDetailOpinion: 0
+      topDetailOpinion: 0,
+      selectedOpinionId: -1
     };
   },
   methods: {
-    displayOpinion(index: number) {
+    displayOpinion(index: number, opinionId: number) {
       const opinions = this.$refs['opinions'] as HTMLElement[];
       const opinion = opinions[index];
       if (opinion) {
         const rect = opinion.getBoundingClientRect();
         const mainWheelHandler = useMainWheelHandler();
         this.topDetailOpinion = window.innerHeight / 2;
+        this.selectedOpinionId = opinionId;
         this.isDisplayOpinionDetail = true;
         mainWheelHandler.disableWheel();
       }
