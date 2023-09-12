@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <ul>
       <li
-        :class="[opinion.agreeingType === 'agree' ? $style.agree : $style.disagree]"
+        :class="[opinion.agreeType === 'agree' ? $style.agree : $style.disagree]"
         v-for="opinion in referredOpinions"
         :key="opinion.id"
       >

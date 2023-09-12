@@ -2,12 +2,12 @@
   <div :class="$style.container" @mousedown.left="onClickPage">
     <main ref="main">
       <div :class="$style['refer-opinion']" @wheel="handleWheel($event)">
-        <ReferToOpinionComponent v-if="referToOpinion !== null" :opinion="referToOpinion" />
+        <ReferToOpinionComponent v-if="referTo !== null" :opinion="referTo" />
       </div>
       <div
         :class="[
           $style['opinion-info'],
-          opinion.agreeingType === 'agree' ? $style.agree : $style.disagree
+          opinion.agreeType === 'agree' ? $style.agree : $style.disagree
         ]"
         v-if="opinion !== null"
         @wheel="handleWheel($event)"
@@ -18,7 +18,7 @@
         <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
       </div>
       <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
-        <ReferredOpinionComponent :referredOpinions="referredOpinions" />
+        <ReferredOpinionComponent :referredOpinions="referred" />
       </div>
     </main>
   </div>
@@ -28,12 +28,7 @@
 import { defineComponent } from 'vue';
 import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
-import {
-  type AgreeingType,
-  type Opinion,
-  type ReferredOpinion,
-  type ReferToOpinion
-} from '@/services/opinions';
+import { getOpinionsWithReference, type Opinion, OpinionWithReference } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Opinion',
@@ -46,13 +41,17 @@ export default defineComponent({
     top: {
       type: Number,
       required: true
+    },
+    opinionId: {
+      type: Number,
+      required: true
     }
   },
   data() {
     return {
-      referredOpinions: [] as ReferredOpinion[],
-      referToOpinion: null as ReferToOpinion | null,
-      opinion: null as Opinion | null
+      referTo: null as Opinion,
+      opinion: null as OpinionWithReference | null,
+      referred: [] as Opinion[]
     };
   },
   methods: {
@@ -61,57 +60,22 @@ export default defineComponent({
     },
     handleWheel(event) {
       event.stopPropagation();
-    },
-    addReferredOpinions() {
-      for (let i = 0; i < 4; i++) {
-        let agreeingType: AgreeingType = 'disagree';
-        if (i % 2 === 0) {
-          agreeingType = 'agree';
-        }
-
-        this.referredOpinions.push({
-          id: i,
-          title:
-            'Lorem ipsum dolor sit amet. Ea nihil amet vel Quis voluptate est repellat tempora in labore assumenda et magnam dolor. Et vero autem est unde quia qui molestias quod. Sit dolorem quidem et perferendis facere non consectetur labore eos atque omnis ut porro quae. Nam facere quis aut velit tempore quo accusantium veritatis est repudiandae dolor eos animi facere cum consectetur fuga sit facere eligendi.',
-          like: 10,
-          dislike: 20,
-          agreeingType: agreeingType
-        });
-      }
-    },
-    addReferToOpinion() {
-      this.referToOpinion = {
-        id: 10,
-        title:
-          'Lorem ipsum dolor sit amet. Ea nihil amet vel Quis voluptate est repellat tempora in labore assumenda et magnam dolor. Et vero autem est unde quia qui molestias quod. Sit dolorem quidem et perferendis facere non consectetur labore eos atque omnis ut porro quae. Nam facere quis aut velit tempore quo accusantium veritatis est repudiandae dolor eos animi facere cum consectetur fuga sit facere eligendi.',
-        summary: '서머리입니다.',
-        like: 10,
-        dislike: 20,
-        agreeingType: 'agree'
-      };
-    },
-    addOpinion() {
-      this.opinion = {
-        id: 11,
-        title: '타이틀입니다.',
-        content:
-          'Lorem ipsum dolor sit amet. Ea nihil amet vel Quis voluptate est repellat tempora in labore assumenda et magnam dolor. Et vero autem est unde quia qui molestias quod. Sit dolorem quidem et perferendis facere non consectetur labore eos atque omnis ut porro quae. Nam facere quis aut velit tempore quo accusantium veritatis est repudiandae dolor eos animi facere cum consectetur fuga sit facere eligendi.',
-        summary: '서머리입니다',
-        like: 11,
-        dislike: 21,
-        agreeingType: 'disagree'
-      };
     }
+  },
+  async created() {
+    console.log(this.opinionId);
+    const opinion = await getOpinionsWithReference(this.opinionId);
+    this.opinion = opinion;
+    this.referTo = opinion.referTo;
+    this.referred = opinion.referred;
+
+    console.log(opinion.referred);
   },
   mounted() {
     const main = this.$refs['main'] as HTMLElement | undefined;
     if (main) {
       main.style.top = `${this.top}px`;
     }
-
-    this.addReferredOpinions();
-    this.addReferToOpinion();
-    this.addOpinion();
   }
 });
 </script>
@@ -137,7 +101,7 @@ export default defineComponent({
     align-items: center;
 
     > * {
-      width: 300px;
+      width: 400px;
     }
 
     .refer-opinion {

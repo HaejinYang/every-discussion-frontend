@@ -21,7 +21,7 @@ import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import type { Opinion } from '@/services/opinions';
-import { getOpinions } from '@/services/opinions';
+import { getOpinionsInDiscussion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Header',
@@ -34,7 +34,7 @@ export default defineComponent({
   methods: {
     async onInputSearch(keyword: string) {
       const searchOpinionHandler = useSearchOpinionHandler();
-      const opinions = await getOpinions(searchOpinionHandler.topicId, keyword);
+      const opinions = await getOpinionsInDiscussion(searchOpinionHandler.topicId, keyword);
 
       return opinions;
     },
