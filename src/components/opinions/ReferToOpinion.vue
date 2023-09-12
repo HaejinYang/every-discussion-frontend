@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="[$style.container, opinion.agreeingType === 'agree' ? $style.agree : $style.disagree]"
-  >
+  <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
     <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
     <p>{{ opinion.summary }}</p>
     <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
