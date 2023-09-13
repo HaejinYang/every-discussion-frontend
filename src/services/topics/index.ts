@@ -1,10 +1,10 @@
-import type { Opinion } from '@/services/opinions';
+import type { OpinionData } from '@/services/opinions';
 import fetchApi from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
-import { Expose, plainToInstance, Type } from 'class-transformer';
+import { Expose, plainToInstance } from 'class-transformer';
 
-class Topic {
+class TopicItem {
   @Expose()
   id: number;
 
@@ -30,78 +30,39 @@ class Topic {
   updatedAt: string;
 }
 
-class TopTopics {
-  @Expose({ name: 'current_page' })
-  currentPage: number;
-
-  @Expose({ name: 'per_page' })
-  perPage: number;
-
-  @Expose({ name: 'first_page_url' })
-  firstPageUrl: string;
-
-  @Expose({ name: 'next_page_url' })
-  nextPageUrl: string;
-
-  @Expose({ name: 'prev_page_url' })
-  prevPageUrl: string;
-
-  @Expose({ name: 'from' })
-  from: number;
-
-  @Expose({ name: 'to' })
-  to: number;
-
-  @Expose({ name: 'path' })
-  path: string;
-
-  @Type(() => Topic)
-  @Expose({ name: 'data' })
-  data: Topic[];
+interface TopicWithOpinions {
+  topic: TopicItem;
+  opinions: OpinionData[];
 }
 
-interface OpinionsInTopic {
-  topic: Topic;
-  opinions: Opinion[];
+class Topic {
+  public static async fetch(topicId: number) {
+    const response = await fetchApi(`/api/topics/${topicId}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const topic: TopicItem = plainToInstance(TopicItem, result.data);
+    return topic;
+  }
+
+  public static async fetchByUser(userId: number) {
+    const URI = `/api/users/${userId}/topics`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const topics: TopicItem[] = plainToInstance(TopicItem, result.data);
+
+    return topics;
+  }
 }
 
-const topTopics = async () => {
-  const response = await fetchApi('/api/topics', {
-    method: 'GET',
-    credentials: 'include'
-  });
-
-  throwErrorWhenResponseNotOk(response);
-
-  const result = await response.json();
-  const topics: TopTopics = plainToInstance(TopTopics, result.data);
-  return topics;
-};
-
-const nextTopTopics = async (pageUrlFromServer: string) => {
-  const response = await fetch(pageUrlFromServer, {
-    method: 'GET',
-    credentials: 'include'
-  });
-
-  throwErrorWhenResponseNotOk(response);
-
-  const result = await response.json();
-  const topics: TopTopics = plainToInstance(TopTopics, result.data);
-  return topics;
-};
-
-const getTopic = async (topicId: number) => {
-  const response = await fetchApi(`/api/topics/${topicId}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
-
-  throwErrorWhenResponseNotOk(response);
-
-  const result = await response.json();
-  const topic: Topic = plainToInstance(Topic, result.data);
-  return topic;
-};
-
-export { type Topic, type OpinionsInTopic, topTopics, TopTopics, nextTopTopics, getTopic };
+export { TopicItem, type TopicWithOpinions, Topic, fetchByUser };

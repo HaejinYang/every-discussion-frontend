@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import { type AgreeingType, registerOpinion } from '@/services/opinions';
+import { type AgreeingType, Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'RegisterOpinion',
@@ -78,7 +78,8 @@ export default defineComponent({
       }
 
       this.isSubmitting = true;
-      const result = await registerOpinion({
+
+      const result = await Opinion.create({
         topicId: this.topicId,
         title: this.title,
         content: this.content,

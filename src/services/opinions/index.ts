@@ -5,7 +5,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 
 type AgreeingType = 'agree' | 'disagree';
 
-class Opinion {
+class OpinionData {
   @Expose()
   id: number;
 
@@ -34,30 +34,13 @@ class Opinion {
   updatedAt: string;
 }
 
-class OpinionWithReference extends Opinion {
+class OpinionWithReferenceItem extends OpinionData {
   @Expose({ name: 'refer_to' })
-  referTo: Opinion;
+  referTo: OpinionData;
 
-  @Type(() => Opinion)
+  @Type(() => OpinionData)
   @Expose()
-  referred: Opinion[];
-}
-
-interface ReferredOpinion {
-  id: number;
-  title: string;
-  like: number;
-  dislike: number;
-  agreeingType: AgreeingType;
-}
-
-interface ReferToOpinion {
-  id: number;
-  title: string;
-  summary: string;
-  like: number;
-  dislike: number;
-  agreeingType: AgreeingType;
+  referred: OpinionData[];
 }
 
 interface RegisterOpinion {
@@ -67,60 +50,73 @@ interface RegisterOpinion {
   agreeingType: AgreeingType;
 }
 
-const getOpinionsInDiscussion = async (topicId: number, keyword = '') => {
-  let url = `/api/topics/${topicId}/opinions`;
-  if (keyword.length > 0) {
-    url += `?keyword=${keyword}`;
+class Opinion {
+  public static async fetch(opinionId: number) {
+    const response = await fetchApi(`/api/opinions/${opinionId}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const opinion: OpinionWithReferenceItem = plainToInstance(
+      OpinionWithReferenceItem,
+      result.data
+    );
+
+    return opinion;
   }
 
-  const response = await fetchApi(url, {
-    method: 'GET',
-    credentials: 'include'
-  });
+  public static async fetchFromTopic(topicId: number, keyword = '') {
+    let URI = `/api/topics/${topicId}/opinions`;
+    if (keyword.length > 0) {
+      URI += `?keyword=${keyword}`;
+    }
 
-  throwErrorWhenResponseNotOk(response);
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  const result = await response.json();
-  const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
-  return opinions;
-};
+    throwErrorWhenResponseNotOk(response);
 
-const registerOpinion = async (opinion: RegisterOpinion) => {
-  const response = await fetchApi('/api/opinions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify(opinion)
-  });
+    const result = await response.json();
+    const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
+    return opinions;
+  }
 
-  throwErrorWhenResponseNotOk(response);
+  public static async fetchFromTopicByUser(topicId: number, userId: number) {
+    const response = await fetchApi(`/api/users/${userId}/topics/${topicId}/opinions`, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  return true;
-};
+    throwErrorWhenResponseNotOk(response);
 
-const getOpinionsWithReference = async (opinionId: number) => {
-  const response = await fetchApi(`/api/opinions/${opinionId}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
+    const result = await response.json();
+    const opinions: OpinionWithReferenceItem[] = plainToInstance(
+      OpinionWithReferenceItem,
+      <any[]>result.data
+    );
 
-  throwErrorWhenResponseNotOk(response);
+    return opinions;
+  }
 
-  const result = await response.json();
-  const opinion: OpinionWithReference = plainToInstance(OpinionWithReference, result.data);
+  public static async create(opinion: RegisterOpinion) {
+    const response = await fetchApi('/api/opinions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(opinion)
+    });
 
-  return opinion;
-};
+    throwErrorWhenResponseNotOk(response);
 
-export {
-  type Opinion,
-  type ReferredOpinion,
-  type AgreeingType,
-  type ReferToOpinion,
-  type OpinionWithReference,
-  getOpinionsInDiscussion,
-  registerOpinion,
-  getOpinionsWithReference
-};
+    return true;
+  }
+}
+
+export { type OpinionData, type AgreeingType, type OpinionWithReferenceItem, Opinion };

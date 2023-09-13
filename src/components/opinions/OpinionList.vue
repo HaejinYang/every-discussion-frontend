@@ -28,14 +28,14 @@
 import { defineComponent, type PropType } from 'vue';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
-import type { Opinion } from '@/services/opinions';
+import type { OpinionData } from '@/services/opinions';
 
 export default defineComponent({
   name: 'OpinionList',
   components: { OpinionItem },
   props: {
     opinions: {
-      type: Array as PropType<Opinion[]>,
+      type: Array as PropType<OpinionData[]>,
       required: true
     }
   },

@@ -20,8 +20,8 @@
 import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
-import type { Opinion } from '@/services/opinions';
-import { getOpinionsInDiscussion } from '@/services/opinions';
+import type { OpinionData } from '@/services/opinions';
+import { Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'Header',
@@ -34,11 +34,11 @@ export default defineComponent({
   methods: {
     async onInputSearch(keyword: string) {
       const searchOpinionHandler = useSearchOpinionHandler();
-      const opinions = await getOpinionsInDiscussion(searchOpinionHandler.topicId, keyword);
+      const opinions = await Opinion.fetchFromTopic(searchOpinionHandler.topicId, keyword);
 
       return opinions;
     },
-    onSearchCompleted(opinions: Opinion[]) {
+    onSearchCompleted(opinions: OpinionData[]) {
       const searchOpinionHandler = useSearchOpinionHandler();
       searchOpinionHandler.showSearchedOpinions();
       searchOpinionHandler.replaceOpinions(opinions);
