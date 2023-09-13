@@ -30,8 +30,9 @@
 import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
-import { type Topic, type TopTopics, TopTopicsApi } from '@/services/topics';
+import { type Topic } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
+import { type TopTopics, TopTopicsApi } from '@/services/topics/TopTopics';
 
 export default defineComponent({
   name: 'HomeView',
