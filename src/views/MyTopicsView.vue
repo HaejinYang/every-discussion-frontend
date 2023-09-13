@@ -12,13 +12,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import type { Topic } from '@/services/topics';
+import type { TopicItem } from '@/services/topics';
 
 export default defineComponent({
   name: 'MyTopicsView',
   data() {
     return {
-      topics: [] as Topic[]
+      topics: [] as TopicItem[]
     };
   },
   methods: {

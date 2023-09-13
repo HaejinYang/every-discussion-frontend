@@ -30,16 +30,16 @@
 import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
-import { type Topic } from '@/services/topics';
+import { type TopicItem } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
-import { type TopTopics, TopTopicsApi } from '@/services/topics/TopTopics';
+import { TopTopics, type TopTopicsItem } from '@/services/topics/TopTopics';
 
 export default defineComponent({
   name: 'HomeView',
   components: { SearchBar, TopicPreview },
   data() {
     return {
-      topics: [] as Topic[],
+      topics: [] as TopicItem[],
       selectedTopicIndex: -1,
       isWaitingMoreTopics: false,
       nextTopicsUrl: '',
@@ -62,7 +62,7 @@ export default defineComponent({
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
 
-      const topics = await TopTopicsApi.fetchNext(
+      const topics = await TopTopics.fetchNext(
         this.nextTopicsUrl + (this.searchKeyword.length > 0 ? `&keyword=${this.searchKeyword}` : '')
       );
       this.topics.push(...topics.data);
@@ -79,7 +79,7 @@ export default defineComponent({
         buttonRef.scrollIntoView({ behavior: 'smooth' });
       }
     },
-    onSearchCompleted(topTopics: TopTopics | null) {
+    onSearchCompleted(topTopics: TopTopicsItem | null) {
       if (topTopics === null) {
         return;
       }
@@ -94,7 +94,7 @@ export default defineComponent({
   },
   created() {
     this.isWaitingMoreTopics = true;
-    TopTopicsApi.fetch().then((topTopics: TopTopics) => {
+    TopTopics.fetch().then((topTopics: TopTopicsItem) => {
       this.topics = topTopics.data;
       this.isWaitingMoreTopics = false;
       this.nextTopicsUrl = topTopics.nextPageUrl;

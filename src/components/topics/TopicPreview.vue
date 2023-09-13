@@ -12,13 +12,13 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import type { Topic } from '@/services/topics';
+import type { TopicItem } from '@/services/topics';
 
 export default defineComponent({
   name: 'TopicPreview',
   props: {
     topic: {
-      type: Object as PropType<Topic>,
+      type: Object as PropType<TopicItem>,
       required: true
     },
     isShowTopicInfo: {

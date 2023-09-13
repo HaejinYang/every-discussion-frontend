@@ -1,10 +1,10 @@
-import type { Opinion } from '@/services/opinions';
+import type { OpinionData } from '@/services/opinions';
 import fetchApi from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 
-class Topic {
+class TopicItem {
   @Expose()
   id: number;
 
@@ -31,11 +31,11 @@ class Topic {
 }
 
 interface TopicWithOpinions {
-  topic: Topic;
-  opinions: Opinion[];
+  topic: TopicItem;
+  opinions: OpinionData[];
 }
 
-class TopicApi {
+class Topic {
   public static async fetch(topicId: number) {
     const response = await fetchApi(`/api/topics/${topicId}`, {
       method: 'GET',
@@ -45,9 +45,9 @@ class TopicApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const topic: Topic = plainToInstance(Topic, result.data);
+    const topic: TopicItem = plainToInstance(TopicItem, result.data);
     return topic;
   }
 }
 
-export { type Topic, type TopicWithOpinions, TopicApi };
+export { TopicItem, type TopicWithOpinions, Topic };

@@ -1,9 +1,9 @@
 import { plainToInstance } from 'class-transformer';
 import fetchApi from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
-import { TopTopics } from '@/services/topics';
+import { TopTopicsItem } from '@/services/topics/TopTopics';
 
-const searchTopics = async (keyword: string): Promise<TopTopics> => {
+const searchTopics = async (keyword: string): Promise<TopTopicsItem> => {
   const response = await fetchApi(`/api/topics?keyword=${keyword}`, {
     method: 'GET',
     credentials: 'include'
@@ -12,7 +12,7 @@ const searchTopics = async (keyword: string): Promise<TopTopics> => {
   throwErrorWhenResponseNotOk(response);
 
   const result = await response.json();
-  const topics = plainToInstance(TopTopics, result.data);
+  const topics = plainToInstance(TopTopicsItem, result.data);
   return topics;
 };
 

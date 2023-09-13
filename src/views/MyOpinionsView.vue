@@ -22,8 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import type { TopicWithOpinions } from '@/services/topics';
-import { OpinionApi } from '@/services/opinions';
+import { type TopicWithOpinions } from '@/services/topics';
 
 export default defineComponent({
   name: 'MyOpinionsView',

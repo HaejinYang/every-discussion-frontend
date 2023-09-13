@@ -1,9 +1,9 @@
 import { Expose, plainToInstance, Type } from 'class-transformer';
-import { Topic } from '@/services/topics/index';
+import { TopicItem } from '@/services/topics/index';
 import fetchApi from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 
-class TopTopics {
+class TopTopicsItem {
   @Expose({ name: 'current_page' })
   currentPage: number;
 
@@ -28,12 +28,12 @@ class TopTopics {
   @Expose({ name: 'path' })
   path: string;
 
-  @Type(() => Topic)
+  @Type(() => TopicItem)
   @Expose({ name: 'data' })
-  data: Topic[];
+  data: TopicItem[];
 }
 
-class TopTopicsApi {
+class TopTopics {
   public static async fetch() {
     const response = await fetchApi('/api/topics', {
       method: 'GET',
@@ -43,7 +43,7 @@ class TopTopicsApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const topics: TopTopics = plainToInstance(TopTopics, result.data);
+    const topics: TopTopicsItem = plainToInstance(TopTopicsItem, result.data);
     return topics;
   }
 
@@ -56,9 +56,9 @@ class TopTopicsApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const topics: TopTopics = plainToInstance(TopTopics, result.data);
+    const topics: TopTopicsItem = plainToInstance(TopTopicsItem, result.data);
     return topics;
   }
 }
 
-export { type TopTopics, TopTopicsApi };
+export { TopTopicsItem, TopTopics };

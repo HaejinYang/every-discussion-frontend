@@ -5,7 +5,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 
 type AgreeingType = 'agree' | 'disagree';
 
-class Opinion {
+class OpinionData {
   @Expose()
   id: number;
 
@@ -34,13 +34,13 @@ class Opinion {
   updatedAt: string;
 }
 
-class OpinionWithReference extends Opinion {
+class OpinionWithReferenceItem extends OpinionData {
   @Expose({ name: 'refer_to' })
-  referTo: Opinion;
+  referTo: OpinionData;
 
-  @Type(() => Opinion)
+  @Type(() => OpinionData)
   @Expose()
-  referred: Opinion[];
+  referred: OpinionData[];
 }
 
 interface RegisterOpinion {
@@ -50,7 +50,7 @@ interface RegisterOpinion {
   agreeingType: AgreeingType;
 }
 
-class OpinionApi {
+class Opinion {
   public static async fetch(opinionId: number) {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'GET',
@@ -60,7 +60,10 @@ class OpinionApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinion: OpinionWithReference = plainToInstance(OpinionWithReference, result.data);
+    const opinion: OpinionWithReferenceItem = plainToInstance(
+      OpinionWithReferenceItem,
+      result.data
+    );
 
     return opinion;
   }
@@ -79,7 +82,7 @@ class OpinionApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
+    const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
     return opinions;
   }
 
@@ -93,7 +96,7 @@ class OpinionApi {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
+    const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
     return opinions;
   }
 
@@ -113,4 +116,4 @@ class OpinionApi {
   }
 }
 
-export { type Opinion, type AgreeingType, type OpinionWithReference, OpinionApi };
+export { type OpinionData, type AgreeingType, type OpinionWithReferenceItem, Opinion };
