@@ -45,8 +45,8 @@ export default defineComponent({
   name: 'DiscussionView',
   components: { RegisterOpinion, OpinionList, Discussion },
   props: {
-    topicId: {
-      type: Number,
+    id: {
+      type: String,
       required: true
     }
   },
@@ -59,6 +59,9 @@ export default defineComponent({
     };
   },
   computed: {
+    topicId() {
+      return parseInt(this.id);
+    },
     isDisplayingSearchedOpinions() {
       const handler = useSearchOpinionHandler();
       return handler.isDisplayingSearchedOpinions;

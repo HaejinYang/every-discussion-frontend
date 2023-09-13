@@ -14,7 +14,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/discussion/:topicId',
+      path: '/discussion/:id',
       name: 'discussion',
       component: DiscussionView,
       props: true
