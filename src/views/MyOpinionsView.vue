@@ -22,7 +22,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { type TopicWithOpinions } from '@/services/topics';
+import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
+import { Opinion, OpinionWithReferenceItem } from '@/services/opinions';
 
 export default defineComponent({
   name: 'MyOpinionsView',
@@ -37,7 +38,20 @@ export default defineComponent({
     }
   },
   async created() {
-    const userId = 47;
+    const userId = 1;
+    const topics = await Topic.fetchByUser(userId);
+    topics.map((topic: TopicItem) => {
+      Opinion.fetchFromTopicByUser(topic.id, userId).then(
+        (opinions: OpinionWithReferenceItem[]) => {
+          const topicWithOpinions: TopicWithOpinions = {
+            topic: topic,
+            opinions: opinions
+          };
+
+          this.topicWithOpinions.push(topicWithOpinions);
+        }
+      );
+    });
   }
 });
 </script>

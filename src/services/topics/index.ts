@@ -48,6 +48,21 @@ class Topic {
     const topic: TopicItem = plainToInstance(TopicItem, result.data);
     return topic;
   }
+
+  public static async fetchByUser(userId: number) {
+    const URI = `/api/users/${userId}/topics`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const topics: TopicItem[] = plainToInstance(TopicItem, result.data);
+
+    return topics;
+  }
 }
 
-export { TopicItem, type TopicWithOpinions, Topic };
+export { TopicItem, type TopicWithOpinions, Topic, fetchByUser };
