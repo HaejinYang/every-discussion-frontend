@@ -34,7 +34,7 @@ export default defineComponent({
   methods: {
     async onInputSearch(keyword: string) {
       const searchOpinionHandler = useSearchOpinionHandler();
-      const opinions = await OpinionApi.fetchDataInTopic(searchOpinionHandler.topicId, keyword);
+      const opinions = await OpinionApi.fetchFromTopic(searchOpinionHandler.topicId, keyword);
 
       return opinions;
     },

@@ -23,6 +23,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { TopicWithOpinions } from '@/services/topics';
+import { OpinionApi } from '@/services/opinions';
 
 export default defineComponent({
   name: 'MyOpinionsView',
@@ -36,7 +37,9 @@ export default defineComponent({
       this.$router.push(`/discussion/${id}`);
     }
   },
-  async created() {}
+  async created() {
+    const userId = 47;
+  }
 });
 </script>
 

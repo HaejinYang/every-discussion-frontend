@@ -66,7 +66,7 @@ export default defineComponent({
   },
   methods: {
     async initializeOpinions() {
-      const opinions = await OpinionApi.fetchDataInTopic(this.topicId);
+      const opinions = await OpinionApi.fetchFromTopic(this.topicId);
       this.opinions = opinions.filter((opinion: Opinion) => {
         return opinion.agreeType === this.agreeingType;
       });

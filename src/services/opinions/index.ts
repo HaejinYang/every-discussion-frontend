@@ -65,12 +65,26 @@ class OpinionApi {
     return opinion;
   }
 
-  public static async fetchDataInTopic(topicId: number, keyword = '') {
+  public static async fetchFromTopic(topicId: number, keyword = '') {
     let url = `/api/topics/${topicId}/opinions`;
     if (keyword.length > 0) {
       url += `?keyword=${keyword}`;
     }
 
+    const response = await fetchApi(url, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
+    return opinions;
+  }
+
+  public static async fetchFromTopicInUser(topicId: number, userId: number) {
+    const url = `/api/users/${userId}/topics/${topicId}/opinions`;
     const response = await fetchApi(url, {
       method: 'GET',
       credentials: 'include'
