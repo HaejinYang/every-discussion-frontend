@@ -104,4 +104,4 @@ const getTopic = async (topicId: number) => {
   return topic;
 };
 
-export { type Topic, type OpinionsInTopic, topTopics, Topic, TopTopics, nextTopTopics, getTopic };
+export { type Topic, type OpinionsInTopic, topTopics, TopTopics, nextTopTopics, getTopic };

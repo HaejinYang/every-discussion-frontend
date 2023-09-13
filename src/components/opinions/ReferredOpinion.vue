@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import type { ReferredOpinion } from '@/services/opinions';
+import { defineComponent, type PropType } from 'vue';
+import { type Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'ReferredOpinion',
   props: {
     referredOpinions: {
-      type: Array as PropType<ReferredOpinion[]>,
+      type: Array as PropType<Opinion[]>,
       required: true
     }
   }

@@ -28,10 +28,14 @@
 import { defineComponent } from 'vue';
 import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
-import { getOpinionsWithReference, type Opinion, OpinionWithReference } from '@/services/opinions';
+import {
+  getOpinionsWithReference,
+  type Opinion,
+  type OpinionWithReference
+} from '@/services/opinions';
 
 export default defineComponent({
-  name: 'Opinion',
+  name: 'OpinionItem',
   components: { ReferToOpinionComponent, ReferredOpinionComponent },
   props: {
     left: {
@@ -49,7 +53,7 @@ export default defineComponent({
   },
   data() {
     return {
-      referTo: null as Opinion,
+      referTo: null as Opinion | null,
       opinion: null as OpinionWithReference | null,
       referred: [] as Opinion[]
     };
@@ -58,7 +62,7 @@ export default defineComponent({
     onClickPage() {
       this.$emit('on-click-anywhere');
     },
-    handleWheel(event) {
+    handleWheel(event: Event) {
       event.stopPropagation();
     }
   },

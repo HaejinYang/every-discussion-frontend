@@ -41,7 +41,7 @@ export default defineComponent({
     };
   },
   methods: {
-    handleWheel(event) {
+    handleWheel(event: Event) {
       if (this.isDisabledWheel) {
         event.preventDefault();
 

@@ -20,7 +20,7 @@
     </div>
   </div>
   <div>
-    <Opinion
+    <OpinionItem
       @on-click-anywhere="onClickDetailOpinion"
       v-if="isDisplayOpinionDetail"
       :left="leftDetailOpinion"
@@ -32,16 +32,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import type { Opinion } from '@/services/opinions';
-import { getOpinionsInDiscussion } from '@/services/opinions';
-import Opinion from '@/components/opinions/Opinion.vue';
+import { getOpinionsInDiscussion, type Opinion } from '@/services/opinions';
+import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 
 export default defineComponent({
   name: 'Discussion',
-  components: { Opinion },
+  components: { OpinionItem },
   props: {
     agreeingType: {
       type: String,

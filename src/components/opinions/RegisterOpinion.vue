@@ -10,7 +10,7 @@
           type="text"
           placeholder="제목"
           :value="title"
-          @input="(event) => (title = event.target.value)"
+          @input="(event) => (title = (event.target as HTMLTextAreaElement)?.value)"
         />
       </div>
       <div>
@@ -18,7 +18,7 @@
           type="text"
           placeholder="본문"
           :value="content"
-          @input="(event) => (content = event.target.value)"
+          @input="(event) => (content = (event.target as HTMLTextAreaElement).value)"
         />
       </div>
       <div :style="{ textAlign: 'right' }" v-if="isShowReference">
@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { AgreeingType, registerOpinion } from '@/services/opinions';
+import { defineComponent, type PropType } from 'vue';
+import { type AgreeingType, registerOpinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'RegisterOpinion',

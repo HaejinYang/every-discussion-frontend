@@ -39,7 +39,7 @@ import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
-import { getTopic, Topic } from '@/services/topics';
+import { getTopic, type Topic } from '@/services/topics';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -54,7 +54,7 @@ export default defineComponent({
     return {
       isDisplayingRegisterForm: false,
       topic: null as Topic | null,
-      opinionTypeOfRegistering: 'agree',
+      opinionTypeOfRegistering: 'agree' as AgreeingType,
       isShowReferenceOfRegistering: false
     };
   },

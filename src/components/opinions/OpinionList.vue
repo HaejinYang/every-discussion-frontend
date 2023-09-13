@@ -14,7 +14,7 @@
     </ul>
   </div>
   <div>
-    <Opinion
+    <OpinionItem
       @on-click-anywhere="onClickDetailOpinion"
       v-if="isDisplayOpinionDetail"
       :left="leftDetailOpinion"
@@ -25,14 +25,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import type { Opinion } from '@/services/opinions';
-import Opinion from '@/components/opinions/Opinion.vue';
+import { defineComponent, type PropType } from 'vue';
+import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
+import type { Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'OpinionList',
-  components: { Opinion },
+  components: { OpinionItem },
   props: {
     opinions: {
       type: Array as PropType<Opinion[]>,

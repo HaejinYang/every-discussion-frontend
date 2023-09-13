@@ -81,7 +81,7 @@ const getOpinionsInDiscussion = async (topicId: number, keyword = '') => {
   throwErrorWhenResponseNotOk(response);
 
   const result = await response.json();
-  const opinions: Opinion[] = plainToInstance(Opinion, result.data);
+  const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
   return opinions;
 };
 

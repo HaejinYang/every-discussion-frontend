@@ -7,14 +7,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import type { ReferToOpinion } from '@/services/opinions';
+import { defineComponent, type PropType } from 'vue';
+import { type Opinion } from '@/services/opinions';
 
 export default defineComponent({
   name: 'ReferToOpinion',
   props: {
     opinion: {
-      type: Object as PropType<ReferToOpinion>,
+      type: Object as PropType<Opinion>,
       required: true
     }
   }
