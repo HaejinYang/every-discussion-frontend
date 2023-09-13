@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { TopicItem } from '@/services/topics';
+import { Topic } from '@/services/topics';
 
 export default defineComponent({
   name: 'MyTopicsView',
@@ -22,24 +23,15 @@ export default defineComponent({
     };
   },
   methods: {
-    addTopics() {
-      for (let index = 0; index < 5; index++) {
-        this.topics.push({
-          id: index,
-          title:
-            'Lorem ipsum dolor sit amet. Qui quis rerum ut quis dolorem et ullam esse ad quas illum aut consequatur consequuntur et aliquid voluptas id quia autem.',
-          host: '홍길동',
-          participantsCount: 10 * index,
-          opinionsCount: 5 * index
-        });
-      }
-    },
     switchToDiscussion(id: number) {
       this.$router.push(`/discussion/${id}`);
     }
   },
   created() {
-    this.addTopics();
+    const userId = 1;
+    Topic.fetchByUser(userId).then((topics: TopicItem[]) => {
+      this.topics = topics;
+    });
   }
 });
 </script>
