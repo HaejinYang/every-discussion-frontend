@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getOpinionsInDiscussion, type Opinion } from '@/services/opinions';
+import { type Opinion, OpinionApi } from '@/services/opinions';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
@@ -66,7 +66,7 @@ export default defineComponent({
   },
   methods: {
     async initializeOpinions() {
-      const opinions = await getOpinionsInDiscussion(this.topicId);
+      const opinions = await OpinionApi.fetchDataInTopic(this.topicId);
       this.opinions = opinions.filter((opinion: Opinion) => {
         return opinion.agreeType === this.agreeingType;
       });

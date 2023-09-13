@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style['info']" v-for="item in opinionsInTopic" :key="item.topic.id">
+    <div :class="$style['info']" v-for="item in topicWithOpinions" :key="item.topic.id">
       <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
         <p>{{ item.topic.title }}</p>
         <p>참여자수{{ item.topic.participantsCount }}</p>
@@ -22,73 +22,21 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import type { OpinionsInTopic, Topic } from '@/services/topics';
-import type { AgreeingType, Opinion } from '@/services/opinions';
+import type { TopicWithOpinions } from '@/services/topics';
 
 export default defineComponent({
   name: 'MyOpinionsView',
   data() {
     return {
-      opinionsInTopic: [] as OpinionsInTopic[]
+      topicWithOpinions: [] as TopicWithOpinions[]
     };
   },
   methods: {
-    addItem() {
-      for (let index = 0; index < 5; index++) {
-        const topic: Topic = {
-          id: index,
-          title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-          host: `홍길동${index}`,
-          participantsCount: index * 2,
-          opinionsCount: index * 4
-        };
-
-        const opinions: Opinion[] = [
-          {
-            id: index * 3 + 0,
-            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            content:
-              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            summary: 'asdasdasdad',
-            like: 10,
-            dislike: 20,
-            agreeingType: index % 2 === 0 ? 'agree' : ('disagree' as AgreeingType)
-          },
-          {
-            id: index * 3 + 1,
-            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            content:
-              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            summary: 'asdasdasdad',
-            like: 10,
-            dislike: 20,
-            agreeingType: index % 2 === 0 ? 'agree' : 'disagree'
-          },
-          {
-            id: index * 3 + 2,
-            title: 'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            content:
-              'pellendus possimus et neque nesciunt sed delectus maiores non culpa mollitia.',
-            summary: 'asdasdasdad',
-            like: 10,
-            dislike: 20,
-            agreeingType: index % 2 === 0 ? 'agree' : 'disagree'
-          }
-        ];
-
-        this.opinionsInTopic.push({
-          topic: topic,
-          opinions: opinions
-        });
-      }
-    },
     switchToDiscussion(id: number) {
       this.$router.push(`/discussion/${id}`);
     }
   },
-  created() {
-    this.addItem();
-  }
+  async created() {}
 });
 </script>
 

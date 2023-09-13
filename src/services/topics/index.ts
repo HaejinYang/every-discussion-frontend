@@ -60,7 +60,7 @@ class TopTopics {
   data: Topic[];
 }
 
-interface OpinionsInTopic {
+interface TopicWithOpinions {
   topic: Topic;
   opinions: Opinion[];
 }
@@ -104,4 +104,4 @@ const getTopic = async (topicId: number) => {
   return topic;
 };
 
-export { type Topic, type OpinionsInTopic, topTopics, TopTopics, nextTopTopics, getTopic };
+export { type Topic, type TopicWithOpinions, topTopics, TopTopics, nextTopTopics, getTopic };

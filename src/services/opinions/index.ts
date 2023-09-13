@@ -43,23 +43,6 @@ class OpinionWithReference extends Opinion {
   referred: Opinion[];
 }
 
-interface ReferredOpinion {
-  id: number;
-  title: string;
-  like: number;
-  dislike: number;
-  agreeingType: AgreeingType;
-}
-
-interface ReferToOpinion {
-  id: number;
-  title: string;
-  summary: string;
-  like: number;
-  dislike: number;
-  agreeingType: AgreeingType;
-}
-
 interface RegisterOpinion {
   topicId: number;
   title: string;
@@ -67,60 +50,53 @@ interface RegisterOpinion {
   agreeingType: AgreeingType;
 }
 
-const getOpinionsInDiscussion = async (topicId: number, keyword = '') => {
-  let url = `/api/topics/${topicId}/opinions`;
-  if (keyword.length > 0) {
-    url += `?keyword=${keyword}`;
+class OpinionApi {
+  public static async fetch(opinionId: number) {
+    const response = await fetchApi(`/api/opinions/${opinionId}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const opinion: OpinionWithReference = plainToInstance(OpinionWithReference, result.data);
+
+    return opinion;
   }
 
-  const response = await fetchApi(url, {
-    method: 'GET',
-    credentials: 'include'
-  });
+  public static async fetchDataInTopic(topicId: number, keyword = '') {
+    let url = `/api/topics/${topicId}/opinions`;
+    if (keyword.length > 0) {
+      url += `?keyword=${keyword}`;
+    }
 
-  throwErrorWhenResponseNotOk(response);
+    const response = await fetchApi(url, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  const result = await response.json();
-  const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
-  return opinions;
-};
+    throwErrorWhenResponseNotOk(response);
 
-const registerOpinion = async (opinion: RegisterOpinion) => {
-  const response = await fetchApi('/api/opinions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify(opinion)
-  });
+    const result = await response.json();
+    const opinions: Opinion[] = plainToInstance(Opinion, <any[]>result.data);
+    return opinions;
+  }
 
-  throwErrorWhenResponseNotOk(response);
+  public static async create(opinion: RegisterOpinion) {
+    const response = await fetchApi('/api/opinions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(opinion)
+    });
 
-  return true;
-};
+    throwErrorWhenResponseNotOk(response);
 
-const getOpinionsWithReference = async (opinionId: number) => {
-  const response = await fetchApi(`/api/opinions/${opinionId}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
+    return true;
+  }
+}
 
-  throwErrorWhenResponseNotOk(response);
-
-  const result = await response.json();
-  const opinion: OpinionWithReference = plainToInstance(OpinionWithReference, result.data);
-
-  return opinion;
-};
-
-export {
-  type Opinion,
-  type ReferredOpinion,
-  type AgreeingType,
-  type ReferToOpinion,
-  type OpinionWithReference,
-  getOpinionsInDiscussion,
-  registerOpinion,
-  getOpinionsWithReference
-};
+export { type Opinion, type AgreeingType, type OpinionWithReference, OpinionApi };

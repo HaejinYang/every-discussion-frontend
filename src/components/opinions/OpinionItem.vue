@@ -28,11 +28,7 @@
 import { defineComponent } from 'vue';
 import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
-import {
-  getOpinionsWithReference,
-  type Opinion,
-  type OpinionWithReference
-} from '@/services/opinions';
+import { type Opinion, OpinionApi, type OpinionWithReference } from '@/services/opinions';
 
 export default defineComponent({
   name: 'OpinionItem',
@@ -68,7 +64,7 @@ export default defineComponent({
   },
   async created() {
     console.log(this.opinionId);
-    const opinion = await getOpinionsWithReference(this.opinionId);
+    const opinion = await OpinionApi.fetch(this.opinionId);
     this.opinion = opinion;
     this.referTo = opinion.referTo;
     this.referred = opinion.referred;
