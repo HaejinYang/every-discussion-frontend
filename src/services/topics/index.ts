@@ -65,43 +65,47 @@ interface TopicWithOpinions {
   opinions: Opinion[];
 }
 
-const topTopics = async () => {
-  const response = await fetchApi('/api/topics', {
-    method: 'GET',
-    credentials: 'include'
-  });
+class TopicApi {
+  public static async fetch(topicId: number) {
+    const response = await fetchApi(`/api/topics/${topicId}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  throwErrorWhenResponseNotOk(response);
+    throwErrorWhenResponseNotOk(response);
 
-  const result = await response.json();
-  const topics: TopTopics = plainToInstance(TopTopics, result.data);
-  return topics;
-};
+    const result = await response.json();
+    const topic: Topic = plainToInstance(Topic, result.data);
+    return topic;
+  }
+}
 
-const nextTopTopics = async (pageUrlFromServer: string) => {
-  const response = await fetch(pageUrlFromServer, {
-    method: 'GET',
-    credentials: 'include'
-  });
+class TopTopicsApi {
+  public static async fetch() {
+    const response = await fetchApi('/api/topics', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  throwErrorWhenResponseNotOk(response);
+    throwErrorWhenResponseNotOk(response);
 
-  const result = await response.json();
-  const topics: TopTopics = plainToInstance(TopTopics, result.data);
-  return topics;
-};
+    const result = await response.json();
+    const topics: TopTopics = plainToInstance(TopTopics, result.data);
+    return topics;
+  }
 
-const getTopic = async (topicId: number) => {
-  const response = await fetchApi(`/api/topics/${topicId}`, {
-    method: 'GET',
-    credentials: 'include'
-  });
+  public static async fetchNext(pageUrlFromServer: string) {
+    const response = await fetch(pageUrlFromServer, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-  throwErrorWhenResponseNotOk(response);
+    throwErrorWhenResponseNotOk(response);
 
-  const result = await response.json();
-  const topic: Topic = plainToInstance(Topic, result.data);
-  return topic;
-};
+    const result = await response.json();
+    const topics: TopTopics = plainToInstance(TopTopics, result.data);
+    return topics;
+  }
+}
 
-export { type Topic, type TopicWithOpinions, topTopics, TopTopics, nextTopTopics, getTopic };
+export { type Topic, type TopicWithOpinions, type TopTopics, TopicApi, TopTopicsApi };

@@ -30,8 +30,7 @@
 import { defineComponent } from 'vue';
 import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
-import type { Topic } from '@/services/topics';
-import { nextTopTopics, TopTopics, topTopics } from '@/services/topics';
+import { type Topic, type TopTopics, TopTopicsApi } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
 
 export default defineComponent({
@@ -62,7 +61,7 @@ export default defineComponent({
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
 
-      const topics = await nextTopTopics(
+      const topics = await TopTopicsApi.fetchNext(
         this.nextTopicsUrl + (this.searchKeyword.length > 0 ? `&keyword=${this.searchKeyword}` : '')
       );
       this.topics.push(...topics.data);
@@ -94,7 +93,7 @@ export default defineComponent({
   },
   created() {
     this.isWaitingMoreTopics = true;
-    topTopics().then((topTopics: TopTopics) => {
+    TopTopicsApi.fetch().then((topTopics: TopTopics) => {
       this.topics = topTopics.data;
       this.isWaitingMoreTopics = false;
       this.nextTopicsUrl = topTopics.nextPageUrl;

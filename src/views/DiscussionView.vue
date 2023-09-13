@@ -39,7 +39,7 @@ import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
-import { getTopic, type Topic } from '@/services/topics';
+import { type Topic, TopicApi } from '@/services/topics';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -85,7 +85,7 @@ export default defineComponent({
     handler.hideSearchedOpinions();
   },
   async created() {
-    const topic = await getTopic(this.topicId);
+    const topic = await TopicApi.fetch(this.topicId);
     this.topic = topic;
   },
   mounted() {}
