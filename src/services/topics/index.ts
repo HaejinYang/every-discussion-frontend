@@ -11,6 +11,9 @@ class TopicItem {
   @Expose()
   title: string;
 
+  @Expose()
+  description: string;
+
   @Expose({ name: 'user_id' })
   hostId: number;
 
@@ -62,6 +65,24 @@ class Topic {
     const topics: TopicItem[] = plainToInstance(TopicItem, result.data);
 
     return topics;
+  }
+
+  public static async create(title: string, description: string) {
+    const URI = `/api/topics`;
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title, description })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const topic: TopicItem = plainToInstance(TopicItem, result.data);
+    return topic;
   }
 }
 

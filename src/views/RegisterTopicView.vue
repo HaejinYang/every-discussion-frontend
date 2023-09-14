@@ -5,14 +5,30 @@
         <span>토론 생성</span>
       </div>
       <div :class="$style['topic-name-wrapper']">
-        <input :class="$style['topic-name']" type="text" placeholder="토론 주제" />
+        <input
+          :class="$style['topic-name']"
+          type="text"
+          placeholder="토론 주제"
+          :value="title"
+          @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
+        />
       </div>
       <div :class="$style['topic-description-wrapper']">
-        <input :class="$style['topic-description']" type="text" placeholder="토론 설명" />
+        <input
+          :class="$style['topic-description']"
+          type="text"
+          placeholder="토론 설명"
+          :value="description"
+          @input="(event) => (description = (event.target as HTMLTextAreaElement).value)"
+        />
       </div>
 
       <div :class="$style['btn-create-wrapper']">
-        <button :class="$style['btn-create']">생성</button>
+        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">
+          {{ submitBtnMessags[submitStep] }}
+          <a href="#" v-show="submitStep === 2" @mousedown.left="moveToTopic"> 토론 바로가기</a>
+        </button>
+        <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWait" />
       </div>
 
       <div :class="$style['btn-search-wrapper']">
@@ -24,9 +40,55 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Topic } from '@/services/topics';
+
+enum eProcessStep {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Faile = 3
+}
 
 export default defineComponent({
-  name: 'RegisterTopicView'
+  name: 'RegisterTopicView',
+  data() {
+    return {
+      title: '',
+      description: '',
+      submitBtnMessags: ['생성', '', '생성완료! ', '생성실패!'],
+      submitStep: eProcessStep.Init as eProcessStep,
+      createdTopicId: -1
+    };
+  },
+  computed: {
+    isWait() {
+      return eProcessStep.Wait === this.submitStep;
+    }
+  },
+  watch: {
+    title(newTitle: string) {
+      console.log(`title : ${newTitle}`);
+    },
+    description(newDescription: string) {
+      console.log(`description: ${newDescription}`);
+    }
+  },
+  methods: {
+    async submitTopic() {
+      if (this.submitStep > eProcessStep.Init) {
+        return;
+      }
+
+      this.submitStep = eProcessStep.Wait;
+      const topic = await Topic.create(this.title, this.description);
+      this.createdTopicId = topic.id;
+
+      this.submitStep = eProcessStep.Success;
+    },
+    moveToTopic() {
+      this.$router.push(`/discussion/${this.createdTopicId}`);
+    }
+  }
 });
 </script>
 
@@ -78,6 +140,11 @@ export default defineComponent({
       padding: 0.5rem;
       color: white;
       font-weight: bold;
+      min-height: 2.1rem;
+
+      > a {
+        color: white;
+      }
     }
 
     .btn-search {
@@ -87,6 +154,20 @@ export default defineComponent({
       padding: 0.5rem;
       color: white;
       font-weight: bold;
+    }
+
+    .btn-create-wrapper {
+      position: relative;
+
+      img {
+        position: absolute;
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   }
 }
