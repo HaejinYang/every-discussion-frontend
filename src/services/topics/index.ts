@@ -11,6 +11,9 @@ class TopicItem {
   @Expose()
   title: string;
 
+  @Expose()
+  description: string;
+
   @Expose({ name: 'user_id' })
   hostId: number;
 
@@ -77,7 +80,9 @@ class Topic {
 
     throwErrorWhenResponseNotOk(response);
 
-    return true;
+    const result = await response.json();
+    const topic: TopicItem = plainToInstance(TopicItem, result.data);
+    return topic;
   }
 }
 

@@ -24,7 +24,11 @@
       </div>
 
       <div :class="$style['btn-create-wrapper']">
-        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">생성</button>
+        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">
+          {{ submitBtnMessags[submitStep] }}
+          <a href="#" v-show="submitStep === 2" @mousedown.left="moveToTopic"> 토론 바로가기</a>
+        </button>
+        <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWait" />
       </div>
 
       <div :class="$style['btn-search-wrapper']">
@@ -38,14 +42,28 @@
 import { defineComponent } from 'vue';
 import { Topic } from '@/services/topics';
 
+enum eProcessStep {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Faile = 3
+}
+
 export default defineComponent({
   name: 'RegisterTopicView',
   data() {
     return {
       title: '',
       description: '',
-      isSubmitting: false
+      submitBtnMessags: ['생성', '', '생성완료! ', '생성실패!'],
+      submitStep: eProcessStep.Init as eProcessStep,
+      createdTopicId: -1
     };
+  },
+  computed: {
+    isWait() {
+      return eProcessStep.Wait === this.submitStep;
+    }
   },
   watch: {
     title(newTitle: string) {
@@ -57,19 +75,18 @@ export default defineComponent({
   },
   methods: {
     async submitTopic() {
-      if (this.isSubmitting) {
+      if (this.submitStep > eProcessStep.Init) {
         return;
       }
 
-      this.isSubmitting = true;
-      const result = await Topic.create(this.title, this.description);
-      if (!result) {
-        console.log('failed');
-      } else {
-        console.log('success');
-      }
+      this.submitStep = eProcessStep.Wait;
+      const topic = await Topic.create(this.title, this.description);
+      this.createdTopicId = topic.id;
 
-      this.isSubmitting = false;
+      this.submitStep = eProcessStep.Success;
+    },
+    moveToTopic() {
+      this.$router.push(`/discussion/${this.createdTopicId}`);
     }
   }
 });
@@ -123,6 +140,11 @@ export default defineComponent({
       padding: 0.5rem;
       color: white;
       font-weight: bold;
+      min-height: 2.1rem;
+
+      > a {
+        color: white;
+      }
     }
 
     .btn-search {
@@ -132,6 +154,20 @@ export default defineComponent({
       padding: 0.5rem;
       color: white;
       font-weight: bold;
+    }
+
+    .btn-create-wrapper {
+      position: relative;
+
+      img {
+        position: absolute;
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   }
 }
