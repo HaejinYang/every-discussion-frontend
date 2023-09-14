@@ -63,6 +63,22 @@ class Topic {
 
     return topics;
   }
+
+  public static async create(title: string, description: string) {
+    const URI = `/api/topics`;
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title, description })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    return true;
+  }
 }
 
 export { TopicItem, type TopicWithOpinions, Topic, fetchByUser };

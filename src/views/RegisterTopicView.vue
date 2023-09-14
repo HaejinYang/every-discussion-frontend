@@ -5,14 +5,26 @@
         <span>토론 생성</span>
       </div>
       <div :class="$style['topic-name-wrapper']">
-        <input :class="$style['topic-name']" type="text" placeholder="토론 주제" />
+        <input
+          :class="$style['topic-name']"
+          type="text"
+          placeholder="토론 주제"
+          :value="title"
+          @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
+        />
       </div>
       <div :class="$style['topic-description-wrapper']">
-        <input :class="$style['topic-description']" type="text" placeholder="토론 설명" />
+        <input
+          :class="$style['topic-description']"
+          type="text"
+          placeholder="토론 설명"
+          :value="description"
+          @input="(event) => (description = (event.target as HTMLTextAreaElement).value)"
+        />
       </div>
 
       <div :class="$style['btn-create-wrapper']">
-        <button :class="$style['btn-create']">생성</button>
+        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">생성</button>
       </div>
 
       <div :class="$style['btn-search-wrapper']">
@@ -24,9 +36,42 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Topic } from '@/services/topics';
 
 export default defineComponent({
-  name: 'RegisterTopicView'
+  name: 'RegisterTopicView',
+  data() {
+    return {
+      title: '',
+      description: '',
+      isSubmitting: false
+    };
+  },
+  watch: {
+    title(newTitle: string) {
+      console.log(`title : ${newTitle}`);
+    },
+    description(newDescription: string) {
+      console.log(`description: ${newDescription}`);
+    }
+  },
+  methods: {
+    async submitTopic() {
+      if (this.isSubmitting) {
+        return;
+      }
+
+      this.isSubmitting = true;
+      const result = await Topic.create(this.title, this.description);
+      if (!result) {
+        console.log('failed');
+      } else {
+        console.log('success');
+      }
+
+      this.isSubmitting = false;
+    }
+  }
 });
 </script>
 
