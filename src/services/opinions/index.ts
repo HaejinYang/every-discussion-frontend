@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import fetchApi from '@/util/network';
+import { fetchApi } from '@/util/network';
 import { Expose, plainToInstance, Type } from 'class-transformer';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 
