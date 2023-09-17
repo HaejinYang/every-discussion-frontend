@@ -1,6 +1,6 @@
 import { Expose, plainToInstance, Type } from 'class-transformer';
 import { TopicItem } from '@/services/topics/index';
-import fetchApi from '@/util/network';
+import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 
 class TopTopicsItem {

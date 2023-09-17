@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import fetchApi from '@/util/network';
+import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import { TopTopicsItem } from '@/services/topics/TopTopics';
 
