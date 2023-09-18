@@ -72,9 +72,10 @@ export default defineComponent({
 
   .login-btn {
     border: none;
-    background-color: $primary-color;
-    padding: 0.5rem;
     border-radius: 5px;
+    background-color: $primary-color;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    font-weight: bold;
     color: white;
   }
 }
