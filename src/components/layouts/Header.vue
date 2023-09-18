@@ -11,7 +11,13 @@
       />
     </div>
     <div>
-      <button :class="$style['login-btn']" @mousedown.left="onClickLogin">로그인</button>
+      <button v-if="!isLogin" :class="$style['login-btn']" @mousedown.left="onClickLogin">
+        로그인
+      </button>
+      <button v-if="isLogin" :class="$style['login-btn']" @mousedown.left="onClickMyInfo">
+        내정보
+      </button>
+      <button :class="$style['login-btn']" @mousedown.left="onClickLogout">로그아웃임시</button>
     </div>
   </header>
 </template>
@@ -22,6 +28,7 @@ import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import type { OpinionData } from '@/services/opinions';
 import { Opinion } from '@/services/opinions';
+import { useAuthHandler } from '@/stores/auth';
 
 export default defineComponent({
   name: 'Header',
@@ -29,6 +36,10 @@ export default defineComponent({
   computed: {
     isDisplaySearchBar() {
       return this.$route.name === 'discussion';
+    },
+    isLogin() {
+      const authHandler = useAuthHandler();
+      return authHandler.isAuth;
     }
   },
   methods: {
@@ -49,6 +60,14 @@ export default defineComponent({
     },
     onClickLogin() {
       this.$emit('show-login');
+    },
+    onClickMyInfo() {
+      // TODO: 내 정보를 보여주는 창으로 이동해야함.
+      this.$router.push('/');
+    },
+    onClickLogout() {
+      const authHandler = useAuthHandler();
+      authHandler.logout();
     }
   }
 });
@@ -72,9 +91,10 @@ export default defineComponent({
 
   .login-btn {
     border: none;
-    background-color: $primary-color;
-    padding: 0.5rem;
     border-radius: 5px;
+    background-color: $primary-color;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    font-weight: bold;
     color: white;
   }
 }

@@ -2,16 +2,23 @@ import { fetchApi, objectToQueryString } from '@/util/network';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
+import { useAuthHandler } from '@/stores/auth';
 
 class UserItem {
   @Expose()
-  email: string;
-
-  @Expose({ name: 'name' })
-  nickname: string;
+  id: number;
 
   @Expose()
-  id: number;
+  email: string;
+
+  @Expose()
+  name: string;
+
+  @Expose()
+  token: string;
+
+  @Expose()
+  role: number;
 }
 
 interface UserRegisterParam {
@@ -59,6 +66,31 @@ class User {
 
     return true;
   }
+
+  public static async login(email: string, password: string) {
+    const URI = '/api/auth/login';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const user: UserItem = plainToInstance(UserItem, result.data);
+
+    const authHandler = useAuthHandler();
+    authHandler.login(user);
+
+    return user;
+  }
 }
 
-export { User };
+export { User, UserItem };

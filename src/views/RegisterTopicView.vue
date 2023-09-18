@@ -28,7 +28,7 @@
           {{ submitBtnMessags[submitStep] }}
           <a href="#" v-show="submitStep === 2" @mousedown.left="moveToTopic"> 토론 바로가기</a>
         </button>
-        <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWait" />
+        <WaitButton v-show="isWait" />
       </div>
 
       <div :class="$style['btn-search-wrapper']">
@@ -41,6 +41,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic } from '@/services/topics';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -51,6 +52,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'RegisterTopicView',
+  components: { WaitButton },
   data() {
     return {
       title: '',
@@ -140,7 +142,7 @@ export default defineComponent({
       padding: 0.5rem;
       color: white;
       font-weight: bold;
-      min-height: 2.1rem;
+      min-height: 2.2rem;
 
       > a {
         color: white;
@@ -158,16 +160,6 @@ export default defineComponent({
 
     .btn-create-wrapper {
       position: relative;
-
-      img {
-        position: absolute;
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
     }
   }
 }

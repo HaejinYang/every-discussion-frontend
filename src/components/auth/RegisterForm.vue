@@ -15,6 +15,7 @@
         />
         <label ref="email-label" for="email"><small>계정</small></label>
         <small v-if="isDuplicatedEmail">email 중복</small>
+        <small v-if="!isEmailForm">잘못된 email 형식</small>
       </div>
       <div :class="$style['name-wrapper']">
         <input
@@ -59,7 +60,7 @@
         <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
           {{ submitBtnMsg[submitStep] }}
         </button>
-        <img v-show="isSubmitWaiting" src="@/assets/spinner-white.svg" />
+        <WaitButton v-show="isSubmitWaiting" />
         <small>{{ isFailRegister ? '정보를 다시확인해주세요' : '' }}</small>
       </div>
     </div>
@@ -71,6 +72,8 @@ import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
+import { isEmailValid } from '@/util/validation';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -81,6 +84,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'RegisterForm',
+  components: { WaitButton },
   data() {
     return {
       name: '',
@@ -90,6 +94,7 @@ export default defineComponent({
       isPasswordSame: true,
       isFailRegister: false,
       isDuplicatedEmail: false,
+      isEmailForm: true,
       isDuplicatedName: false,
       isPasswordShort: false,
       submitBtnMsg: ['회원가입', '', '회원가입 완료!', '회원가입'],
@@ -114,6 +119,7 @@ export default defineComponent({
     },
     email() {
       this.isDuplicatedEmail = false;
+      this.isEmailForm = true;
       this.debouncedCheckEmail();
     }
   },
@@ -142,6 +148,11 @@ export default defineComponent({
     }, 500);
 
     this.debouncedCheckEmail = debounce(async () => {
+      if (!isEmailValid(this.email)) {
+        this.isEmailForm = false;
+        return;
+      }
+
       try {
         const result = await User.isDuplicated({ email: this.email });
       } catch (e) {
@@ -158,9 +169,6 @@ export default defineComponent({
   },
   methods: {
     onClickRegisterForm() {
-      this.isDuplicatedName = false;
-      this.isDuplicatedEmail = false;
-      this.isPasswordSame = true;
       this.isFailRegister = false;
     },
     switchToLoginForm() {
@@ -226,16 +234,7 @@ export default defineComponent({
     .register-btn-wrapper {
       border-bottom: none;
       position: relative;
-
-      > img {
-        position: absolute;
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
+      padding-bottom: 0;
 
       > small {
         color: red;

@@ -21,7 +21,7 @@
       <button :class="$style.more" @mousedown.left="moreTopics">
         {{ isWaitingMoreTopics ? '' : '더보기' }}
       </button>
-      <img src="@/assets/spinner-white.svg" alt="spinner" v-show="isWaitingMoreTopics" />
+      <WaitButton v-show="isWaitingMoreTopics" />
     </div>
   </div>
 </template>
@@ -33,10 +33,11 @@ import SearchBar from '@/components/SearchBar.vue';
 import { type TopicItem } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
 import { TopTopics, type TopTopicsItem } from '@/services/topics/TopTopics';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 export default defineComponent({
   name: 'HomeView',
-  components: { SearchBar, TopicPreview },
+  components: { WaitButton, SearchBar, TopicPreview },
   data() {
     return {
       topics: [] as TopicItem[],
@@ -145,16 +146,6 @@ export default defineComponent({
         cursor: pointer;
         box-shadow: $box-shadow-normal;
       }
-    }
-
-    > img {
-      position: absolute;
-      object-fit: contain;
-      height: 100%;
-      width: 100%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
     }
   }
 }
