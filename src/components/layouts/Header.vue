@@ -11,7 +11,9 @@
       />
     </div>
     <div>
-      <button :class="$style['login-btn']" @mousedown.left="onClickLogin">로그인</button>
+      <button :class="$style['login-btn']" @mousedown.left="onClickLogin">
+        {{ isLogin ? '내정보' : '로그인' }}
+      </button>
     </div>
   </header>
 </template>
@@ -22,6 +24,7 @@ import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import type { OpinionData } from '@/services/opinions';
 import { Opinion } from '@/services/opinions';
+import { useAuthHandler } from '@/stores/auth';
 
 export default defineComponent({
   name: 'Header',
@@ -29,6 +32,10 @@ export default defineComponent({
   computed: {
     isDisplaySearchBar() {
       return this.$route.name === 'discussion';
+    },
+    isLogin() {
+      const authHandler = useAuthHandler();
+      return authHandler.isAuth;
     }
   },
   methods: {

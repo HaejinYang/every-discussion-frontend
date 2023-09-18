@@ -1,6 +1,6 @@
 <template>
   <div :class="$style['container']">
-    <div :class="$style['login-form']" @mousedown.left.stop>
+    <div :class="$style['login-form']" @mousedown.left.stop="onClickLoginForm">
       <div>
         <p :class="$style.title">모두의토론</p>
       </div>
@@ -33,10 +33,11 @@
         <span><small>아이디 / 비밀번호 찾기</small></span>
       </div>
       <div :class="$style['login-btn-wrapper']">
-        <button :class="$style['login-form-btn']" @mousedown.left="onClickLogin">
+        <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
           {{ submitBtnMsg[submitStep] }}
         </button>
         <img v-show="isSubmitWaiting" src="@/assets/spinner-white.svg" />
+        <small>{{ isFailLogin ? '정보를 다시확인해주세요' : '' }}</small>
       </div>
     </div>
   </div>
@@ -46,6 +47,8 @@
 import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { isEmailValid } from '@/util/validation';
+import { getErrorMessage } from '@/util/error';
+import { User } from '@/services/users';
 
 enum eProcessStep {
   Init = 0,
@@ -71,6 +74,9 @@ export default defineComponent({
   computed: {
     isSubmitWaiting() {
       return this.submitStep === eProcessStep.Wait;
+    },
+    isFailLogin() {
+      return this.submitStep === eProcessStep.Fail;
     }
   },
   watch: {
@@ -87,12 +93,24 @@ export default defineComponent({
     switchRegisterForm() {
       this.$emit('switch-register-form');
     },
-    onClickLogin() {
-      if (this.submitStep > eProcessStep.Init) {
+    async onClickLogin() {
+      if (this.submitStep === eProcessStep.Wait) {
         return;
       }
 
       this.submitStep = eProcessStep.Wait;
+      try {
+        const user = await User.login(this.email, this.password);
+        this.submitStep = eProcessStep.Success;
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.submitStep = eProcessStep.Fail;
+      }
+    },
+    onClickLoginForm() {
+      if (this.submitStep !== eProcessStep.Wait) {
+        this.submitStep = eProcessStep.Init;
+      }
     }
   },
   created() {
