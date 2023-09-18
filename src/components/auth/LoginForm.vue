@@ -36,7 +36,7 @@
         <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
           {{ submitBtnMsg[submitStep] }}
         </button>
-        <img v-show="isSubmitWaiting" src="@/assets/spinner-white.svg" />
+        <WaitButton v-show="isSubmitWaiting" />
         <small>{{ isFailLogin ? '정보를 다시확인해주세요' : '' }}</small>
       </div>
     </div>
@@ -49,6 +49,7 @@ import { debounce } from '@/util/timing';
 import { isEmailValid } from '@/util/validation';
 import { getErrorMessage } from '@/util/error';
 import { User } from '@/services/users';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -59,6 +60,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'LoginForm',
+  components: { WaitButton },
   data() {
     return {
       email: '',
@@ -170,6 +172,7 @@ export default defineComponent({
     .login-btn-wrapper {
       border-bottom: none;
       position: relative;
+      padding-bottom: 0;
 
       .login-form-btn {
         width: 100%;
@@ -186,16 +189,6 @@ export default defineComponent({
           cursor: pointer;
           filter: brightness(90%);
         }
-      }
-
-      > img {
-        position: absolute;
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
       }
     }
 

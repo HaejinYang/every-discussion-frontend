@@ -11,8 +11,11 @@
       />
     </div>
     <div>
-      <button :class="$style['login-btn']" @mousedown.left="onClickLogin">
-        {{ isLogin ? '내정보' : '로그인' }}
+      <button v-if="!isLogin" :class="$style['login-btn']" @mousedown.left="onClickLogin">
+        로그인
+      </button>
+      <button v-if="isLogin" :class="$style['login-btn']" @mousedown.left="onClickMyInfo">
+        내정보
       </button>
     </div>
   </header>
@@ -56,6 +59,10 @@ export default defineComponent({
     },
     onClickLogin() {
       this.$emit('show-login');
+    },
+    onClickMyInfo() {
+      // TODO: 내 정보를 보여주는 창으로 이동해야함.
+      this.$router.push('/');
     }
   }
 });

@@ -60,7 +60,7 @@
         <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
           {{ submitBtnMsg[submitStep] }}
         </button>
-        <img v-show="isSubmitWaiting" src="@/assets/spinner-white.svg" />
+        <WaitButton v-show="isSubmitWaiting" />
         <small>{{ isFailRegister ? '정보를 다시확인해주세요' : '' }}</small>
       </div>
     </div>
@@ -73,6 +73,7 @@ import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { isEmailValid } from '@/util/validation';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -83,6 +84,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'RegisterForm',
+  components: { WaitButton },
   data() {
     return {
       name: '',
@@ -232,16 +234,7 @@ export default defineComponent({
     .register-btn-wrapper {
       border-bottom: none;
       position: relative;
-
-      > img {
-        position: absolute;
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
+      padding-bottom: 0;
 
       > small {
         color: red;
