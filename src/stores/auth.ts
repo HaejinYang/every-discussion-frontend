@@ -14,9 +14,12 @@ export const useAuthHandler = defineStore('auth-handler', {
     };
   },
   actions: {
-    accept(info: UserItem) {
+    login(info: UserItem) {
       this.isAuth = true;
       this.info = info;
+    },
+    logout() {
+      this.isAuth = false;
     }
   }
 });

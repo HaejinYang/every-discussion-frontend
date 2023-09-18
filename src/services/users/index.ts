@@ -87,7 +87,7 @@ class User {
     const user: UserItem = plainToInstance(UserItem, result.data);
 
     const authHandler = useAuthHandler();
-    authHandler.accept(user);
+    authHandler.login(user);
 
     return user;
   }

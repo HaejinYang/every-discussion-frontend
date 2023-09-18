@@ -17,6 +17,7 @@
       <button v-if="isLogin" :class="$style['login-btn']" @mousedown.left="onClickMyInfo">
         내정보
       </button>
+      <button :class="$style['login-btn']" @mousedown.left="onClickLogout">로그아웃임시</button>
     </div>
   </header>
 </template>
@@ -63,6 +64,10 @@ export default defineComponent({
     onClickMyInfo() {
       // TODO: 내 정보를 보여주는 창으로 이동해야함.
       this.$router.push('/');
+    },
+    onClickLogout() {
+      const authHandler = useAuthHandler();
+      authHandler.logout();
     }
   }
 });
