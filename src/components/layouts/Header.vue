@@ -32,7 +32,7 @@
           @mouseleave="userMenuHoveredChanged(false)"
         >
           <ul>
-            <li>프로필</li>
+            <li @mousedown.lef="moveToMyInfo">프로필</li>
             <li>변경</li>
             <li @mousedown.left="onClickLogout">로그아웃</li>
           </ul>
@@ -112,6 +112,9 @@ export default defineComponent({
 
       clearTimeout(this.userMenuHoveredTimer);
       this.isUserMenuHovered = true;
+    },
+    moveToMyInfo() {
+      this.$router.push('/my-info');
     }
   }
 });
