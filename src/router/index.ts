@@ -4,6 +4,7 @@ import DiscussionView from '@/views/DiscussionView.vue';
 import MyTopicsView from '@/views/MyTopicsView.vue';
 import MyOpinionsView from '@/views/MyOpinionsView.vue';
 import RegisterTopicView from '@/views/RegisterTopicView.vue';
+import MyInfoView from '@/views/MyInfoView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/topic-register',
       name: 'topic-register',
       component: RegisterTopicView
+    },
+    {
+      path: '/my-info',
+      name: 'my-info',
+      component: MyInfoView
     }
   ]
 });

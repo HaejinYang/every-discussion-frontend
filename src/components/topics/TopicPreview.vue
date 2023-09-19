@@ -38,6 +38,7 @@ export default defineComponent({
 .container {
   max-width: 300px;
   box-shadow: $box-shadow-normal;
+  border: $border-weak-line;
 
   .title {
     padding: 1rem;

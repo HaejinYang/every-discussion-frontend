@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { UserItem } from '@/services/users';
+import { User, type UserItem } from '@/services/users';
 
 export const useAuthHandler = defineStore('auth-handler', {
   state: () => {
@@ -17,9 +17,14 @@ export const useAuthHandler = defineStore('auth-handler', {
     login(info: UserItem) {
       this.isAuth = true;
       this.info = info;
+
+      console.log('login', info);
     },
     logout() {
       this.isAuth = false;
+      User.logout().then((user: UserItem) => {
+        console.log('logout', user);
+      });
     }
   }
 });

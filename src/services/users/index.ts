@@ -19,6 +19,12 @@ class UserItem {
 
   @Expose()
   role: number;
+
+  @Expose()
+  topicsCount: number;
+
+  @Expose()
+  opinionsCount: number;
 }
 
 interface UserRegisterParam {
@@ -88,6 +94,25 @@ class User {
 
     const authHandler = useAuthHandler();
     authHandler.login(user);
+
+    return user;
+  }
+
+  public static async logout() {
+    const authHandler = useAuthHandler();
+    const URI = '/api/auth/logout';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${authHandler.info.token}`
+      }
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const user: UserItem = plainToInstance(UserItem, result.data);
 
     return user;
   }

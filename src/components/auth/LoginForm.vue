@@ -104,6 +104,9 @@ export default defineComponent({
       try {
         const user = await User.login(this.email, this.password);
         this.submitStep = eProcessStep.Success;
+        setTimeout(() => {
+          this.$emit('close-form');
+        }, 1000);
       } catch (e) {
         reportError(getErrorMessage(e));
         this.submitStep = eProcessStep.Fail;
@@ -189,6 +192,10 @@ export default defineComponent({
           cursor: pointer;
           filter: brightness(90%);
         }
+      }
+
+      > small {
+        color: red;
       }
     }
 
