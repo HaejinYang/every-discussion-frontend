@@ -21,10 +21,15 @@
       </ul>
     </nav>
     <div :class="$style['register-topic']">
-      <p>안녕하세요?</p>
-      <span>
-        <button>로그인로그아웃혹은다른것</button>
-      </span>
+      <p>{{ isLogin ? '환영합니다!' : '안녕하세요?' }}</p>
+      <span v-show="!isLogin"> 로그아웃 상태입니다.</span>
+
+      <div v-show="isLogin" :class="$style['user-info']">
+        <h3>{{ name }}</h3>
+        <p>
+          <small>참여 토론: {{ topicsCount }}</small> <small>작성 의견: {{ opinionsCount }}</small>
+        </p>
+      </div>
     </div>
     <footer>
       Lorem ipsum dolor sit amet. Et pariatur dolorem qui incidunt corporis ut exercitationem facere
@@ -36,6 +41,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useAuthHandler } from '@/stores/auth';
 
 export default defineComponent({
   name: 'Aside',
@@ -43,6 +49,24 @@ export default defineComponent({
     return {
       isDisplayRegisterTopicForm: false
     };
+  },
+  computed: {
+    isLogin() {
+      const authHandler = useAuthHandler();
+      return authHandler.isAuth;
+    },
+    name() {
+      const authHandler = useAuthHandler();
+      return authHandler.info.name;
+    },
+    topicsCount() {
+      const authHandler = useAuthHandler();
+      return authHandler.info.topicsCount;
+    },
+    opinionsCount() {
+      const authHandler = useAuthHandler();
+      return authHandler.info.opinionsCount;
+    }
   },
   methods: {
     onClickHomePage() {
@@ -118,6 +142,16 @@ export default defineComponent({
     .register-topic {
       visibility: visible;
       border-bottom: $border-weak-line;
+
+      .user-info {
+        margin: 0.5rem;
+        padding: 1rem;
+        box-shadow: $box-shadow-default;
+        border: $border-default-line;
+
+        > p {
+        }
+      }
     }
 
     footer {

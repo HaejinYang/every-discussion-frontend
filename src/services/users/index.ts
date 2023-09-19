@@ -19,6 +19,12 @@ class UserItem {
 
   @Expose()
   role: number;
+
+  @Expose()
+  topicsCount: number;
+
+  @Expose()
+  opinionsCount: number;
 }
 
 interface UserRegisterParam {
