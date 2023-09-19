@@ -11,8 +11,36 @@
         <li :class="[isSelectedQuit ? $style['selected'] : null]" data-select="quit">회원 탈퇴</li>
       </ul>
     </div>
-    <div :class="$style['content']">
+    <div :class="$style['content']" v-show="isSelectedProfile">
       <h2>프로필</h2>
+      <div :class="$style['item']">
+        <span :class="$style['label']">계정</span>
+        <span :class="$style['value']">crmerry@gmail.com</span>
+      </div>
+      <div :class="$style['item']">
+        <span :class="$style['label']">이름</span>
+        <span :class="$style['value']">씨알메리</span>
+      </div>
+      <div :class="$style['item']">
+        <button>수정하기</button>
+      </div>
+    </div>
+    <div :class="$style['content']" v-show="isSelectedPassword">
+      <h2>비밀번호 변경</h2>
+      <div :class="$style['item']">
+        <span :class="$style['label']">계정</span>
+        <span :class="$style['value']">crmerry@gmail.com</span>
+      </div>
+      <div :class="$style['item']">
+        <span :class="$style['label']">이름</span>
+        <span :class="$style['value']">씨알메리</span>
+      </div>
+      <div :class="$style['item']">
+        <button>수정하기</button>
+      </div>
+    </div>
+    <div :class="$style['content']" v-show="isSelectedQuit">
+      <h2>회원 탈퇴</h2>
       <div :class="$style['item']">
         <span :class="$style['label']">계정</span>
         <span :class="$style['value']">crmerry@gmail.com</span>
