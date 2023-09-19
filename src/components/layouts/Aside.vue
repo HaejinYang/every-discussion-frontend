@@ -89,7 +89,8 @@ export default defineComponent({
         }
 
         &:hover {
-          box-shadow: $box-shadow-normal;
+          cursor: pointer;
+          font-weight: bold;
         }
       }
     }
