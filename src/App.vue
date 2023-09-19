@@ -10,8 +10,16 @@
       </main>
     </section>
     <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
-      <RegisterForm @switch-login-form="switchLoginForm" v-show="!isShowLoginForm" />
-      <LoginForm @switch-register-form="switchRegisterForm" v-show="isShowLoginForm" />
+      <RegisterForm
+        @switch-login-form="switchLoginForm"
+        @register-success="isShowLoginForm = true"
+        v-show="!isShowLoginForm"
+      />
+      <LoginForm
+        @switch-register-form="switchRegisterForm"
+        @close-form="hideAuthForm"
+        v-show="isShowLoginForm"
+      />
     </div>
   </div>
 </template>

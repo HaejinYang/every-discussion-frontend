@@ -188,6 +188,9 @@ export default defineComponent({
           password_confirmation: this.passwordConfirm
         });
         this.submitStep = eProcessStep.Success;
+        setTimeout(() => {
+          this.$emit('register-success');
+        }, 1000);
       } catch (e) {
         this.isFailRegister = true;
         this.submitStep = eProcessStep.Fail;

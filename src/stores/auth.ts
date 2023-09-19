@@ -17,6 +17,8 @@ export const useAuthHandler = defineStore('auth-handler', {
     login(info: UserItem) {
       this.isAuth = true;
       this.info = info;
+
+      console.log('login', info);
     },
     logout() {
       this.isAuth = false;
