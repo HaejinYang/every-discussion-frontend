@@ -25,6 +25,9 @@ export const useAuthHandler = defineStore('auth-handler', {
       User.logout().then((user: UserItem) => {
         console.log('logout', user);
       });
+    },
+    delete() {
+      this.isAuth = false;
     }
   }
 });

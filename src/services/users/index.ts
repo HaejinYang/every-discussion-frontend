@@ -139,6 +139,23 @@ class User {
 
     throwErrorWhenResponseNotOk(response);
   }
+
+  public static async delete(password: string) {
+    const authHandler = useAuthHandler();
+
+    const URI = '/api/user';
+    const response = await fetchApi(URI, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${authHandler.info.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
 }
 
 export { User, UserItem };

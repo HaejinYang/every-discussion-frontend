@@ -105,6 +105,7 @@ import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
+import { useAuthHandler } from '@/stores/auth';
 
 enum eSelectMenu {
   Profile = 0,
@@ -183,8 +184,17 @@ export default defineComponent({
       }
     },
 
-    onClickQuit() {
+    async onClickQuit() {
       console.log('탈퇴');
+      try {
+        await User.delete(this.passwordCheck);
+
+        const authHandler = useAuthHandler();
+        authHandler.delete();
+        this.$router.push('/');
+      } catch (e) {
+        reportError(getErrorMessage(e));
+      }
     }
   },
   created() {
