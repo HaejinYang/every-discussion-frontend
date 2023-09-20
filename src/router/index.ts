@@ -5,6 +5,7 @@ import MyTopicsView from '@/views/MyTopicsView.vue';
 import MyOpinionsView from '@/views/MyOpinionsView.vue';
 import RegisterTopicView from '@/views/RegisterTopicView.vue';
 import MyInfoView from '@/views/MyInfoView.vue';
+import ErrorView from '@/views/ErrorView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,12 @@ const router = createRouter({
       path: '/my-info',
       name: 'my-info',
       component: MyInfoView
+    },
+    {
+      path: '/error/:msg',
+      name: 'error',
+      component: ErrorView,
+      props: true
     }
   ]
 });

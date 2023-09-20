@@ -12,6 +12,10 @@ function reportError(message: string) {
 }
 
 function throwErrorWhenResponseNotOk(response: Response) {
+  if (response.status === 401) {
+    window.location.href = 'error/인증이 필요합니다';
+  }
+
   if (!response.ok) {
     const errorMessage = `Network response was not ok: ${response.status} ${response.statusText}`;
     throw new Error(errorMessage);
