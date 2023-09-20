@@ -56,7 +56,7 @@ export default defineComponent({
   data() {
     return {
       isUserMenuHovered: false,
-      userMenuHoveredTimer: null as ReturnType<typeof setTimeout>
+      userMenuHoveredTimer: -1 as ReturnType<typeof setTimeout>
     };
   },
   computed: {
@@ -91,12 +91,12 @@ export default defineComponent({
       this.$emit('show-login');
     },
     onClickMyInfo() {
-      // TODO: 내 정보를 보여주는 창으로 이동해야함.
-      this.$router.push('/');
+      //this.$router.push('/');
     },
     onClickLogout() {
       const authHandler = useAuthHandler();
       authHandler.logout();
+      this.$router.push('/');
     },
     userMenuHoveredChanged(hover: boolean) {
       if (!hover) {

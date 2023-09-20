@@ -293,6 +293,7 @@ export default defineComponent({
     .password-wrapper,
     .name-wrapper {
       position: relative;
+      padding-top: 0.5rem;
 
       input {
         border: none;

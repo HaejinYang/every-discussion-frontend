@@ -12,7 +12,7 @@
     <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
       <RegisterForm
         @switch-login-form="switchLoginForm"
-        @register-success="isShowLoginForm = true"
+        @register-success="switchLoginForm"
         v-show="!isShowLoginForm"
       />
       <LoginForm
@@ -32,21 +32,24 @@ import { RouterView } from 'vue-router';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
+import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
 
 export default defineComponent({
   name: 'App',
   components: { RegisterForm, LoginForm, Aside, Header, RouterView },
   computed: {
     isDisabledWheel() {
-      const mainWheelHandler = useMainWheelHandler();
-      return mainWheelHandler.isDisabled;
+      const handler = useMainWheelHandler();
+      return handler.isDisabled;
+    },
+    isShowLoginForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShowLogin;
+    },
+    isShowAuthForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShowAuth;
     }
-  },
-  data() {
-    return {
-      isShowLoginForm: true,
-      isShowAuthForm: false
-    };
   },
   methods: {
     handleWheel(event: Event) {
@@ -57,16 +60,20 @@ export default defineComponent({
       }
     },
     switchLoginForm() {
-      this.isShowLoginForm = true;
+      const handler = useShowAuthFormHandler();
+      handler.showLogin();
     },
     switchRegisterForm() {
-      this.isShowLoginForm = false;
+      const handler = useShowAuthFormHandler();
+      handler.hideLogin();
     },
     showAuthForm() {
-      this.isShowAuthForm = true;
+      const handler = useShowAuthFormHandler();
+      handler.showAuth();
     },
     hideAuthForm() {
-      this.isShowAuthForm = false;
+      const handler = useShowAuthFormHandler();
+      handler.hideAuth();
     }
   }
 });

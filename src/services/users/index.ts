@@ -39,6 +39,12 @@ interface CheckDuplicatedUserParam {
   name?: string;
 }
 
+interface UserChangeParam {
+  name: string;
+  password: string;
+  password_confirmation: string;
+}
+
 class User {
   public static async create(registerInfo: UserRegisterParam) {
     const URI = '/api/auth/register';
@@ -87,7 +93,7 @@ class User {
       })
     });
 
-    throwErrorWhenResponseNotOk(response);
+    throwErrorWhenResponseNotOk(response, true);
 
     const result = await response.json();
     const user: UserItem = plainToInstance(UserItem, result.data);
@@ -115,6 +121,40 @@ class User {
     const user: UserItem = plainToInstance(UserItem, result.data);
 
     return user;
+  }
+
+  public static async update(info: Partial<UserChangeParam>) {
+    const authHandler = useAuthHandler();
+
+    const URI = '/api/user';
+    const response = await fetchApi(URI, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${authHandler.info.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(info)
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async delete(password: string) {
+    const authHandler = useAuthHandler();
+
+    const URI = '/api/user';
+    const response = await fetchApi(URI, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${authHandler.info.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password })
+    });
+
+    throwErrorWhenResponseNotOk(response);
   }
 }
 
