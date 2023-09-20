@@ -59,7 +59,12 @@
           </div>
         </div>
         <div :class="$style['item']">
-          <button :class="$style['submit-warning']">변경하기</button>
+          <button
+            :class="[$style['submit-warning'], canModifyPassword ? null : $style['can-modify']]"
+            @mousedown.left="onClickChangePassword"
+          >
+            변경하기
+          </button>
         </div>
       </div>
       <div :class="$style['content']" v-show="isSelectedQuit">
@@ -99,6 +104,7 @@ export default defineComponent({
       isPasswordShort: false,
       password: '',
       passwordConfirm: '',
+      canModifyPassword: false,
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -141,21 +147,26 @@ export default defineComponent({
           console.assert(false, 'can not match this select');
           break;
       }
+    },
+    onClickChangePassword() {
     }
   },
   created() {
     this.debouncedCheckPassword = debounce(() => {
+      this.canModifyPassword = false;
       if (this.password.length < 8 && this.password.length > 0) {
         this.isPasswordShort = true;
         return;
       }
 
-      if (
-        this.password === this.passwordConfirm ||
-        this.password.length === 0 ||
-        this.passwordConfirm.length === 0
-      ) {
+      if (this.password.length === 0 || this.passwordConfirm.length === 0) {
         this.isPasswordSame = true;
+        return;
+      }
+
+      if (this.password === this.passwordConfirm) {
+        this.isPasswordSame = true;
+        this.canModifyPassword = true;
         return;
       }
 
@@ -290,5 +301,10 @@ export default defineComponent({
 .selected {
   color: white !important;
   font-weight: bold;
+}
+
+.can-modify {
+  filter: opacity(50%);
+  pointer-events: none;
 }
 </style>
