@@ -72,16 +72,28 @@
       </div>
       <div :class="$style['content']" v-show="isSelectedQuit">
         <h2>회원 탈퇴</h2>
-        <div :class="$style['item']">
-          <span :class="$style['label']">계정</span>
-          <span :class="$style['value']">crmerry@gmail.com</span>
+        <div :class="$style['item']" :style="{ marginBottom: '1rem' }">
+          <small>
+            작성한 게시물, 댓글은 자동으로 삭제되지 않습니다. 탈퇴하면 계정을 복구할 수 없습니다
+          </small>
         </div>
         <div :class="$style['item']">
-          <span :class="$style['label']">이름</span>
-          <span :class="$style['value']">씨알메리</span>
+          <div :class="$style['password-wrapper']">
+            <input
+              :class="$style.password"
+              type="password"
+              id="password-check"
+              placeholder=" "
+              :value="passwordCheck"
+              @input="(event) => (passwordCheck = (event.target as HTMLInputElement).value)"
+            />
+            <label for="password-check"><small>비밀번호</small></label>
+          </div>
         </div>
         <div :class="$style['item']">
-          <button>수정하기</button>
+          <button :class="[$style['submit-warning']]" @mousedown.left="onClickQuit">
+            탈퇴하기
+          </button>
         </div>
       </div>
     </div>
@@ -111,6 +123,7 @@ export default defineComponent({
       passwordConfirm: '',
       canModifyPassword: false,
       isFailChangePassword: false,
+      passwordCheck: '',
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -140,6 +153,9 @@ export default defineComponent({
   methods: {
     onClickMenu(event: Event) {
       const select: string = (event.target as HTMLElement).getAttribute('data-select');
+      if (!select) {
+        return;
+      }
 
       switch (select) {
         case 'profile':
@@ -165,6 +181,10 @@ export default defineComponent({
         this.isFailChangePassword = true;
         reportError(getErrorMessage(e));
       }
+    },
+
+    onClickQuit() {
+      console.log('탈퇴');
     }
   },
   created() {
@@ -245,6 +265,9 @@ export default defineComponent({
         padding: 0.5rem;
         width: 100%;
 
+        > * {
+        }
+
         .label {
           min-width: 120px;
           font-weight: bold;
@@ -286,8 +309,10 @@ export default defineComponent({
 
         .password-wrapper {
           position: relative;
-          width: 100%;
           padding-top: 0.5rem;
+          width: 90%;
+          padding-bottom: 0.5rem;
+          border-bottom: $border-weak-line;
 
           input {
             border: none;
