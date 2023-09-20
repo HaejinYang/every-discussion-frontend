@@ -230,6 +230,7 @@ export default defineComponent({
     .email-wrapper,
     .password-wrapper {
       position: relative;
+      padding-top: 0.5rem;
 
       input {
         border: none;
