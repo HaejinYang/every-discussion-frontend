@@ -11,8 +11,8 @@ function reportError(message: string) {
   console.error(message);
 }
 
-function throwErrorWhenResponseNotOk(response: Response) {
-  if (response.status === 401) {
+function throwErrorWhenResponseNotOk(response: Response, ignoreAuth = false) {
+  if (!ignoreAuth && response.status === 401) {
     window.location.href = 'error/인증이 필요합니다';
   }
 

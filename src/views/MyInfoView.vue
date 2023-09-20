@@ -66,6 +66,9 @@
             변경하기
           </button>
         </div>
+        <div :class="$style['item']">
+          <small>{{ isFailChangePassword ? '비밀번호를 다시확인해주세요' : '' }}</small>
+        </div>
       </div>
       <div :class="$style['content']" v-show="isSelectedQuit">
         <h2>회원 탈퇴</h2>
@@ -88,6 +91,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
+import { User } from '@/services/users';
+import { getErrorMessage } from '@/util/error';
 
 enum eSelectMenu {
   Profile = 0,
@@ -105,6 +110,7 @@ export default defineComponent({
       password: '',
       passwordConfirm: '',
       canModifyPassword: false,
+      isFailChangePassword: false,
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -122,10 +128,12 @@ export default defineComponent({
   watch: {
     password() {
       this.isPasswordShort = false;
+      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     },
     passwordConfirm() {
       this.isPasswordSame = true;
+      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     }
   },
@@ -148,7 +156,15 @@ export default defineComponent({
           break;
       }
     },
-    onClickChangePassword() {
+    async onClickChangePassword() {
+      try {
+        console.log('change password');
+        await User.update({ password: this.password, password_confirmation: this.passwordConfirm });
+        this.$router.push('/');
+      } catch (e) {
+        this.isFailChangePassword = true;
+        reportError(getErrorMessage(e));
+      }
     }
   },
   created() {
@@ -246,12 +262,26 @@ export default defineComponent({
           padding: 0.5rem;
         }
 
+        > small {
+          color: red;
+        }
+
         .submit-modify {
           background-color: $primary-color;
+          cursor: pointer;
+
+          &:hover {
+            filter: brightness(85%);
+          }
         }
 
         .submit-warning {
           background-color: $weak-caution-color;
+          cursor: pointer;
+
+          &:hover {
+            filter: brightness(85%);
+          }
         }
 
         .password-wrapper {
