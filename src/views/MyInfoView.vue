@@ -45,14 +45,12 @@
           >
             취소
           </button>
-          <button
-            :class="$style['submit-modify']"
-            v-if="isModifyMode"
-            f
-            @mousedown.left="onClickModifySubmit"
-          >
-            저장
-          </button>
+          <div :style="{ position: 'relative', width: '100%' }" v-if="isModifyMode">
+            <button :class="$style['submit-modify']" @mousedown.left="onClickModifySubmit">
+              {{ userInfoModifyMsg[userInfoModifyStep] }}
+            </button>
+            <WaitButton v-show="isUserInfoChanging" />
+          </div>
         </div>
       </div>
       <div :class="$style['content']" v-show="isSelectedPassword">
@@ -168,6 +166,8 @@ export default defineComponent({
       userEmail: '',
       passwordModifyStep: eProcess.Init as eProcess,
       passwordModifyMsg: ['변경하기', '', '변경 성공', '변경 실패'],
+      userInfoModifyStep: eProcess.Init as eProcess,
+      userInfoModifyMsg: ['수정하기', '', '수정하기', '수정 실패'],
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -186,6 +186,9 @@ export default defineComponent({
     },
     isPasswordChanging() {
       return this.passwordModifyStep === eProcess.Wait;
+    },
+    isUserInfoChanging() {
+      return this.userInfoModifyStep === eProcess.Wait;
     }
   },
   watch: {
@@ -254,15 +257,23 @@ export default defineComponent({
     },
     onClickModify() {
       this.isModifyMode = true;
+      this.userInfoModifyStep = eProcess.Init;
     },
     async onClickModifySubmit() {
+      if (this.userInfoModifyStep === eProcess.Wait) {
+        return;
+      }
+
+      this.userInfoModifyStep = eProcess.Wait;
       const authHandler = useAuthHandler();
 
       try {
         await User.update({ name: this.userName });
+        this.userInfoModifyStep = eProcess.Success;
       } catch (e) {
         reportError(getErrorMessage(e));
         this.userName = authHandler.info.name;
+        this.userInfoModifyStep = eProcess.Fail;
       } finally {
         this.isModifyMode = false;
         console.log(authHandler.info.name);
