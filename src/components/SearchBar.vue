@@ -25,6 +25,10 @@ export default defineComponent({
     placeholder: {
       type: String,
       required: true
+    },
+    ignoreEmptyKeyword: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -47,7 +51,7 @@ export default defineComponent({
   },
   created() {
     this.debouncedSearch = debounce(async (keyword: string) => {
-      if (keyword.length < 1) {
+      if (keyword.length < 1 && this.ignoreEmptyKeyword) {
         return;
       }
 
