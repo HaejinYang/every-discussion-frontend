@@ -1,11 +1,23 @@
 <template>
   <div :class="$style.container">
-    <div v-for="topic in topics" :key="topic.id" @mousedown.left="switchToDiscussion(topic.id)">
-      <p>
-        {{ topic.title }}
-      </p>
-      <p>참여자수 {{ topic.participantsCount }}</p>
-      <p>의견수 {{ topic.opinionsCount }}</p>
+    <div
+      :class="$style.wrapper"
+      v-for="topic in topics"
+      :key="topic.id"
+      @mousedown.left="switchToDiscussion(topic.id)"
+    >
+      <div :class="$style['item']">
+        <span :class="$style['label']">주제</span>
+        <span :class="$style['value']">{{ topic.title }}</span>
+      </div>
+      <div :class="$style['item']">
+        <span :class="$style['label']">참여자수</span>
+        <span :class="$style['value']">{{ topic.participantsCount }}</span>
+      </div>
+      <div :class="$style['item']">
+        <span :class="$style['label']">의견수</span>
+        <span :class="$style['value']">{{ topic.opinionsCount }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -14,9 +26,12 @@
 import { defineComponent } from 'vue';
 import type { TopicItem } from '@/services/topics';
 import { Topic } from '@/services/topics';
+import { useAuthHandler } from '@/stores/auth';
+import SearchBar from '@/components/SearchBar.vue';
 
 export default defineComponent({
   name: 'MyTopicsView',
+  components: { SearchBar },
   data() {
     return {
       topics: [] as TopicItem[]
@@ -28,7 +43,15 @@ export default defineComponent({
     }
   },
   created() {
-    const userId = 1;
+    const authHandler = useAuthHandler();
+
+    if (!authHandler.isAuth) {
+      this.$router.push('/error/인증이 필요합니다.');
+
+      return;
+    }
+
+    const userId = authHandler.info.id;
     Topic.fetchByUser(userId).then((topics: TopicItem[]) => {
       this.topics = topics;
     });
@@ -39,24 +62,35 @@ export default defineComponent({
 <style module lang="scss">
 .container {
   display: flex;
-  flex-flow: row wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-  > div {
-    max-width: 250px;
-    min-width: 200px;
+  .wrapper {
+    width: 450px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1rem;
     margin: 1rem;
-    box-shadow: $box-shadow-normal;
+    box-shadow: $box-shadow-default;
+    border: $border-default-line;
 
-    > p {
-      border-bottom: $border-weak-line;
-      width: 100%;
-      text-align: left;
+    .item {
+      position: relative;
+      display: flex;
       padding: 0.5rem;
+      width: 100%;
+
+      .label {
+        min-width: 120px;
+        font-weight: bold;
+      }
+
+      .value {
+        min-width: 200px;
+      }
     }
 
     &:hover {
