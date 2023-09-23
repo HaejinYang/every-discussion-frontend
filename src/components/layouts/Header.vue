@@ -33,7 +33,6 @@
         >
           <ul>
             <li @mousedown.lef="moveToMyInfo">프로필</li>
-            <li>변경</li>
             <li @mousedown.left="onClickLogout">로그아웃</li>
           </ul>
         </div>

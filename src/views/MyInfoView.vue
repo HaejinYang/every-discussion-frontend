@@ -18,14 +18,39 @@
         <h2>프로필</h2>
         <div :class="$style['item']">
           <span :class="$style['label']">계정</span>
-          <span :class="$style['value']">crmerry@gmail.com</span>
+          <span :class="$style['value']">{{ userEmail }}</span>
         </div>
         <div :class="$style['item']">
           <span :class="$style['label']">이름</span>
-          <span :class="$style['value']">씨알메리</span>
+          <span :class="$style['value']" v-if="!isModifyMode">{{ userName }}</span>
+          <input
+            type="text"
+            v-if="isModifyMode"
+            :value="userName"
+            @input="(event) => (userName = (event.target as HTMLInputElement).value)"
+          />
         </div>
         <div :class="$style['item']">
-          <button :class="$style['submit-modify']">수정하기</button>
+          <button
+            :class="$style['submit-modify']"
+            v-if="!isModifyMode"
+            @mousedown.left="onClickModify"
+          >
+            수정하기
+          </button>
+          <button
+            :class="[$style['submit-modify'], $style['submit-cancel']]"
+            v-if="isModifyMode"
+            @mousedown.left="onClickModifyCancel"
+          >
+            취소
+          </button>
+          <div :style="{ position: 'relative', width: '100%' }" v-if="isModifyMode">
+            <button :class="$style['submit-modify']" @mousedown.left="onClickModifySubmit">
+              {{ userInfoModifyMsg[userInfoModifyStep] }}
+            </button>
+            <WaitButton v-show="isUserInfoChanging" />
+          </div>
         </div>
       </div>
       <div :class="$style['content']" v-show="isSelectedPassword">
@@ -63,8 +88,9 @@
             :class="[$style['submit-warning'], canModifyPassword ? null : $style['can-modify']]"
             @mousedown.left="onClickChangePassword"
           >
-            변경하기
+            {{ passwordModifyMsg[passwordModifyStep] }}
           </button>
+          <WaitButton v-show="isPasswordChanging" />
         </div>
         <div :class="$style['item']">
           <small>{{ isFailChangePassword ? '비밀번호를 다시확인해주세요' : '' }}</small>
@@ -86,14 +112,19 @@
               placeholder=" "
               :value="passwordCheck"
               @input="(event) => (passwordCheck = (event.target as HTMLInputElement).value)"
+              @mousedown.left="onClickQuitInput"
             />
-            <label for="password-check"><small>비밀번호</small></label>
+            <label for="password-check"><small>비밀번호 확인</small></label>
           </div>
         </div>
         <div :class="$style['item']">
           <button :class="[$style['submit-warning']]" @mousedown.left="onClickQuit">
-            탈퇴하기
+            {{ userQuitMsg[userQuitStep] }}
           </button>
+          <WaitButton v-show="isUserQuitProcessing" />
+        </div>
+        <div :class="$style['item']">
+          <small>{{ isFailQuit ? '비밀번호를 다시확인해주세요' : '' }}</small>
         </div>
       </div>
     </div>
@@ -106,6 +137,8 @@ import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { useAuthHandler } from '@/stores/auth';
+import * as events from 'events';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eSelectMenu {
   Profile = 0,
@@ -113,8 +146,16 @@ enum eSelectMenu {
   Quit = 2
 }
 
+enum eProcess {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3
+}
+
 export default defineComponent({
   name: 'MyInfoView',
+  components: { WaitButton },
   data() {
     return {
       selectedMenu: eSelectMenu.Profile as eSelectMenu,
@@ -123,12 +164,23 @@ export default defineComponent({
       password: '',
       passwordConfirm: '',
       canModifyPassword: false,
-      isFailChangePassword: false,
       passwordCheck: '',
+      isModifyMode: false,
+      userName: '',
+      userEmail: '',
+      passwordModifyStep: eProcess.Init as eProcess,
+      passwordModifyMsg: ['변경하기', '', '변경 성공', '변경 실패'],
+      userInfoModifyStep: eProcess.Init as eProcess,
+      userInfoModifyMsg: ['수정하기', '', '수정하기', '수정 실패'],
+      userQuitStep: eProcess.Init as eProcess,
+      userQuitMsg: ['탈퇴하기', '', '탈퇴 성공', '탈퇴 실패'],
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
   computed: {
+    events() {
+      return events;
+    },
     isSelectedProfile() {
       return this.selectedMenu === eSelectMenu.Profile;
     },
@@ -137,17 +189,30 @@ export default defineComponent({
     },
     isSelectedQuit() {
       return this.selectedMenu === eSelectMenu.Quit;
+    },
+    isPasswordChanging() {
+      return this.passwordModifyStep === eProcess.Wait;
+    },
+    isUserInfoChanging() {
+      return this.userInfoModifyStep === eProcess.Wait;
+    },
+    isUserQuitProcessing() {
+      return this.userQuitStep === eProcess.Wait;
+    },
+    isFailQuit() {
+      return this.userQuitStep === eProcess.Fail;
+    },
+    isFailChangePassword() {
+      return this.passwordModifyStep === eProcess.Fail;
     }
   },
   watch: {
     password() {
       this.isPasswordShort = false;
-      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     },
     passwordConfirm() {
       this.isPasswordSame = true;
-      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     }
   },
@@ -157,6 +222,11 @@ export default defineComponent({
       if (!select) {
         return;
       }
+
+      this.userQuitStep = eProcess.Init;
+      this.userInfoModifyStep = eProcess.Init;
+      this.passwordModifyStep = eProcess.Init;
+      this.onClickModifyCancel();
 
       switch (select) {
         case 'profile':
@@ -174,32 +244,87 @@ export default defineComponent({
       }
     },
     async onClickChangePassword() {
+      if (this.passwordModifyStep === eProcess.Wait) {
+        return;
+      }
+
+      this.passwordModifyStep = eProcess.Wait;
       try {
         console.log('change password');
         await User.update({ password: this.password, password_confirmation: this.passwordConfirm });
-        this.$router.push('/');
+        this.passwordModifyStep = eProcess.Success;
+        setTimeout(() => {
+          this.$router.push('/');
+        }, 1000);
       } catch (e) {
-        this.isFailChangePassword = true;
         reportError(getErrorMessage(e));
+        this.passwordModifyStep = eProcess.Fail;
       }
     },
-
     async onClickQuit() {
-      console.log('탈퇴');
+      if (this.userQuitStep === eProcess.Wait) {
+        return;
+      }
+
+      this.userQuitStep = eProcess.Wait;
+
       try {
         await User.delete(this.passwordCheck);
 
         const authHandler = useAuthHandler();
         authHandler.delete();
+        this.userQuitStep = eProcess.Success;
+
         this.$router.push('/');
       } catch (e) {
         reportError(getErrorMessage(e));
+        this.userQuitStep = eProcess.Fail;
+      }
+    },
+    onClickModify() {
+      this.isModifyMode = true;
+      this.userInfoModifyStep = eProcess.Init;
+    },
+    async onClickModifySubmit() {
+      if (this.userInfoModifyStep === eProcess.Wait) {
+        return;
+      }
+
+      this.userInfoModifyStep = eProcess.Wait;
+      const authHandler = useAuthHandler();
+
+      try {
+        await User.update({ name: this.userName });
+        this.userInfoModifyStep = eProcess.Success;
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.userName = authHandler.info.name;
+        this.userInfoModifyStep = eProcess.Fail;
+      } finally {
+        this.isModifyMode = false;
+        console.log(authHandler.info.name);
+      }
+    },
+    onClickModifyCancel() {
+      const authHandler = useAuthHandler();
+      this.userName = authHandler.info.name;
+      this.isModifyMode = false;
+    },
+    onClickQuitInput() {
+      if (this.userQuitStep > eProcess.Wait) {
+        this.userQuitStep = eProcess.Init;
       }
     }
   },
   created() {
+    const authHandler = useAuthHandler();
+    this.userName = authHandler.info.name;
+    this.userEmail = authHandler.info.email;
+
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;
+      this.passwordModifyStep = eProcess.Init;
+
       if (this.password.length < 8 && this.password.length > 0) {
         this.isPasswordShort = true;
         return;
@@ -230,8 +355,7 @@ export default defineComponent({
   align-items: center;
 
   .wrapper {
-    min-width: 400px;
-    max-width: 50%;
+    width: 450px;
 
     .menu {
       border: $border-default-line;
@@ -271,6 +395,7 @@ export default defineComponent({
       }
 
       .item {
+        position: relative;
         display: flex;
         padding: 0.5rem;
         width: 100%;
@@ -288,6 +413,7 @@ export default defineComponent({
 
         button {
           width: 100%;
+          min-height: 2.2rem;
           border: none;
           border-radius: 5px;
           color: white;
@@ -306,6 +432,14 @@ export default defineComponent({
           &:hover {
             filter: brightness(85%);
           }
+        }
+
+        .submit-cancel {
+          background-color: white;
+          margin-right: 1rem;
+          color: $primary-color;
+          border: $border-default-line;
+          border-color: $primary-color;
         }
 
         .submit-warning {

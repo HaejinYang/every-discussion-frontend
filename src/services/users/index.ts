@@ -123,7 +123,7 @@ class User {
     return user;
   }
 
-  public static async update(info: Partial<UserChangeParam>) {
+  public static async update(updates: Partial<UserChangeParam>) {
     const authHandler = useAuthHandler();
 
     const URI = '/api/user';
@@ -134,10 +134,14 @@ class User {
         Authorization: `Bearer ${authHandler.info.token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(info)
+      body: JSON.stringify(updates)
     });
 
     throwErrorWhenResponseNotOk(response);
+
+    if ('name' in updates) {
+      authHandler.update(updates);
+    }
   }
 
   public static async delete(password: string) {
