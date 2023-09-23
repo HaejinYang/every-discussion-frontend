@@ -90,8 +90,9 @@
             :class="[$style['submit-warning'], canModifyPassword ? null : $style['can-modify']]"
             @mousedown.left="onClickChangePassword"
           >
-            변경하기
+            {{ passwordModifyMsg[passwordModifyStep] }}
           </button>
+          <WaitButton v-show="isPasswordChanging" />
         </div>
         <div :class="$style['item']">
           <small>{{ isFailChangePassword ? '비밀번호를 다시확인해주세요' : '' }}</small>
@@ -134,6 +135,7 @@ import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { useAuthHandler } from '@/stores/auth';
 import * as events from 'events';
+import WaitButton from '@/components/buttons/WaitButton.vue';
 
 enum eSelectMenu {
   Profile = 0,
@@ -141,8 +143,16 @@ enum eSelectMenu {
   Quit = 2
 }
 
+enum eProcess {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3
+}
+
 export default defineComponent({
   name: 'MyInfoView',
+  components: { WaitButton },
   data() {
     return {
       selectedMenu: eSelectMenu.Profile as eSelectMenu,
@@ -156,6 +166,8 @@ export default defineComponent({
       isModifyMode: false,
       userName: '',
       userEmail: '',
+      passwordModifyStep: eProcess.Init as eProcess,
+      passwordModifyMsg: ['변경하기', '', '변경 성공', '변경 실패'],
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -171,6 +183,9 @@ export default defineComponent({
     },
     isSelectedQuit() {
       return this.selectedMenu === eSelectMenu.Quit;
+    },
+    isPasswordChanging() {
+      return this.passwordModifyStep === eProcess.Wait;
     }
   },
   watch: {
@@ -208,13 +223,22 @@ export default defineComponent({
       }
     },
     async onClickChangePassword() {
+      if (this.passwordModifyStep === eProcess.Wait) {
+        return;
+      }
+
+      this.passwordModifyStep = eProcess.Wait;
       try {
         console.log('change password');
         await User.update({ password: this.password, password_confirmation: this.passwordConfirm });
-        this.$router.push('/');
+        this.passwordModifyStep = eProcess.Success;
+        setTimeout(() => {
+          this.$router.push('/');
+        }, 1000);
       } catch (e) {
         this.isFailChangePassword = true;
         reportError(getErrorMessage(e));
+        this.passwordModifyStep = eProcess.Fail;
       }
     },
     async onClickQuit() {
@@ -257,6 +281,8 @@ export default defineComponent({
 
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;
+      this.passwordModifyStep = eProcess.Init;
+
       if (this.password.length < 8 && this.password.length > 0) {
         this.isPasswordShort = true;
         return;
@@ -327,6 +353,7 @@ export default defineComponent({
       }
 
       .item {
+        position: relative;
         display: flex;
         padding: 0.5rem;
         width: 100%;
@@ -344,6 +371,7 @@ export default defineComponent({
 
         button {
           width: 100%;
+          min-height: 2.2rem;
           border: none;
           border-radius: 5px;
           color: white;
