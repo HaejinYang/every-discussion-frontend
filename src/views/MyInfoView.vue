@@ -112,14 +112,19 @@
               placeholder=" "
               :value="passwordCheck"
               @input="(event) => (passwordCheck = (event.target as HTMLInputElement).value)"
+              @mousedown.left="onClickQuitInput"
             />
             <label for="password-check"><small>비밀번호 확인</small></label>
           </div>
         </div>
         <div :class="$style['item']">
           <button :class="[$style['submit-warning']]" @mousedown.left="onClickQuit">
-            탈퇴하기
+            {{ userQuitMsg[userQuitStep] }}
           </button>
+          <WaitButton v-show="isUserQuitProcessing" />
+        </div>
+        <div :class="$style['item']">
+          <small>{{ isFailQuit ? '비밀번호를 다시확인해주세요' : '' }}</small>
         </div>
       </div>
     </div>
@@ -159,7 +164,6 @@ export default defineComponent({
       password: '',
       passwordConfirm: '',
       canModifyPassword: false,
-      isFailChangePassword: false,
       passwordCheck: '',
       isModifyMode: false,
       userName: '',
@@ -168,6 +172,8 @@ export default defineComponent({
       passwordModifyMsg: ['변경하기', '', '변경 성공', '변경 실패'],
       userInfoModifyStep: eProcess.Init as eProcess,
       userInfoModifyMsg: ['수정하기', '', '수정하기', '수정 실패'],
+      userQuitStep: eProcess.Init as eProcess,
+      userQuitMsg: ['탈퇴하기', '', '탈퇴 성공', '탈퇴 실패'],
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
@@ -189,17 +195,24 @@ export default defineComponent({
     },
     isUserInfoChanging() {
       return this.userInfoModifyStep === eProcess.Wait;
+    },
+    isUserQuitProcessing() {
+      return this.userQuitStep === eProcess.Wait;
+    },
+    isFailQuit() {
+      return this.userQuitStep === eProcess.Fail;
+    },
+    isFailChangePassword() {
+      return this.passwordModifyStep === eProcess.Fail;
     }
   },
   watch: {
     password() {
       this.isPasswordShort = false;
-      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     },
     passwordConfirm() {
       this.isPasswordSame = true;
-      this.isFailChangePassword = false;
       this.debouncedCheckPassword();
     }
   },
@@ -209,6 +222,11 @@ export default defineComponent({
       if (!select) {
         return;
       }
+
+      this.userQuitStep = eProcess.Init;
+      this.userInfoModifyStep = eProcess.Init;
+      this.passwordModifyStep = eProcess.Init;
+      this.onClickModifyCancel();
 
       switch (select) {
         case 'profile':
@@ -239,20 +257,28 @@ export default defineComponent({
           this.$router.push('/');
         }, 1000);
       } catch (e) {
-        this.isFailChangePassword = true;
         reportError(getErrorMessage(e));
         this.passwordModifyStep = eProcess.Fail;
       }
     },
     async onClickQuit() {
+      if (this.userQuitStep === eProcess.Wait) {
+        return;
+      }
+
+      this.userQuitStep = eProcess.Wait;
+
       try {
         await User.delete(this.passwordCheck);
 
         const authHandler = useAuthHandler();
         authHandler.delete();
+        this.userQuitStep = eProcess.Success;
+
         this.$router.push('/');
       } catch (e) {
         reportError(getErrorMessage(e));
+        this.userQuitStep = eProcess.Fail;
       }
     },
     onClickModify() {
@@ -283,6 +309,11 @@ export default defineComponent({
       const authHandler = useAuthHandler();
       this.userName = authHandler.info.name;
       this.isModifyMode = false;
+    },
+    onClickQuitInput() {
+      if (this.userQuitStep > eProcess.Wait) {
+        this.userQuitStep = eProcess.Init;
+      }
     }
   },
   created() {
