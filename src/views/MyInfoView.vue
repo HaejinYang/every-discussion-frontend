@@ -18,14 +18,41 @@
         <h2>프로필</h2>
         <div :class="$style['item']">
           <span :class="$style['label']">계정</span>
-          <span :class="$style['value']">crmerry@gmail.com</span>
+          <span :class="$style['value']">{{ userEmail }}</span>
         </div>
         <div :class="$style['item']">
           <span :class="$style['label']">이름</span>
-          <span :class="$style['value']">씨알메리</span>
+          <span :class="$style['value']" v-if="!isModifyMode">{{ userName }}</span>
+          <input
+            type="text"
+            v-if="isModifyMode"
+            :value="userName"
+            @input="(event) => (userName = (event.target as HTMLInputElement).value)"
+          />
         </div>
         <div :class="$style['item']">
-          <button :class="$style['submit-modify']">수정하기</button>
+          <button
+            :class="$style['submit-modify']"
+            v-if="!isModifyMode"
+            @mousedown.left="onClickModify"
+          >
+            수정하기
+          </button>
+          <button
+            :class="[$style['submit-modify'], $style['submit-cancel']]"
+            v-if="isModifyMode"
+            @mousedown.left="onClickModifyCancel"
+          >
+            취소
+          </button>
+          <button
+            :class="$style['submit-modify']"
+            v-if="isModifyMode"
+            f
+            @mousedown.left="onClickModifySubmit"
+          >
+            저장
+          </button>
         </div>
       </div>
       <div :class="$style['content']" v-show="isSelectedPassword">
@@ -87,7 +114,7 @@
               :value="passwordCheck"
               @input="(event) => (passwordCheck = (event.target as HTMLInputElement).value)"
             />
-            <label for="password-check"><small>비밀번호</small></label>
+            <label for="password-check"><small>비밀번호 확인</small></label>
           </div>
         </div>
         <div :class="$style['item']">
@@ -106,6 +133,7 @@ import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { useAuthHandler } from '@/stores/auth';
+import * as events from 'events';
 
 enum eSelectMenu {
   Profile = 0,
@@ -125,10 +153,16 @@ export default defineComponent({
       canModifyPassword: false,
       isFailChangePassword: false,
       passwordCheck: '',
+      isModifyMode: false,
+      userName: '',
+      userEmail: '',
       debouncedCheckPassword: (...args: any[]): void => {}
     };
   },
   computed: {
+    events() {
+      return events;
+    },
     isSelectedProfile() {
       return this.selectedMenu === eSelectMenu.Profile;
     },
@@ -183,9 +217,7 @@ export default defineComponent({
         reportError(getErrorMessage(e));
       }
     },
-
     async onClickQuit() {
-      console.log('탈퇴');
       try {
         await User.delete(this.passwordCheck);
 
@@ -195,9 +227,34 @@ export default defineComponent({
       } catch (e) {
         reportError(getErrorMessage(e));
       }
+    },
+    onClickModify() {
+      this.isModifyMode = true;
+    },
+    async onClickModifySubmit() {
+      const authHandler = useAuthHandler();
+
+      try {
+        await User.update({ name: this.userName });
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.userName = authHandler.info.name;
+      } finally {
+        this.isModifyMode = false;
+        console.log(authHandler.info.name);
+      }
+    },
+    onClickModifyCancel() {
+      const authHandler = useAuthHandler();
+      this.userName = authHandler.info.name;
+      this.isModifyMode = false;
     }
   },
   created() {
+    const authHandler = useAuthHandler();
+    this.userName = authHandler.info.name;
+    this.userEmail = authHandler.info.email;
+
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;
       if (this.password.length < 8 && this.password.length > 0) {
@@ -230,8 +287,7 @@ export default defineComponent({
   align-items: center;
 
   .wrapper {
-    min-width: 400px;
-    max-width: 50%;
+    width: 450px;
 
     .menu {
       border: $border-default-line;
@@ -306,6 +362,14 @@ export default defineComponent({
           &:hover {
             filter: brightness(85%);
           }
+        }
+
+        .submit-cancel {
+          background-color: white;
+          margin-right: 1rem;
+          color: $primary-color;
+          border: $border-default-line;
+          border-color: $primary-color;
         }
 
         .submit-warning {

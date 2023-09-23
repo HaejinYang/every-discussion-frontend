@@ -28,6 +28,12 @@ export const useAuthHandler = defineStore('auth-handler', {
     },
     delete() {
       this.isAuth = false;
+    },
+    update(updates: Partial<UserItem>) {
+      this.info = {
+        ...this.info,
+        ...updates
+      };
     }
   }
 });
