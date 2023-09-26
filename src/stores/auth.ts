@@ -5,7 +5,7 @@ export const useAuthHandler = defineStore('auth-handler', {
   state: () => {
     return {
       isAuth: false,
-      info: {
+      user: {
         id: -1,
         email: '',
         token: '',
@@ -14,11 +14,11 @@ export const useAuthHandler = defineStore('auth-handler', {
     };
   },
   actions: {
-    login(info: UserItem) {
+    login(user: UserItem) {
       this.isAuth = true;
-      this.info = info;
+      this.user = user;
 
-      console.log('login', info);
+      console.log('login', user);
     },
     logout() {
       this.isAuth = false;
@@ -30,8 +30,8 @@ export const useAuthHandler = defineStore('auth-handler', {
       this.isAuth = false;
     },
     update(updates: Partial<UserItem>) {
-      this.info = {
-        ...this.info,
+      this.user = {
+        ...this.user,
         ...updates
       };
     }

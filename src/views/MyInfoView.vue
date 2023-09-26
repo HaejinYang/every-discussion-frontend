@@ -298,16 +298,16 @@ export default defineComponent({
         this.userInfoModifyStep = eProcess.Success;
       } catch (e) {
         reportError(getErrorMessage(e));
-        this.userName = authHandler.info.name;
+        this.userName = authHandler.user.name;
         this.userInfoModifyStep = eProcess.Fail;
       } finally {
         this.isModifyMode = false;
-        console.log(authHandler.info.name);
+        console.log(authHandler.user.name);
       }
     },
     onClickModifyCancel() {
       const authHandler = useAuthHandler();
-      this.userName = authHandler.info.name;
+      this.userName = authHandler.user.name;
       this.isModifyMode = false;
     },
     onClickQuitInput() {
@@ -318,8 +318,8 @@ export default defineComponent({
   },
   created() {
     const authHandler = useAuthHandler();
-    this.userName = authHandler.info.name;
-    this.userEmail = authHandler.info.email;
+    this.userName = authHandler.user.name;
+    this.userEmail = authHandler.user.email;
 
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;

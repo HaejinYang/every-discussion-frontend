@@ -69,7 +69,7 @@ export default defineComponent({
       return;
     }
 
-    const userId = authHandler.info.id;
+    const userId = authHandler.user.id;
     Topic.fetchByUser(userId).then((topics: TopicItem[]) => {
       this.topics = topics;
       this.displayTopics = this.topics;
