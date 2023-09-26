@@ -19,7 +19,6 @@ export default defineComponent({
   },
   computed: {
     currentPoision() {
-      console.log(this.position);
       if (this.position === 'left') {
         return this.$style['left'];
       }

@@ -43,13 +43,6 @@ class OpinionWithReferenceItem extends OpinionData {
   referred: OpinionData[];
 }
 
-interface RegisterOpinion {
-  topicId: number;
-  title: string;
-  content: string;
-  agreeingType: AgreeingType;
-}
-
 class Opinion {
   public static async fetch(opinionId: number) {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
@@ -85,38 +78,6 @@ class Opinion {
     const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
     return opinions;
   }
-
-  public static async fetchFromTopicByUser(topicId: number, userId: number) {
-    const response = await fetchApi(`/api/users/${userId}/topics/${topicId}/opinions`, {
-      method: 'GET',
-      credentials: 'include'
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    const result = await response.json();
-    const opinions: OpinionWithReferenceItem[] = plainToInstance(
-      OpinionWithReferenceItem,
-      <any[]>result.data
-    );
-
-    return opinions;
-  }
-
-  public static async create(opinion: RegisterOpinion) {
-    const response = await fetchApi('/api/opinions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(opinion)
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    return true;
-  }
 }
 
-export { type OpinionData, type AgreeingType, type OpinionWithReferenceItem, Opinion };
+export { type OpinionData, type AgreeingType, OpinionWithReferenceItem, Opinion };
