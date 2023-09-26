@@ -146,8 +146,8 @@ export default defineComponent({
       .user-info {
         margin: 0.5rem;
         padding: 1rem;
-        box-shadow: $box-shadow-default;
-        border: $border-default-line;
+        box-shadow: $box-shadow-normal;
+        border: $border-normal-line;
 
         > p {
         }

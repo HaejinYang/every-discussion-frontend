@@ -102,7 +102,7 @@ export default defineComponent({
 
   .register-form {
     margin-top: 100px;
-    border: $border-weak-line;
+    border: $border-normal-line;
     padding: 1rem;
     width: 400px;
 
@@ -125,13 +125,13 @@ export default defineComponent({
 
     .topic-name {
       width: 100%;
-      border: $border-normal-line;
+      border: $border-weak-line;
       padding: 0.5rem;
     }
 
     .topic-description {
       width: 100%;
-      border: $border-normal-line;
+      border: $border-weak-line;
       padding: 0.5rem;
     }
 

@@ -153,8 +153,8 @@ export default defineComponent({
     align-items: center;
     padding: 1rem;
     margin: 1rem;
-    box-shadow: $box-shadow-default;
-    border: $border-default-line;
+    box-shadow: $box-shadow-normal;
+    border: $border-normal-line;
 
     .item {
       position: relative;

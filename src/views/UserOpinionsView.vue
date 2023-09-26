@@ -130,7 +130,13 @@ export default defineComponent({
     display: flex;
     justify-content: space-around;
     padding: 1rem;
+    border: $border-normal-line;
     box-shadow: $box-shadow-normal;
+    margin: 1rem;
+
+    > * {
+      border: $border-weak-line;
+    }
 
     .topic-info {
       display: flex;
@@ -148,16 +154,15 @@ export default defineComponent({
     .opinions-wrapper {
       overflow-y: scroll;
       max-height: 200px;
-      box-shadow: $box-shadow-normal;
 
       .opinions {
         max-width: 300px;
         padding: 1rem;
-        box-shadow: $box-shadow-normal;
 
         > p {
           padding: 1rem;
           border-bottom: $border-weak-line;
+          border: $border-weak-line;
 
           &:last-child {
             display: flex;
@@ -171,10 +176,11 @@ export default defineComponent({
                 color: white;
                 padding: 0.5rem;
                 border-radius: 5px;
+                font-weight: bold;
 
                 &:hover {
                   cursor: pointer;
-                  box-shadow: $box-shadow-strong;
+                  filter: brightness(85%);
                 }
               }
             }
