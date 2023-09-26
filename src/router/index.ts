@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import DiscussionView from '@/views/DiscussionView.vue';
-import MyTopicsView from '@/views/MyTopicsView.vue';
-import MyOpinionsView from '@/views/MyOpinionsView.vue';
-import RegisterTopicView from '@/views/RegisterTopicView.vue';
-import MyInfoView from '@/views/MyInfoView.vue';
 import ErrorView from '@/views/ErrorView.vue';
 import { useAuthHandler } from '@/stores/auth';
 import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import TopicRegisterView from '@/views/TopicRegisterView.vue';
+import UserTopicsView from '@/views/UserTopicsView.vue';
+import UserProfileView from '@/views/UserProfileView.vue';
+import UserOpinionsView from '@/views/UserOpinionsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,22 +26,22 @@ const router = createRouter({
     {
       path: '/user/topics',
       name: 'user-topics',
-      component: MyTopicsView
+      component: UserTopicsView
     },
     {
       path: '/user/opinions',
       name: 'user-opinions',
-      component: MyOpinionsView
+      component: UserOpinionsView
     },
     {
       path: '/topic/register',
       name: 'topic-register',
-      component: RegisterTopicView
+      component: TopicRegisterView
     },
     {
       path: '/user/profile',
       name: 'user-profile',
-      component: MyInfoView
+      component: UserProfileView
     },
     {
       path: '/error/:msg',
