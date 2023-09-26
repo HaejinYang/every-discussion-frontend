@@ -6,6 +6,7 @@
         v-for="(opinion, index) in referredOpinions"
         :key="opinion.id"
       >
+        <p>참조의견</p>
         <fieldset>
           <legend>의견 {{ index + 1 }}</legend>
           <fieldset>
@@ -43,9 +44,13 @@ export default defineComponent({
     li {
       list-style: none;
       padding: 0.5rem;
+      color: white;
+
+      > p {
+        text-align: center;
+      }
 
       fieldset {
-        color: white;
         border: $border-weak-line;
         padding: 0.5rem;
 

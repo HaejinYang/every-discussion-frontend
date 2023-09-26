@@ -26,6 +26,7 @@
 import { defineComponent } from 'vue';
 import { Opinion, type OpinionData } from '@/services/opinions';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'Discussion',
@@ -63,13 +64,20 @@ export default defineComponent({
         opinion.title.includes(handler.filterKeyword)
       );
       this.displayedOpinions = [...filtered];
+    },
+    onClickOpinion(index: number, opinionId: number) {
+      const handler = useDiscussionHandler();
+      handler.displayOpinionDetailly(opinionId);
     }
   },
   async created() {
     const opinions = await Opinion.fetchFromTopic(this.topicId);
+    console.log(opinions);
     this.opinions = opinions.filter((opinion: OpinionData) => {
       return opinion.agreeType === this.agreeingType;
     });
+
+    this.displayOpinions();
   }
 });
 </script>
@@ -82,6 +90,12 @@ export default defineComponent({
   max-height: 400px;
   overflow-y: auto;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  color: white;
+
   .title {
     padding: 1rem 1rem 0 1rem;
     text-align: center;
@@ -90,6 +104,11 @@ export default defineComponent({
   .opinion {
     margin: 0.5rem;
     border: $border-weak-line;
+
+    &:hover {
+      cursor: pointer;
+      border: $border-strong-white-line;
+    }
 
     > p,
     div {

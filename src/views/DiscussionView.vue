@@ -25,7 +25,7 @@
     </div>
   </div>
   <div>
-    <OpinionItem opinion-id="1" top="300" left="0" />
+    <OpinionItem v-if="isShowOpinionDetail" :opinion-id="selectedOpinionId" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion
@@ -71,6 +71,14 @@ export default defineComponent({
     isFold() {
       const handler = useDiscussionHandler();
       return handler.isFoldOpinionList;
+    },
+    isShowOpinionDetail() {
+      const handler = useDiscussionHandler();
+      return handler.selectedOpinionId !== -1;
+    },
+    selectedOpinionId() {
+      const handler = useDiscussionHandler();
+      return handler.selectedOpinionId;
     }
   },
   methods: {
@@ -83,14 +91,17 @@ export default defineComponent({
     },
     onClickTitle() {
       const handler = useDiscussionHandler();
-      handler.spreadList();
+      handler.hideOpinionDetaily();
     }
   },
   async created() {
     const topic = await Topic.fetch(this.topicId);
     this.topic = topic;
   },
-  mounted() {}
+  mounted() {
+    const handler = useDiscussionHandler();
+    handler.hideOpinionDetaily();
+  }
 });
 </script>
 
@@ -106,6 +117,10 @@ export default defineComponent({
       position: relative;
       padding: 1rem;
 
+      &:hover {
+        cursor: pointer;
+      }
+
       .spread {
         position: absolute;
         bottom: -60%;
@@ -119,18 +134,26 @@ export default defineComponent({
     .opinions {
       display: flex;
       flex-direction: column;
-
+      justify-content: center;
+      align-items: center;
       max-height: 1000px;
       overflow: hidden;
-      background-color: navajowhite;
       transition: all 1s ease-in-out;
 
       .agree {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
       }
 
       .disagree {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
       }

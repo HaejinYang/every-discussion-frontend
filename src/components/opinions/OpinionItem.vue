@@ -1,36 +1,40 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
-    <div :class="$style.box">
-      <div :class="$style['refer-opinion']">
-        <ReferToOpinionComponent v-if="referTo !== null" :opinion="referTo" />
-      </div>
-      <div
-        :class="[
-          $style['opinion-info'],
-          opinion.agreeType === 'agree' ? $style.agree : $style.disagree
-        ]"
-        v-if="opinion !== null"
-        @wheel="handleWheel($event)"
-      >
-        <fieldset>
-          <legend>타이틀</legend>
-          <p>{{ opinion.title }}</p>
-        </fieldset>
-        <fieldset>
-          <legend>요약</legend>
-          <p>{{ opinion.summary }}</p>
-        </fieldset>
-        <fieldset>
-          <legend>본문</legend>
-          <p>{{ opinion.content }}</p>
-        </fieldset>
-        <fieldset>
-          <legend>추천</legend>
-          <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
-        </fieldset>
-      </div>
-      <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
-        <ReferredOpinionComponent :referredOpinions="referred" />
+    <div :class="$style.wrapper">
+      <div :class="$style.box">
+        <div :class="$style['refer-opinion']" v-if="referTo !== null">
+          <ReferToOpinionComponent :opinion="referTo" />
+        </div>
+        <div
+          :class="[
+            $style['opinion-info'],
+            opinion.agreeType === 'agree' ? $style.agree : $style.disagree
+          ]"
+          v-if="opinion !== null"
+        >
+          <div>
+            <p>선택의견</p>
+            <fieldset>
+              <legend>타이틀</legend>
+              <p>{{ opinion.title }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>요약</legend>
+              <p>{{ opinion.summary }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>본문</legend>
+              <p>{{ opinion.content }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>추천</legend>
+              <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+            </fieldset>
+          </div>
+        </div>
+        <div :class="$style['related-opinions']" v-if="referred.length !== 0">
+          <ReferredOpinionComponent :referredOpinions="referred" />
+        </div>
       </div>
     </div>
   </div>
@@ -85,53 +89,63 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 2rem;
 
-  .box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+  .wrapper {
+    margin-top: 3rem;
 
-    > * {
-      width: 200px;
-      max-height: 310px;
-      overflow: auto;
-      margin: 3rem;
+    .box {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
 
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
+      > * {
+        width: 200px;
+        height: 310px;
+        overflow: auto;
+        margin: 3rem;
 
-    .refer-opinion {
-    }
-
-    .opinion-info {
-      margin: 0.5rem;
-      padding: 0.5rem;
-      color: white;
-
-      fieldset {
-        border: $border-weak-line;
-        margin-top: 0.5rem;
-
-        p {
-          padding: 0.5rem;
+        &::-webkit-scrollbar {
+          display: none;
         }
       }
-    }
 
-    .related-opinions {
+      .refer-opinion {
+      }
+
+      .opinion-info {
+        color: white;
+
+        div {
+          padding: 0.5rem;
+
+          > p {
+            text-align: center;
+          }
+
+          fieldset {
+            border: $border-weak-line;
+            margin-top: 0.5rem;
+
+            p {
+              padding: 0.5rem;
+            }
+          }
+        }
+      }
+
+      .related-opinions {
+      }
     }
   }
 }
 
 @media screen and (min-width: $middle-size) {
   .container {
-    .box {
-      flex-direction: row;
+    .wrapper {
+      .box {
+        flex-direction: row;
+      }
     }
   }
 }

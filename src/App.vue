@@ -3,7 +3,7 @@
     <Header :class="$style.header" @show-login="showAuthForm" />
     <section>
       <Aside :class="$style.aside" />
-      <main @wheel="handleWheel($event)" ref="main">
+      <main ref="main">
         <div :class="$style['main-item']">
           <RouterView />
         </div>
@@ -52,13 +52,6 @@ export default defineComponent({
     }
   },
   methods: {
-    handleWheel(event: Event) {
-      if (this.isDisabledWheel) {
-        event.preventDefault();
-
-        return;
-      }
-    },
     switchLoginForm() {
       const handler = useShowAuthFormHandler();
       handler.showLogin();

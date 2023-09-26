@@ -1,6 +1,7 @@
 <template>
   <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
     <div>
+      <p>참조의견</p>
       <fieldset>
         <legend>타이틀</legend>
         <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
@@ -35,9 +36,14 @@ export default defineComponent({
 <style module lang="scss">
 .container {
   color: white;
+  height: 100%;
 
   div {
     padding: 0.5rem;
+
+    > p {
+      text-align: center;
+    }
 
     fieldset {
       margin-top: 0.5rem;
