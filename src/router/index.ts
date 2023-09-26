@@ -56,14 +56,22 @@ router.beforeEach((to, from) => {
   const authHandler = useAuthHandler();
   switch (to.name) {
     case 'user-opinions':
+    // fall-through
     case 'user-topics':
+    // fall-through
     case 'topic-register':
+    // fall-through
     case 'user-profile':
       if (!authHandler.isAuth) {
         const authFormHandler = useShowAuthFormHandler();
         authFormHandler.showAuth();
-        return { name: from.name };
+        authFormHandler.showLogin();
+
+        return { name: 'home' };
       }
+      break;
+    default:
+      // 아무일도 하지 않는다.
       break;
   }
 });
