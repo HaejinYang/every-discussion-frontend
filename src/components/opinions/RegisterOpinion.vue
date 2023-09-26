@@ -1,13 +1,14 @@
 <template>
   <div :class="$style.container" @mousedown.left="disableForm">
     <div @mousedown.left.stop>
-      <div :style="{ textAlign: 'center' }">
-        {{ agreeingType === 'agree' ? '찬성' : '반대' }}
+      <div :class="$style['header']">
+        <h3>
+          {{ agreeingType === 'agree' ? '찬성' : '반대' }}
+        </h3>
       </div>
 
       <div>
         <textarea
-          type="text"
           placeholder="제목"
           :value="title"
           @input="(event) => (title = (event.target as HTMLTextAreaElement)?.value)"
@@ -15,7 +16,6 @@
       </div>
       <div>
         <textarea
-          type="text"
           placeholder="본문"
           :value="content"
           @input="(event) => (content = (event.target as HTMLTextAreaElement).value)"
@@ -42,7 +42,8 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import { type AgreeingType, Opinion } from '@/services/opinions';
+import { type AgreeingType } from '@/services/opinions';
+import { UserOpinion } from '@/services/UserOpinions';
 
 export default defineComponent({
   name: 'RegisterOpinion',
@@ -79,7 +80,7 @@ export default defineComponent({
 
       this.isSubmitting = true;
 
-      const result = await Opinion.create({
+      await UserOpinion.create({
         topicId: this.topicId,
         title: this.title,
         content: this.content,
@@ -109,11 +110,14 @@ export default defineComponent({
     padding: 1rem;
     width: 60%;
     background-color: white;
-    box-shadow: $box-shadow-normal;
+    border: $border-normal-line;
+
+    .header {
+      text-align: center;
+    }
 
     > div {
       padding: 1rem;
-      border-bottom: $border-weak-line;
 
       > textarea {
         width: 100%;
