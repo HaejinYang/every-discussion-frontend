@@ -21,9 +21,11 @@
             <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
           </div>
         </div>
-        <!--        <OpinionList :opinions="searchedOpinions" v-show="isDisplayingSearchedOpinions" />-->
       </div>
     </div>
+  </div>
+  <div>
+    <OpinionItem opinion-id="1" top="300" left="0" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion
@@ -43,10 +45,11 @@ import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
 import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import OpinionItem from '@/components/opinions/OpinionItem.vue';
 
 export default defineComponent({
   name: 'DiscussionView',
-  components: { RegisterOpinion, OpinionList, Discussion },
+  components: { OpinionItem, RegisterOpinion, OpinionList, Discussion },
   props: {
     id: {
       type: String,

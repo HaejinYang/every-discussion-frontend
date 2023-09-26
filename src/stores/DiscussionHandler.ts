@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useDiscussionHandler = defineStore('discussion', {
   state: () => {
-    return { isFoldOpinionList: false };
+    return { isFoldOpinionList: true };
   },
   actions: {
     foldList() {

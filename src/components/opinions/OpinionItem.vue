@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
-    <main ref="main">
-      <div :class="$style['refer-opinion']" @wheel="handleWheel($event)">
+    <div :class="$style.box">
+      <div :class="$style['refer-opinion']">
         <ReferToOpinionComponent v-if="referTo !== null" :opinion="referTo" />
       </div>
       <div
@@ -12,15 +12,27 @@
         v-if="opinion !== null"
         @wheel="handleWheel($event)"
       >
-        <p>{{ opinion.title }}</p>
-        <p>{{ opinion.summary }}</p>
-        <p>{{ opinion.content }}</p>
-        <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+        <fieldset>
+          <legend>타이틀</legend>
+          <p>{{ opinion.title }}</p>
+        </fieldset>
+        <fieldset>
+          <legend>요약</legend>
+          <p>{{ opinion.summary }}</p>
+        </fieldset>
+        <fieldset>
+          <legend>본문</legend>
+          <p>{{ opinion.content }}</p>
+        </fieldset>
+        <fieldset>
+          <legend>추천</legend>
+          <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+        </fieldset>
       </div>
       <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
         <ReferredOpinionComponent :referredOpinions="referred" />
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -34,14 +46,6 @@ export default defineComponent({
   name: 'OpinionItem',
   components: { ReferToOpinionComponent, ReferredOpinionComponent },
   props: {
-    left: {
-      type: Number,
-      required: true
-    },
-    top: {
-      type: Number,
-      required: true
-    },
     opinionId: {
       type: Number,
       required: true
@@ -57,98 +61,77 @@ export default defineComponent({
   methods: {
     onClickPage() {
       this.$emit('on-click-anywhere');
-    },
-    handleWheel(event: Event) {
-      event.stopPropagation();
     }
   },
   async created() {
-    console.log(this.opinionId);
     const opinion = await Opinion.fetch(this.opinionId);
     this.opinion = opinion;
     this.referTo = opinion.referTo;
-    this.referred = opinion.referred;
+    let temp = [] as OpinionData[];
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
 
-    console.log(opinion.referred);
-  },
-  mounted() {
-    const main = this.$refs['main'] as HTMLElement | undefined;
-    if (main) {
-      main.style.top = `${this.top}px`;
-    }
+    this.referred = temp;
   }
 });
 </script>
 
 <style module lang="scss">
 .container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
 
-  main {
-    position: absolute;
-    transform: translateY(-50%);
-    height: 600px;
-    width: 100%;
-    padding: 2rem;
+  .box {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
 
     > * {
-      width: 400px;
-      min-height: 300px;
+      width: 200px;
+      max-height: 310px;
+      overflow: auto;
+      margin: 3rem;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
 
     .refer-opinion {
-      overflow-y: auto;
     }
 
     .opinion-info {
-      margin-top: 3rem;
-      overflow-y: auto;
+      margin: 0.5rem;
+      padding: 0.5rem;
+      color: white;
 
-      > p {
-        padding: 0.5rem;
-        margin: 0.5rem;
-        border-bottom: $border-weak-line;
+      fieldset {
+        border: $border-weak-line;
+        margin-top: 0.5rem;
+
+        p {
+          padding: 0.5rem;
+        }
       }
     }
 
     .related-opinions {
-      margin-top: 3rem;
-      overflow-y: auto;
-
-      ul {
-        li {
-        }
-      }
     }
   }
+}
 
-  @media screen and (min-width: $large-size) {
-    main {
+@media screen and (min-width: $middle-size) {
+  .container {
+    .box {
       flex-direction: row;
-
-      > * {
-        height: 200px;
-      }
-
-      .opinion-info {
-        margin: 1rem 3rem;
-      }
-
-      .refer-opinion {
-        margin: 1rem 3rem;
-      }
-
-      .related-opinions {
-        margin: 1rem 3rem;
-      }
     }
   }
 }

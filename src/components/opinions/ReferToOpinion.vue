@@ -1,8 +1,19 @@
 <template>
   <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
-    <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
-    <p>{{ opinion.summary }}</p>
-    <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+    <div>
+      <fieldset>
+        <legend>타이틀</legend>
+        <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
+      </fieldset>
+      <fieldset>
+        <legend>요약</legend>
+        <p>{{ opinion.summary }}</p>
+      </fieldset>
+      <fieldset>
+        <legend>추천</legend>
+        <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+      </fieldset>
+    </div>
   </div>
 </template>
 
@@ -23,10 +34,19 @@ export default defineComponent({
 
 <style module lang="scss">
 .container {
-  p {
-    margin: 0.5rem;
+  color: white;
+
+  div {
     padding: 0.5rem;
-    border-bottom: $border-weak-line;
+
+    fieldset {
+      margin-top: 0.5rem;
+      border: $border-weak-line;
+
+      p {
+        padding: 0.5rem;
+      }
+    }
   }
 }
 
