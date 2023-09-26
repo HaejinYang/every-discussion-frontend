@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
+  <div :class="$style.container">
     <div :class="$style.content">
       <div :class="$style.title" @mousedown.left="onClickTitle">
         <h1>{{ topic?.title }}</h1>
@@ -21,11 +21,9 @@
             <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
           </div>
         </div>
+        <!--        <OpinionList :opinions="searchedOpinions" v-show="isDisplayingSearchedOpinions" />-->
       </div>
     </div>
-  </div>
-  <div v-else :class="$style.container">
-    <OpinionList :opinions="searchedOpinions" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion
@@ -40,7 +38,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
-import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
@@ -68,14 +65,6 @@ export default defineComponent({
     topicId() {
       return parseInt(this.id);
     },
-    isDisplayingSearchedOpinions() {
-      const handler = useSearchOpinionHandler();
-      return handler.isDisplayingSearchedOpinions;
-    },
-    searchedOpinions() {
-      const handler = useSearchOpinionHandler();
-      return handler.opinions;
-    },
     isFold() {
       const handler = useDiscussionHandler();
       return handler.isFoldOpinionList;
@@ -94,10 +83,6 @@ export default defineComponent({
       handler.spreadList();
     }
   },
-  beforeCreate() {
-    const handler = useSearchOpinionHandler();
-    handler.hideSearchedOpinions();
-  },
   async created() {
     const topic = await Topic.fetch(this.topicId);
     this.topic = topic;
@@ -114,8 +99,6 @@ export default defineComponent({
   align-items: center;
 
   .content {
-    background-color: orange;
-
     .title {
       position: relative;
       padding: 1rem;
