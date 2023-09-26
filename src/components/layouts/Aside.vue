@@ -57,15 +57,15 @@ export default defineComponent({
     },
     name() {
       const authHandler = useAuthHandler();
-      return authHandler.info.name;
+      return authHandler.user.name;
     },
     topicsCount() {
       const authHandler = useAuthHandler();
-      return authHandler.info.topicsCount;
+      return authHandler.user.topicsCount;
     },
     opinionsCount() {
       const authHandler = useAuthHandler();
-      return authHandler.info.opinionsCount;
+      return authHandler.user.opinionsCount;
     }
   },
   methods: {

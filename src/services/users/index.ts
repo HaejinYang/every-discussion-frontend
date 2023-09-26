@@ -111,7 +111,7 @@ class User {
       method: 'POST',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.info.token}`
+        Authorization: `Bearer ${authHandler.user.token}`
       }
     });
 
@@ -131,7 +131,7 @@ class User {
       method: 'PUT',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.info.token}`,
+        Authorization: `Bearer ${authHandler.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(updates)
@@ -152,7 +152,7 @@ class User {
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.info.token}`,
+        Authorization: `Bearer ${authHandler.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ password })

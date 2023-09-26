@@ -78,7 +78,7 @@ export default defineComponent({
     }
 
     this.step = eProcess.Wait;
-    const userId = authHandler.info.id;
+    const userId = authHandler.user.id;
     try {
       const topics = await Topic.fetchByUser(userId);
       this.step = eProcess.Success;
