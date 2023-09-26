@@ -27,6 +27,10 @@
         <span :class="$style['value']">{{ topic.opinionsCount }}</span>
       </div>
     </div>
+    <div :class="$style['step']" v-show="isNotSuccesLoading">
+      {{ msg[step] }}
+      <WaitButton v-show="isWaitLoading" position="right" />
+    </div>
   </div>
 </template>
 
@@ -36,16 +40,42 @@ import type { TopicItem } from '@/services/topics';
 import { Topic } from '@/services/topics';
 import { useAuthHandler } from '@/stores/auth';
 import SearchBar from '@/components/SearchBar.vue';
+import WaitButton from '@/components/buttons/WaitButton.vue';
+import { getErrorMessage } from '@/util/error';
+
+enum eProcess {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3,
+  NoResult = 4
+}
 
 export default defineComponent({
   name: 'MyTopicsView',
-  components: { SearchBar },
+  components: { WaitButton, SearchBar },
   data() {
     return {
       topics: [] as TopicItem[],
       displayTopics: [] as TopicItem[],
-      ignoreEmptyKeyword: false
+      ignoreEmptyKeyword: false,
+      step: eProcess.Init as eProcess,
+      msg: [
+        '토론을 불러오고 있습니다.',
+        '토론을 불러오고 있습니다.',
+        '',
+        '토론 불러오기 실패.',
+        '참여한 토론이 없습니다.'
+      ]
     };
+  },
+  computed: {
+    isWaitLoading() {
+      return this.step === eProcess.Wait;
+    },
+    isNotSuccesLoading() {
+      return this.step !== eProcess.Success;
+    }
   },
   methods: {
     switchToDiscussion(id: number) {
@@ -70,10 +100,24 @@ export default defineComponent({
     }
 
     const userId = authHandler.user.id;
-    Topic.fetchByUser(userId).then((topics: TopicItem[]) => {
-      this.topics = topics;
-      this.displayTopics = this.topics;
-    });
+
+    this.step = eProcess.Wait;
+    Topic.fetchByUser(userId)
+      .then((topics: TopicItem[]) => {
+        if (topics.length < 1) {
+          this.step = eProcess.NoResult;
+
+          return;
+        }
+
+        this.topics = topics;
+        this.displayTopics = this.topics;
+        this.step = eProcess.Success;
+      })
+      .catch((e) => {
+        this.step = eProcess.Fail;
+        reportError(getErrorMessage(e));
+      });
   }
 });
 </script>
@@ -84,6 +128,17 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .step {
+    position: relative;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: $wait-color;
+    border-radius: 5px;
+    color: white;
+    min-width: 350px;
+    text-align: center;
+  }
 
   .search {
     margin-top: 2rem;
