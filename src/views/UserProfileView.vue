@@ -358,9 +358,9 @@ export default defineComponent({
     width: 450px;
 
     .menu {
-      border: $border-default-line;
+      border: $border-normal-line;
       border-radius: 5px;
-      box-shadow: $box-shadow-default;
+      box-shadow: $box-shadow-normal;
       background-color: $menu-color;
       color: white;
       margin-bottom: 1rem;
@@ -384,9 +384,9 @@ export default defineComponent({
     .content {
       display: flex;
       flex-direction: column;
-      border: $border-default-line;
+      border: $border-normal-line;
       border-radius: 5px;
-      box-shadow: $box-shadow-default;
+      box-shadow: $box-shadow-normal;
       padding: 1rem;
 
       h2 {
@@ -438,7 +438,7 @@ export default defineComponent({
           background-color: white;
           margin-right: 1rem;
           color: $primary-color;
-          border: $border-default-line;
+          border: $border-normal-line;
           border-color: $primary-color;
         }
 
