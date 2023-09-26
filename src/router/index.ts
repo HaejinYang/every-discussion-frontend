@@ -24,23 +24,23 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/my-topics',
-      name: 'my-topics',
+      path: '/user/topics',
+      name: 'user-topics',
       component: MyTopicsView
     },
     {
-      path: '/my-opinions',
-      name: 'my-opinions',
+      path: '/user/opinions',
+      name: 'user-opinions',
       component: MyOpinionsView
     },
     {
-      path: '/topic-register',
+      path: '/topic/register',
       name: 'topic-register',
       component: RegisterTopicView
     },
     {
-      path: '/my-info',
-      name: 'my-info',
+      path: '/user/profile',
+      name: 'user-profile',
       component: MyInfoView
     },
     {
@@ -55,10 +55,10 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const authHandler = useAuthHandler();
   switch (to.name) {
-    case 'my-opinions':
-    case 'my-topics':
+    case 'user-opinions':
+    case 'user-topics':
     case 'topic-register':
-    case 'my-info':
+    case 'user-profile':
       if (!authHandler.isAuth) {
         const authFormHandler = useShowAuthFormHandler();
         authFormHandler.showAuth();
