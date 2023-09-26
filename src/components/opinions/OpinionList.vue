@@ -49,6 +49,8 @@ export default defineComponent({
   },
   methods: {
     displayOpinion(index: number, opinionId: number) {
+      consooe.log('displayOpinion in OpininList');
+
       const opinions = this.$refs['opinions'] as HTMLElement[];
       const opinion = opinions[index];
       if (opinion) {

@@ -37,6 +37,7 @@ import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import { debounce } from '@/util/timing';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'Discussion',
@@ -81,6 +82,9 @@ export default defineComponent({
       this.displayOpinions();
     },
     onClickOpinion(index: number, opinionId: number) {
+      console.log('onClickOpinion');
+      const handler = useDiscussionHandler();
+      handler.foldList();
       this.displayOpinion(index);
       this.lastSelectedOpinion = index;
       this.lastSelectedOpinionId = opinionId;

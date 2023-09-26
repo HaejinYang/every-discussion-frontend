@@ -1,20 +1,25 @@
 <template>
   <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
-    <div :class="$style.title">
-      <h1>{{ topic?.title }}</h1>
-    </div>
-    <div :class="$style.opinions">
-      <div :class="$style.agree">
-        <Discussion agreeingType="agree" :topicId="topicId" />
-        <div :class="$style['submit-agree']">
-          <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
+    <div :class="$style.content">
+      <div :class="$style.title" @mousedown.left="onClickTitle">
+        <h1>{{ topic?.title }}</h1>
+        <div :class="[$style.spread, isFold ? $style.show : null]">
+          <img src="@/assets/caret.svg" />
         </div>
       </div>
+      <div :class="[$style.opinions, isFold ? $style.short : null]">
+        <div :class="$style.agree">
+          <Discussion agreeingType="agree" :topicId="topicId" />
+          <div :class="$style['submit-agree']">
+            <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
+          </div>
+        </div>
 
-      <div :class="$style.disagree">
-        <Discussion agreeingType="disagree" :topicId="topicId" />
-        <div :class="$style['submit-disagree']">
-          <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
+        <div :class="$style.disagree">
+          <Discussion agreeingType="disagree" :topicId="topicId" />
+          <div :class="$style['submit-disagree']">
+            <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
+          </div>
         </div>
       </div>
     </div>
@@ -40,6 +45,7 @@ import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -69,6 +75,10 @@ export default defineComponent({
     searchedOpinions() {
       const handler = useSearchOpinionHandler();
       return handler.opinions;
+    },
+    isFold() {
+      const handler = useDiscussionHandler();
+      return handler.isFoldOpinionList;
     }
   },
   methods: {
@@ -78,6 +88,10 @@ export default defineComponent({
     },
     disableRegisterForm() {
       this.isDisplayingRegisterForm = false;
+    },
+    onClickTitle() {
+      const handler = useDiscussionHandler();
+      handler.spreadList();
     }
   },
   beforeCreate() {
@@ -94,51 +108,69 @@ export default defineComponent({
 
 <style module lang="scss">
 .container {
-  background-color: #eee;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .title {
-    padding: 1rem;
-  }
+  .content {
+    background-color: orange;
 
-  .opinions {
-    display: flex;
-    flex-direction: column;
-
-    .agree {
+    .title {
+      position: relative;
       padding: 1rem;
-      border: $border-normal-line;
-    }
 
-    .disagree {
-      padding: 1rem;
-      border: $border-normal-line;
-    }
+      .spread {
+        position: absolute;
+        bottom: -60%;
+        left: 50%;
+        opacity: 0;
 
-    .submit-agree,
-    .submit-disagree {
-      text-align: center;
-      margin-top: 1rem;
-
-      > button {
-        width: 100%;
-        padding: 0.5rem;
-        background-color: transparent;
-        border: none;
-        color: white;
-        font-weight: bold;
+        transition: all 1s ease-in-out;
       }
     }
 
-    .submit-agree {
-      background-color: $agree-background-color;
-    }
+    .opinions {
+      display: flex;
+      flex-direction: column;
 
-    .submit-disagree {
-      background-color: $disagree-background-color;
+      max-height: 1000px;
+      overflow: hidden;
+      background-color: navajowhite;
+      transition: all 1s ease-in-out;
+
+      .agree {
+        padding: 1rem;
+        border: $border-normal-line;
+      }
+
+      .disagree {
+        padding: 1rem;
+        border: $border-normal-line;
+      }
+
+      .submit-agree,
+      .submit-disagree {
+        text-align: center;
+        margin-top: 1rem;
+
+        > button {
+          width: 100%;
+          padding: 0.5rem;
+          background-color: transparent;
+          border: none;
+          color: white;
+          font-weight: bold;
+        }
+      }
+
+      .submit-agree {
+        background-color: $agree-background-color;
+      }
+
+      .submit-disagree {
+        background-color: $disagree-background-color;
+      }
     }
   }
 }
@@ -153,9 +185,19 @@ export default defineComponent({
 
 @media screen and (min-width: $middle-size) {
   .container {
-    .opinions {
-      flex-direction: row;
+    .content {
+      .opinions {
+        flex-direction: row;
+      }
     }
   }
+}
+
+.short {
+  max-height: 0px !important;
+}
+
+.show {
+  opacity: 1 !important;
 }
 </style>

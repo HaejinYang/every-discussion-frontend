@@ -87,7 +87,6 @@ export default defineComponent({
   left: 0;
   right: 0;
   bottom: 0;
-  backdrop-filter: blur(5px);
 
   main {
     position: absolute;
@@ -102,15 +101,14 @@ export default defineComponent({
 
     > * {
       width: 400px;
+      min-height: 300px;
     }
 
     .refer-opinion {
-      min-height: 150px;
       overflow-y: auto;
     }
 
     .opinion-info {
-      min-height: 150px;
       margin-top: 3rem;
       overflow-y: auto;
 
@@ -122,7 +120,6 @@ export default defineComponent({
     }
 
     .related-opinions {
-      min-height: 150px;
       margin-top: 3rem;
       overflow-y: auto;
 
