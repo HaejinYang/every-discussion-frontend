@@ -16,7 +16,10 @@
         </div>
       </div>
     </div>
-    <span>MyOpinions</span>
+    <div :class="$style.wait" v-show="isNotSuccesLoading">
+      {{ msg[step] }}
+      <WaitButton v-show="isWaitLoading" position="right" />
+    </div>
   </div>
 </template>
 
@@ -24,13 +27,42 @@
 import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
 import { Opinion, OpinionWithReferenceItem } from '@/services/opinions';
+import Discussion from '@/components/discussions/Discussion.vue';
+import WaitButton from '@/components/buttons/WaitButton.vue';
+import { useAuthHandler } from '@/stores/auth';
+import { getErrorMessage } from '@/util/error';
+
+enum eProcess {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3,
+  NoResult = 4
+}
 
 export default defineComponent({
   name: 'MyOpinionsView',
+  components: { WaitButton, Discussion },
   data() {
     return {
-      topicWithOpinions: [] as TopicWithOpinions[]
+      topicWithOpinions: [] as TopicWithOpinions[],
+      step: eProcess.Init as eProcess,
+      msg: [
+        '의견을 가져오고 있습니다.',
+        '의견을 가져오고 있습니다.',
+        '',
+        '의견 가져오기 실패',
+        '작성된 의견이 없습니다.'
+      ]
     };
+  },
+  computed: {
+    isWaitLoading() {
+      return this.step === eProcess.Wait;
+    },
+    isNotSuccesLoading() {
+      return this.step !== eProcess.Success;
+    }
   },
   methods: {
     switchToDiscussion(id: number) {
@@ -38,26 +70,62 @@ export default defineComponent({
     }
   },
   async created() {
-    const userId = 1;
-    const topics = await Topic.fetchByUser(userId);
-    topics.map((topic: TopicItem) => {
-      Opinion.fetchFromTopicByUser(topic.id, userId).then(
-        (opinions: OpinionWithReferenceItem[]) => {
-          const topicWithOpinions: TopicWithOpinions = {
-            topic: topic,
-            opinions: opinions
-          };
+    const authHandler = useAuthHandler();
+    if (!authHandler.isAuth) {
+      this.$router.push('/error/인증이 필요합니다.');
 
-          this.topicWithOpinions.push(topicWithOpinions);
-        }
-      );
-    });
+      return;
+    }
+
+    this.step = eProcess.Wait;
+    const userId = authHandler.info.id;
+    try {
+      const topics = await Topic.fetchByUser(userId);
+      this.step = eProcess.Success;
+      if (topics.length < 1) {
+        this.step = eProcess.NoResult;
+
+        return;
+      }
+
+      topics.map((topic: TopicItem) => {
+        Opinion.fetchFromTopicByUser(topic.id, userId).then(
+          (opinions: OpinionWithReferenceItem[]) => {
+            const topicWithOpinions: TopicWithOpinions = {
+              topic: topic,
+              opinions: opinions
+            };
+
+            this.topicWithOpinions.push(topicWithOpinions);
+          }
+        );
+      });
+    } catch (e) {
+      reportError(getErrorMessage(e));
+      this.step = eProcess.Fail;
+    }
   }
 });
 </script>
 
 <style module lang="scss">
 .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .wait {
+    position: relative;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: $wait-color;
+    border-radius: 5px;
+    color: white;
+    min-width: 350px;
+    text-align: center;
+  }
+
   .info {
     display: flex;
     justify-content: space-around;
@@ -68,7 +136,7 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       justify-content: center;
-      max-width: 200px;
+      max-width: 250px;
       padding: 1rem;
 
       &:hover {
