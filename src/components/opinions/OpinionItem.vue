@@ -1,26 +1,42 @@
 <template>
   <div :class="$style.container" @mousedown.left="onClickPage">
-    <main ref="main">
-      <div :class="$style['refer-opinion']" @wheel="handleWheel($event)">
-        <ReferToOpinionComponent v-if="referTo !== null" :opinion="referTo" />
+    <div :class="$style.wrapper">
+      <div :class="$style.box">
+        <div :class="$style['refer-opinion']" v-if="referTo !== null">
+          <ReferToOpinionComponent :opinion="referTo" />
+        </div>
+        <div
+          :class="[
+            $style['opinion-info'],
+            opinion.agreeType === 'agree' ? $style.agree : $style.disagree
+          ]"
+          v-if="opinion !== null"
+        >
+          <div>
+            <p>선택의견</p>
+            <fieldset>
+              <legend>타이틀</legend>
+              <p>{{ opinion.title }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>요약</legend>
+              <p>{{ opinion.summary }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>본문</legend>
+              <p>{{ opinion.content }}</p>
+            </fieldset>
+            <fieldset>
+              <legend>추천</legend>
+              <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+            </fieldset>
+          </div>
+        </div>
+        <div :class="$style['related-opinions']" v-if="referred.length !== 0">
+          <ReferredOpinionComponent :referredOpinions="referred" />
+        </div>
       </div>
-      <div
-        :class="[
-          $style['opinion-info'],
-          opinion.agreeType === 'agree' ? $style.agree : $style.disagree
-        ]"
-        v-if="opinion !== null"
-        @wheel="handleWheel($event)"
-      >
-        <p>{{ opinion.title }}</p>
-        <p>{{ opinion.summary }}</p>
-        <p>{{ opinion.content }}</p>
-        <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
-      </div>
-      <div :class="$style['related-opinions']" @wheel="handleWheel($event)">
-        <ReferredOpinionComponent :referredOpinions="referred" />
-      </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -34,14 +50,6 @@ export default defineComponent({
   name: 'OpinionItem',
   components: { ReferToOpinionComponent, ReferredOpinionComponent },
   props: {
-    left: {
-      type: Number,
-      required: true
-    },
-    top: {
-      type: Number,
-      required: true
-    },
     opinionId: {
       type: Number,
       required: true
@@ -57,100 +65,86 @@ export default defineComponent({
   methods: {
     onClickPage() {
       this.$emit('on-click-anywhere');
-    },
-    handleWheel(event: Event) {
-      event.stopPropagation();
     }
   },
   async created() {
-    console.log(this.opinionId);
     const opinion = await Opinion.fetch(this.opinionId);
     this.opinion = opinion;
     this.referTo = opinion.referTo;
-    this.referred = opinion.referred;
+    let temp = [] as OpinionData[];
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
+    temp.push(...opinion.referred);
 
-    console.log(opinion.referred);
-  },
-  mounted() {
-    const main = this.$refs['main'] as HTMLElement | undefined;
-    if (main) {
-      main.style.top = `${this.top}px`;
-    }
+    this.referred = temp;
   }
 });
 </script>
 
 <style module lang="scss">
 .container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-  main {
-    position: absolute;
-    transform: translateY(-50%);
-    height: 600px;
-    width: 100%;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  .wrapper {
+    margin-top: 3rem;
 
-    > * {
-      width: 400px;
-    }
-
-    .refer-opinion {
-      min-height: 150px;
-      overflow-y: auto;
-    }
-
-    .opinion-info {
-      min-height: 150px;
-      margin-top: 3rem;
-      overflow-y: auto;
-
-      > p {
-        padding: 0.5rem;
-        margin: 0.5rem;
-        border-bottom: $border-weak-line;
-      }
-    }
-
-    .related-opinions {
-      min-height: 150px;
-      margin-top: 3rem;
-      overflow-y: auto;
-
-      ul {
-        li {
-        }
-      }
-    }
-  }
-
-  @media screen and (min-width: $large-size) {
-    main {
-      flex-direction: row;
+    .box {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
 
       > * {
-        height: 200px;
-      }
+        width: 200px;
+        height: 310px;
+        overflow: auto;
+        margin: 3rem;
 
-      .opinion-info {
-        margin: 1rem 3rem;
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
 
       .refer-opinion {
-        margin: 1rem 3rem;
+      }
+
+      .opinion-info {
+        color: white;
+
+        div {
+          padding: 0.5rem;
+
+          > p {
+            text-align: center;
+          }
+
+          fieldset {
+            border: $border-weak-line;
+            margin-top: 0.5rem;
+
+            p {
+              padding: 0.5rem;
+            }
+          }
+        }
       }
 
       .related-opinions {
-        margin: 1rem 3rem;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $middle-size) {
+  .container {
+    .wrapper {
+      .box {
+        flex-direction: row;
       }
     }
   }

@@ -3,11 +3,21 @@
     <ul>
       <li
         :class="[opinion.agreeType === 'agree' ? $style.agree : $style.disagree]"
-        v-for="opinion in referredOpinions"
+        v-for="(opinion, index) in referredOpinions"
         :key="opinion.id"
       >
-        <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
-        <p>추천{{ opinion.like }} 비추천{{ opinion.dislike }}</p>
+        <p>참조의견</p>
+        <fieldset>
+          <legend>의견 {{ index + 1 }}</legend>
+          <fieldset>
+            <legend>타이틀</legend>
+            <p>{{ opinion.title }}</p>
+          </fieldset>
+          <fieldset>
+            <legend>추천</legend>
+            <p>추천{{ opinion.like }} 비추천{{ opinion.dislike }}</p>
+          </fieldset>
+        </fieldset>
       </li>
     </ul>
   </div>
@@ -34,10 +44,24 @@ export default defineComponent({
     li {
       list-style: none;
       padding: 0.5rem;
+      color: white;
 
-      p {
+      > p {
+        text-align: center;
+      }
+
+      fieldset {
+        border: $border-weak-line;
         padding: 0.5rem;
-        border-bottom: $border-weak-line;
+
+        fieldset {
+          border: $border-weak-line;
+          margin-top: 0.5rem;
+
+          p {
+            padding: 0.5rem;
+          }
+        }
       }
     }
   }

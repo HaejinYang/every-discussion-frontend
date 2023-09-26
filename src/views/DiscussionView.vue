@@ -1,26 +1,31 @@
 <template>
-  <div :class="$style.container" v-if="!isDisplayingSearchedOpinions">
-    <div :class="$style.title">
-      <h1>{{ topic?.title }}</h1>
-    </div>
-    <div :class="$style.opinions">
-      <div :class="$style.agree">
-        <Discussion agreeingType="agree" :topicId="topicId" />
-        <div :class="$style['submit-agree']">
-          <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
+  <div :class="$style.container">
+    <div :class="$style.content">
+      <div :class="$style.title" @mousedown.left="onClickTitle">
+        <h1>{{ topic?.title }}</h1>
+        <div :class="[$style.spread, isFold ? $style.show : null]">
+          <img src="@/assets/caret.svg" />
         </div>
       </div>
+      <div :class="[$style.opinions, isFold ? $style.short : null]">
+        <div :class="$style.agree">
+          <Discussion agreeingType="agree" :topicId="topicId" />
+          <div :class="$style['submit-agree']">
+            <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
+          </div>
+        </div>
 
-      <div :class="$style.disagree">
-        <Discussion agreeingType="disagree" :topicId="topicId" />
-        <div :class="$style['submit-disagree']">
-          <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
+        <div :class="$style.disagree">
+          <Discussion agreeingType="disagree" :topicId="topicId" />
+          <div :class="$style['submit-disagree']">
+            <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div v-else :class="$style.container">
-    <OpinionList :opinions="searchedOpinions" />
+  <div>
+    <OpinionItem v-if="isShowOpinionDetail" :opinion-id="selectedOpinionId" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion
@@ -35,15 +40,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
-import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import OpinionItem from '@/components/opinions/OpinionItem.vue';
 
 export default defineComponent({
   name: 'DiscussionView',
-  components: { RegisterOpinion, OpinionList, Discussion },
+  components: { OpinionItem, RegisterOpinion, OpinionList, Discussion },
   props: {
     id: {
       type: String,
@@ -62,13 +68,17 @@ export default defineComponent({
     topicId() {
       return parseInt(this.id);
     },
-    isDisplayingSearchedOpinions() {
-      const handler = useSearchOpinionHandler();
-      return handler.isDisplayingSearchedOpinions;
+    isFold() {
+      const handler = useDiscussionHandler();
+      return handler.isFoldOpinionList;
     },
-    searchedOpinions() {
-      const handler = useSearchOpinionHandler();
-      return handler.opinions;
+    isShowOpinionDetail() {
+      const handler = useDiscussionHandler();
+      return handler.selectedOpinionId !== -1;
+    },
+    selectedOpinionId() {
+      const handler = useDiscussionHandler();
+      return handler.selectedOpinionId;
     }
   },
   methods: {
@@ -78,67 +88,98 @@ export default defineComponent({
     },
     disableRegisterForm() {
       this.isDisplayingRegisterForm = false;
+    },
+    onClickTitle() {
+      const handler = useDiscussionHandler();
+      handler.hideOpinionDetaily();
     }
-  },
-  beforeCreate() {
-    const handler = useSearchOpinionHandler();
-    handler.hideSearchedOpinions();
   },
   async created() {
     const topic = await Topic.fetch(this.topicId);
     this.topic = topic;
   },
-  mounted() {}
+  mounted() {
+    const handler = useDiscussionHandler();
+    handler.hideOpinionDetaily();
+  }
 });
 </script>
 
 <style module lang="scss">
 .container {
-  background-color: #eee;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .title {
-    padding: 1rem;
-  }
-
-  .opinions {
-    display: flex;
-    flex-direction: column;
-
-    .agree {
+  .content {
+    .title {
+      position: relative;
       padding: 1rem;
-      border: $border-normal-line;
-    }
 
-    .disagree {
-      padding: 1rem;
-      border: $border-normal-line;
-    }
+      &:hover {
+        cursor: pointer;
+      }
 
-    .submit-agree,
-    .submit-disagree {
-      text-align: center;
-      margin-top: 1rem;
+      .spread {
+        position: absolute;
+        bottom: -60%;
+        left: 50%;
+        opacity: 0;
 
-      > button {
-        width: 100%;
-        padding: 0.5rem;
-        background-color: transparent;
-        border: none;
-        color: white;
-        font-weight: bold;
+        transition: all 1s ease-in-out;
       }
     }
 
-    .submit-agree {
-      background-color: $agree-background-color;
-    }
+    .opinions {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: all 1s ease-in-out;
 
-    .submit-disagree {
-      background-color: $disagree-background-color;
+      .agree {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 400px;
+        padding: 1rem;
+        border: $border-normal-line;
+      }
+
+      .disagree {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 400px;
+        padding: 1rem;
+        border: $border-normal-line;
+      }
+
+      .submit-agree,
+      .submit-disagree {
+        text-align: center;
+        margin-top: 1rem;
+
+        > button {
+          width: 100%;
+          padding: 0.5rem;
+          background-color: transparent;
+          border: none;
+          color: white;
+          font-weight: bold;
+        }
+      }
+
+      .submit-agree {
+        background-color: $agree-background-color;
+      }
+
+      .submit-disagree {
+        background-color: $disagree-background-color;
+      }
     }
   }
 }
@@ -153,9 +194,19 @@ export default defineComponent({
 
 @media screen and (min-width: $middle-size) {
   .container {
-    .opinions {
-      flex-direction: row;
+    .content {
+      .opinions {
+        flex-direction: row;
+      }
     }
   }
+}
+
+.short {
+  max-height: 0px !important;
+}
+
+.show {
+  opacity: 1 !important;
 }
 </style>

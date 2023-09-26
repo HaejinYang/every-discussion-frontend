@@ -8,6 +8,7 @@
         placeholder="의견을 검색하세요"
         @on-search-complete="onSearchCompleted"
         :onInputSearch="onInputSearch"
+        :ignoreEmptyKeyword="ignoreEmptyKeyword"
       />
     </div>
     <div>
@@ -45,8 +46,6 @@
 import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
-import type { OpinionData } from '@/services/opinions';
-import { Opinion } from '@/services/opinions';
 import { useAuthHandler } from '@/stores/auth';
 
 export default defineComponent({
@@ -55,7 +54,8 @@ export default defineComponent({
   data() {
     return {
       isUserMenuHovered: false,
-      userMenuHoveredTimer: -1 as ReturnType<typeof setTimeout>
+      userMenuHoveredTimer: -1 as ReturnType<typeof setTimeout>,
+      ignoreEmptyKeyword: false
     };
   },
   computed: {
@@ -73,16 +73,11 @@ export default defineComponent({
   methods: {
     async onInputSearch(keyword: string) {
       const searchOpinionHandler = useSearchOpinionHandler();
-      const opinions = await Opinion.fetchFromTopic(searchOpinionHandler.topicId, keyword);
+      searchOpinionHandler.set(keyword);
 
-      return opinions;
+      return true;
     },
-    onSearchCompleted(opinions: OpinionData[]) {
-      const searchOpinionHandler = useSearchOpinionHandler();
-      searchOpinionHandler.showSearchedOpinions();
-      searchOpinionHandler.replaceOpinions(opinions);
-      console.log(opinions);
-    },
+    onSearchCompleted(result: boolean) {},
     onClickTitle() {
       this.$router.push('/');
     },
