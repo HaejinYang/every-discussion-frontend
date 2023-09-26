@@ -73,13 +73,13 @@ export default defineComponent({
       this.$router.push('/');
     },
     onClickMyTopics() {
-      this.$router.push('/my-topics');
+      this.$router.push('/user/topics');
     },
     onClickMyOpinions() {
-      this.$router.push('/my-opinions');
+      this.$router.push('/user/opinions');
     },
     onClickRegisterTopic() {
-      this.$router.push('/topic-register');
+      this.$router.push('/topic/register');
     }
   }
 });

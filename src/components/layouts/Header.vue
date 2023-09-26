@@ -113,7 +113,7 @@ export default defineComponent({
       this.isUserMenuHovered = true;
     },
     moveToMyInfo() {
-      this.$router.push('/my-info');
+      this.$router.push('/user/profile');
     }
   }
 });
