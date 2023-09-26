@@ -26,11 +26,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
-import { Opinion, OpinionWithReferenceItem } from '@/services/opinions';
+import { OpinionWithReferenceItem } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/buttons/WaitButton.vue';
 import { useAuthHandler } from '@/stores/auth';
 import { getErrorMessage } from '@/util/error';
+import { UserOpinion } from '@/services/UserOpinions';
 
 enum eProcess {
   Init = 0,
@@ -89,16 +90,14 @@ export default defineComponent({
       }
 
       topics.map((topic: TopicItem) => {
-        Opinion.fetchFromTopicByUser(topic.id, userId).then(
-          (opinions: OpinionWithReferenceItem[]) => {
-            const topicWithOpinions: TopicWithOpinions = {
-              topic: topic,
-              opinions: opinions
-            };
+        UserOpinion.fetch(topic.id).then((opinions: OpinionWithReferenceItem[]) => {
+          const topicWithOpinions: TopicWithOpinions = {
+            topic: topic,
+            opinions: opinions
+          };
 
-            this.topicWithOpinions.push(topicWithOpinions);
-          }
-        );
+          this.topicWithOpinions.push(topicWithOpinions);
+        });
       });
     } catch (e) {
       reportError(getErrorMessage(e));

@@ -1,9 +1,7 @@
 <template>
   <div :class="$style['container']">
     <h2>오류 발생!</h2>
-    <p :class="$style['msg']">
-      {{ msg }}
-    </p>
+    <p :class="$style['msg']">{{ msg }}.</p>
   </div>
 </template>
 
