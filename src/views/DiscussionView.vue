@@ -46,6 +46,8 @@ import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
 import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
+import { useAuthHandler } from '@/stores/auth';
+import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -83,6 +85,15 @@ export default defineComponent({
   },
   methods: {
     displayRegisterOpinion(type: AgreeingType) {
+      const authHandler = useAuthHandler();
+      if (!authHandler.isAuth) {
+        const authFormHandler = useShowAuthFormHandler();
+        authFormHandler.showAuth();
+        authFormHandler.showLogin();
+
+        return;
+      }
+
       this.isDisplayingRegisterForm = true;
       this.opinionTypeOfRegistering = type;
     },
