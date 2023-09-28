@@ -42,6 +42,7 @@
 import { defineComponent } from 'vue';
 import { Topic } from '@/services/topics';
 import WaitButton from '@/components/buttons/WaitButton.vue';
+import { debounce } from '@/util/timing';
 
 enum eProcessStep {
   Init = 0,
@@ -59,7 +60,8 @@ export default defineComponent({
       description: '',
       submitBtnMessags: ['생성', '', '생성완료! ', '생성실패!'],
       submitStep: eProcessStep.Init as eProcessStep,
-      createdTopicId: -1
+      createdTopicId: -1,
+      debouncedSearchSimilarTitle: (...args: any[]): void => {}
     };
   },
   computed: {
@@ -69,7 +71,12 @@ export default defineComponent({
   },
   watch: {
     title(newTitle: string) {
-      console.log(`title : ${newTitle}`);
+      if (newTitle.length < 1) {
+        //TODO: 비워야함.
+        return;
+      }
+
+      this.debouncedSearchSimilarTitle(newTitle);
     },
     description(newDescription: string) {
       console.log(`description: ${newDescription}`);
@@ -90,6 +97,12 @@ export default defineComponent({
     moveToTopic() {
       this.$router.push(`/discussion/${this.createdTopicId}`);
     }
+  },
+  created() {
+    this.debouncedSearchSimilarTitle = debounce(async (title: string) => {
+      const topics = await Topic.search(title);
+      console.log(topics);
+    }, 500);
   }
 });
 </script>

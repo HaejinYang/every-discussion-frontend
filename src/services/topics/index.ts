@@ -4,6 +4,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 import { useAuthHandler } from '@/stores/auth';
+import { SearchTopicsItem } from '@/services/topics/TopTopics';
 
 class TopicItem {
   @Expose()
@@ -87,6 +88,20 @@ class Topic {
     const topic: TopicItem = plainToInstance(TopicItem, result.data);
     return topic;
   }
+
+  public static async search(title: string) {
+    const URI = `/api/topics?keyword=${title}`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const topics = plainToInstance(SearchTopicsItem, result.data);
+    return topics;
+  }
 }
 
-export { TopicItem, type TopicWithOpinions, Topic, fetchByUser };
+export { TopicItem, type TopicWithOpinions, Topic };
