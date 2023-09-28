@@ -126,7 +126,7 @@ class User {
   public static async update(updates: Partial<UserChangeParam>) {
     const authHandler = useAuthHandler();
 
-    const URI = '/api/user';
+    const URI = '/api/users';
     const response = await fetchApi(URI, {
       method: 'PUT',
       credentials: 'include',
@@ -147,7 +147,7 @@ class User {
   public static async delete(password: string) {
     const authHandler = useAuthHandler();
 
-    const URI = '/api/user';
+    const URI = '/api/users';
     const response = await fetchApi(URI, {
       method: 'DELETE',
       credentials: 'include',
