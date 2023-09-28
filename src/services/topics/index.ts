@@ -3,6 +3,7 @@ import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
+import { useAuthHandler } from '@/stores/auth';
 
 class TopicItem {
   @Expose()
@@ -68,12 +69,14 @@ class Topic {
   }
 
   public static async create(title: string, description: string) {
+    const authHandler = useAuthHandler();
     const URI = `/api/topics`;
     const response = await fetchApi(URI, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authHandler.user.token}`
       },
       body: JSON.stringify({ title, description })
     });
