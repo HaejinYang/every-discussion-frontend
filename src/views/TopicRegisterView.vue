@@ -12,6 +12,7 @@
           :value="title"
           @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
         />
+        <SimilarTopics :topics="similarTopics" />
       </div>
       <div :class="$style['topic-description-wrapper']">
         <input
@@ -40,20 +41,22 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Topic } from '@/services/topics';
+import { Topic, TopicItem } from '@/services/topics';
 import WaitButton from '@/components/buttons/WaitButton.vue';
 import { debounce } from '@/util/timing';
+import SimilarTopics from '@/components/topics/SimilarTopics.vue';
+import { getErrorMessage } from '@/util/error';
 
 enum eProcessStep {
   Init = 0,
   Wait = 1,
   Success = 2,
-  Faile = 3
+  Fail = 3
 }
 
 export default defineComponent({
   name: 'RegisterTopicView',
-  components: { WaitButton },
+  components: { SimilarTopics, WaitButton },
   data() {
     return {
       title: '',
@@ -61,7 +64,8 @@ export default defineComponent({
       submitBtnMessags: ['생성', '', '생성완료! ', '생성실패!'],
       submitStep: eProcessStep.Init as eProcessStep,
       createdTopicId: -1,
-      debouncedSearchSimilarTitle: (...args: any[]): void => {}
+      debouncedSearchSimilarTitle: (...args: any[]): void => {},
+      similarTopics: [] as TopicItem[]
     };
   },
   computed: {
@@ -72,7 +76,8 @@ export default defineComponent({
   watch: {
     title(newTitle: string) {
       if (newTitle.length < 1) {
-        //TODO: 비워야함.
+        this.similarTopics = [];
+
         return;
       }
 
@@ -99,10 +104,16 @@ export default defineComponent({
     }
   },
   created() {
+    this.similarTopics = [];
+
     this.debouncedSearchSimilarTitle = debounce(async (title: string) => {
-      const topics = await Topic.search(title);
-      console.log(topics);
-    }, 500);
+      try {
+        const topics = await Topic.search(title);
+        this.similarTopics = topics.data;
+      } catch (e) {
+        reportError(getErrorMessage(e));
+      }
+    }, 100);
   }
 });
 </script>
@@ -136,10 +147,12 @@ export default defineComponent({
       text-align: center;
     }
 
-    .topic-name {
-      width: 100%;
-      border: $border-weak-line;
-      padding: 0.5rem;
+    .topic-name-wrapper {
+      .topic-name {
+        width: 100%;
+        border: $border-weak-line;
+        padding: 0.5rem;
+      }
     }
 
     .topic-description {
