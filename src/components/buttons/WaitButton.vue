@@ -1,20 +1,25 @@
 <template>
   <div :class="$style.container">
-    <img src="@/assets/spinner-white.svg" :class="currentPoision" />
+    <img :src="spinnerImgUrl" :class="currentPoision" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 
-type alignPosition = 'left' | 'middle' | 'right';
+type AlignPosition = 'left' | 'middle' | 'right';
+type SpinnerColor = 'black' | 'white';
 
 export default defineComponent({
   name: 'WaitButton',
   props: {
     position: {
-      type: String as PropType<alignPosition>,
+      type: String as PropType<AlignPosition>,
       default: 'middle'
+    },
+    color: {
+      type: String as PropType<SpinnerColor>,
+      default: 'white'
     }
   },
   computed: {
@@ -32,6 +37,14 @@ export default defineComponent({
       }
 
       return this.$style['middle'];
+    },
+    spinnerImgUrl() {
+      if (this.color === 'black') {
+        console.log('black');
+        return new URL('/src/assets/spinner-black.svg', import.meta.url);
+      }
+
+      return new URL('/src/assets/spinner-white.svg', import.meta.url);
     }
   }
 });

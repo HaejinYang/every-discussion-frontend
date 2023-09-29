@@ -1,18 +1,21 @@
 <template>
   <div :class="$style.container">
     <div :class="$style['register-form']">
-      <div :class="$style.title">
+      <div :class="$style.header">
         <span>토론 생성</span>
       </div>
-      <div :class="$style['topic-name-wrapper']">
-        <input
-          :class="$style['topic-name']"
-          type="text"
-          placeholder="토론 주제"
-          :value="title"
-          @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
-        />
-        <SimilarTopics :topics="similarTopics" />
+      <div :class="$style['topic-titles']">
+        <div :class="$style['topic-name-wrapper']">
+          <input
+            :class="$style['topic-name']"
+            type="text"
+            placeholder="토론 주제"
+            :value="title"
+            @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
+          />
+          <SimilarTopics :topics="similarTopics" />
+        </div>
+        <WaitButton v-show="isSearchingSimliarTopics" position="right" color="black" />
       </div>
       <div :class="$style['topic-description-wrapper']">
         <input
@@ -65,12 +68,16 @@ export default defineComponent({
       submitStep: eProcessStep.Init as eProcessStep,
       createdTopicId: -1,
       debouncedSearchSimilarTitle: (...args: any[]): void => {},
-      similarTopics: [] as TopicItem[]
+      similarTopics: [] as TopicItem[],
+      searchStep: eProcessStep.Init as eProcessStep
     };
   },
   computed: {
     isWait() {
       return eProcessStep.Wait === this.submitStep;
+    },
+    isSearchingSimliarTopics() {
+      return eProcessStep.Wait === this.searchStep;
     }
   },
   watch: {
@@ -81,6 +88,7 @@ export default defineComponent({
         return;
       }
 
+      this.searchStep = eProcessStep.Wait;
       this.debouncedSearchSimilarTitle(newTitle);
     },
     description(newDescription: string) {
@@ -112,6 +120,8 @@ export default defineComponent({
         this.similarTopics = topics.data;
       } catch (e) {
         reportError(getErrorMessage(e));
+      } finally {
+        this.searchStep = eProcessStep.Init;
       }
     }, 100);
   }
@@ -143,15 +153,21 @@ export default defineComponent({
       padding-bottom: 0;
     }
 
-    .title {
+    .header {
       text-align: center;
     }
 
-    .topic-name-wrapper {
-      .topic-name {
-        width: 100%;
-        border: $border-weak-line;
-        padding: 0.5rem;
+    .topic-titles {
+      position: relative;
+
+      .topic-name-wrapper {
+        position: relative;
+
+        .topic-name {
+          width: 100%;
+          border: $border-weak-line;
+          padding: 0.5rem;
+        }
       }
     }
 
