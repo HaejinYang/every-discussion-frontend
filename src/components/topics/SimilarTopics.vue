@@ -1,8 +1,13 @@
 <template>
   <div :class="$style['container']">
-    <div :class="$style['similar-topic-item']" v-for="topic in displayingTopics" :key="topic.id">
+    <div
+      :class="$style['similar-topic-item']"
+      v-for="topic in displayingTopics"
+      :key="topic.id"
+      @mousedown.left="onClickTopic(topic.id)"
+    >
       <p>{{ topic.title.substring(0, 30) }}</p>
-      <img src="@/assets/search.svg" />
+      <img src="@/assets/shortcut.svg" />
     </div>
   </div>
 </template>
@@ -28,6 +33,11 @@ export default defineComponent({
     return {
       displayingTopics: [] as TopicItem[]
     };
+  },
+  methods: {
+    onClickTopic(topicId: number) {
+      this.$router.push(`/discussion/${topicId}`);
+    }
   }
 });
 </script>
