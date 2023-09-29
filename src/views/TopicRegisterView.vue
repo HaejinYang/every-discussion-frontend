@@ -34,10 +34,6 @@
         </button>
         <WaitButton v-show="isWait" />
       </div>
-
-      <div :class="$style['btn-search-wrapper']">
-        <button :class="$style['btn-search']">비슷한 토론 검색</button>
-      </div>
     </div>
   </div>
 </template>
@@ -189,15 +185,6 @@ export default defineComponent({
       > a {
         color: white;
       }
-    }
-
-    .btn-search {
-      width: 100%;
-      background-color: $primary-color;
-      border: none;
-      padding: 0.5rem;
-      color: white;
-      font-weight: bold;
     }
 
     .btn-create-wrapper {
