@@ -1,17 +1,21 @@
 <template>
   <div :class="$style.container">
     <div :class="$style['register-form']">
-      <div :class="$style.title">
+      <div :class="$style.header">
         <span>토론 생성</span>
       </div>
-      <div :class="$style['topic-name-wrapper']">
-        <input
-          :class="$style['topic-name']"
-          type="text"
-          placeholder="토론 주제"
-          :value="title"
-          @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
-        />
+      <div :class="$style['topic-titles']">
+        <div :class="$style['topic-name-wrapper']">
+          <input
+            :class="$style['topic-name']"
+            type="text"
+            placeholder="토론 주제"
+            :value="title"
+            @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
+          />
+          <SimilarTopics :topics="similarTopics" />
+        </div>
+        <WaitButton v-show="isSearchingSimliarTopics" position="right" color="black" />
       </div>
       <div :class="$style['topic-description-wrapper']">
         <input
@@ -30,46 +34,58 @@
         </button>
         <WaitButton v-show="isWait" />
       </div>
-
-      <div :class="$style['btn-search-wrapper']">
-        <button :class="$style['btn-search']">비슷한 토론 검색</button>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Topic } from '@/services/topics';
+import { Topic, TopicItem } from '@/services/topics';
 import WaitButton from '@/components/buttons/WaitButton.vue';
+import { debounce } from '@/util/timing';
+import SimilarTopics from '@/components/topics/SimilarTopics.vue';
+import { getErrorMessage } from '@/util/error';
 
 enum eProcessStep {
   Init = 0,
   Wait = 1,
   Success = 2,
-  Faile = 3
+  Fail = 3
 }
 
 export default defineComponent({
   name: 'RegisterTopicView',
-  components: { WaitButton },
+  components: { SimilarTopics, WaitButton },
   data() {
     return {
       title: '',
       description: '',
       submitBtnMessags: ['생성', '', '생성완료! ', '생성실패!'],
       submitStep: eProcessStep.Init as eProcessStep,
-      createdTopicId: -1
+      createdTopicId: -1,
+      debouncedSearchSimilarTitle: (...args: any[]): void => {},
+      similarTopics: [] as TopicItem[],
+      searchStep: eProcessStep.Init as eProcessStep
     };
   },
   computed: {
     isWait() {
       return eProcessStep.Wait === this.submitStep;
+    },
+    isSearchingSimliarTopics() {
+      return eProcessStep.Wait === this.searchStep;
     }
   },
   watch: {
     title(newTitle: string) {
-      console.log(`title : ${newTitle}`);
+      if (newTitle.length < 1) {
+        this.similarTopics = [];
+
+        return;
+      }
+
+      this.searchStep = eProcessStep.Wait;
+      this.debouncedSearchSimilarTitle(newTitle);
     },
     description(newDescription: string) {
       console.log(`description: ${newDescription}`);
@@ -90,6 +106,20 @@ export default defineComponent({
     moveToTopic() {
       this.$router.push(`/discussion/${this.createdTopicId}`);
     }
+  },
+  created() {
+    this.similarTopics = [];
+
+    this.debouncedSearchSimilarTitle = debounce(async (title: string) => {
+      try {
+        const topics = await Topic.search(title);
+        this.similarTopics = topics.data;
+      } catch (e) {
+        reportError(getErrorMessage(e));
+      } finally {
+        this.searchStep = eProcessStep.Init;
+      }
+    }, 100);
   }
 });
 </script>
@@ -119,14 +149,22 @@ export default defineComponent({
       padding-bottom: 0;
     }
 
-    .title {
+    .header {
       text-align: center;
     }
 
-    .topic-name {
-      width: 100%;
-      border: $border-weak-line;
-      padding: 0.5rem;
+    .topic-titles {
+      position: relative;
+
+      .topic-name-wrapper {
+        position: relative;
+
+        .topic-name {
+          width: 100%;
+          border: $border-weak-line;
+          padding: 0.5rem;
+        }
+      }
     }
 
     .topic-description {
@@ -147,15 +185,6 @@ export default defineComponent({
       > a {
         color: white;
       }
-    }
-
-    .btn-search {
-      width: 100%;
-      background-color: $primary-color;
-      border: none;
-      padding: 0.5rem;
-      color: white;
-      font-weight: bold;
     }
 
     .btn-create-wrapper {

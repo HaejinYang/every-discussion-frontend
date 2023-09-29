@@ -33,6 +33,8 @@ class TopTopicsItem {
   data: TopicItem[];
 }
 
+class SearchTopicsItem extends TopTopicsItem {}
+
 class TopTopics {
   public static async fetch() {
     const response = await fetchApi('/api/topics', {
@@ -61,4 +63,4 @@ class TopTopics {
   }
 }
 
-export { TopTopicsItem, TopTopics };
+export { TopTopicsItem, TopTopics, SearchTopicsItem };
