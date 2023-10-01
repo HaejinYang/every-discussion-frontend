@@ -128,23 +128,22 @@ export default defineComponent({
   .more-wrapper {
     position: relative;
     width: 300px;
-    background-color: $primary-color;
     margin-bottom: 1rem;
 
     .more {
       min-height: 50px;
       width: 100%;
-      color: white;
-      text-align: center;
-      font-weight: bold;
       padding: 1rem;
-      border-radius: 10px;
-      background-color: transparent;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      background-color: $primary-color;
+      border-radius: 5px;
       border: none;
 
       &:hover {
         cursor: pointer;
-        box-shadow: $box-shadow-normal;
+        filter: brightness(85%);
       }
     }
   }

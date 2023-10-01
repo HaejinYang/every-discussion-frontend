@@ -22,9 +22,9 @@
     </nav>
     <div :class="$style['register-topic']">
       <p>{{ isLogin ? '환영합니다!' : '안녕하세요?' }}</p>
-      <span v-show="!isLogin"> 로그아웃 상태입니다.</span>
+      <span v-show="!isLogin"> 로그인이 필요합니다.</span>
 
-      <div v-show="isLogin" :class="$style['user-info']">
+      <div v-show="isLogin" :class="$style['user-info']" @mousedown.left="onClickUserInfo">
         <h3>{{ name }}</h3>
         <p>
           <small>참여 토론: {{ topicsCount }}</small> <small>작성 의견: {{ opinionsCount }}</small>
@@ -80,6 +80,9 @@ export default defineComponent({
     },
     onClickRegisterTopic() {
       this.$router.push('/topic/register');
+    },
+    onClickUserInfo() {
+      this.$router.push('/user/profile');
     }
   }
 });
@@ -148,8 +151,14 @@ export default defineComponent({
         padding: 1rem;
         box-shadow: $box-shadow-normal;
         border: $border-normal-line;
+        border-radius: 5px;
 
         > p {
+        }
+
+        &:hover {
+          cursor: pointer;
+          filter: brightness(85%);
         }
       }
     }

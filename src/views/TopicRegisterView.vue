@@ -30,7 +30,7 @@
       <div :class="$style['btn-create-wrapper']">
         <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">
           {{ submitBtnMessags[submitStep] }}
-          <a href="#" v-show="submitStep === 2" @mousedown.left="moveToTopic"> 토론 바로가기</a>
+          <a href="#" v-if="isRegisterSuccess" @mousedown.left="moveToTopic"> 토론 바로가기</a>
         </button>
         <WaitButton v-show="isWait" />
       </div>
@@ -74,6 +74,9 @@ export default defineComponent({
     },
     isSearchingSimliarTopics() {
       return eProcessStep.Wait === this.searchStep;
+    },
+    isRegisterSuccess() {
+      return eProcessStep.Success === this.submitStep;
     }
   },
   watch: {
@@ -87,21 +90,23 @@ export default defineComponent({
       this.searchStep = eProcessStep.Wait;
       this.debouncedSearchSimilarTitle(newTitle);
     },
-    description(newDescription: string) {
-      console.log(`description: ${newDescription}`);
-    }
+    description(newDescription: string) {}
   },
   methods: {
     async submitTopic() {
-      if (this.submitStep > eProcessStep.Init) {
+      if (this.submitStep === eProcessStep.Wait) {
         return;
       }
 
       this.submitStep = eProcessStep.Wait;
-      const topic = await Topic.create(this.title, this.description);
-      this.createdTopicId = topic.id;
-
-      this.submitStep = eProcessStep.Success;
+      try {
+        const topic = await Topic.create(this.title, this.description);
+        this.createdTopicId = topic.id;
+        this.submitStep = eProcessStep.Success;
+      } catch (e) {
+        this.submitStep = eProcessStep.Fail;
+        reportError(getErrorMessage(e));
+      }
     },
     moveToTopic() {
       this.$router.push(`/discussion/${this.createdTopicId}`);
@@ -135,6 +140,7 @@ export default defineComponent({
     border: $border-normal-line;
     padding: 1rem;
     width: 400px;
+    border-radius: 5px;
 
     > * {
       padding: 0.5rem;
@@ -163,6 +169,7 @@ export default defineComponent({
           width: 100%;
           border: $border-weak-line;
           padding: 0.5rem;
+          border-radius: 5px;
         }
       }
     }
@@ -171,24 +178,32 @@ export default defineComponent({
       width: 100%;
       border: $border-weak-line;
       padding: 0.5rem;
-    }
-
-    .btn-create {
-      width: 100%;
-      background-color: $primary-color;
-      border: none;
-      padding: 0.5rem;
-      color: white;
-      font-weight: bold;
-      min-height: 2.2rem;
-
-      > a {
-        color: white;
-      }
+      border-radius: 5px;
     }
 
     .btn-create-wrapper {
       position: relative;
+      min-height: 2.2rem;
+      padding: 0.5rem;
+
+      .btn-create {
+        min-height: 2.2rem;
+        width: 100%;
+        background-color: $primary-color;
+        color: white;
+        font-weight: bold;
+        border-radius: 5px;
+        border: none;
+
+        &:hover {
+          cursor: pointer;
+          filter: brightness(85%);
+        }
+
+        > a {
+          color: white;
+        }
+      }
     }
   }
 }

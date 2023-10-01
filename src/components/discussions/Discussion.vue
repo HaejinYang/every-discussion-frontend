@@ -89,6 +89,7 @@ export default defineComponent({
   min-width: 300px;
   max-height: 400px;
   overflow-y: auto;
+  border-radius: 5px;
 
   &::-webkit-scrollbar {
     display: none;
@@ -104,10 +105,11 @@ export default defineComponent({
   .opinion {
     margin: 0.5rem;
     border: $border-weak-line;
+    border-radius: 5px;
 
     &:hover {
       cursor: pointer;
-      border: $border-strong-white-line;
+      box-shadow: $box-shadow-full;
     }
 
     > p,

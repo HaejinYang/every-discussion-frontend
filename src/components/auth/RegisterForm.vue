@@ -222,6 +222,7 @@ export default defineComponent({
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
 
     > * {
       width: 90%;
@@ -251,12 +252,12 @@ export default defineComponent({
         font-weight: bold;
         background-color: $primary-color;
         filter: brightness(100%);
-        transition: all 300ms ease-in-out;
         min-height: 2.2rem;
+        border-radius: 5px;
 
         &:hover {
           cursor: pointer;
-          filter: brightness(90%);
+          filter: brightness(85%);
         }
       }
     }

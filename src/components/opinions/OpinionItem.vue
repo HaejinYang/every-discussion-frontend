@@ -104,9 +104,14 @@ export default defineComponent({
         height: 310px;
         overflow: auto;
         margin: 3rem;
+        border-radius: 5px;
 
         &::-webkit-scrollbar {
           display: none;
+        }
+
+        fieldset {
+          border-radius: 5px;
         }
       }
 

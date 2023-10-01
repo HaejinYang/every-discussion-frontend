@@ -2,13 +2,20 @@
   <div :class="$style.container">
     <div :class="$style['info']" v-for="item in topicWithOpinions" :key="item.topic.id">
       <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
+        <span>참여토론</span>
         <p>{{ item.topic.title }}</p>
         <p>참여자수{{ item.topic.participantsCount }}</p>
         <p>의견정보{{ item.topic.opinionsCount }}</p>
       </div>
       <div :class="$style['opinions-wrapper']">
         <div :class="$style.opinions" v-for="opinion in item.opinions" :key="opinion.id">
-          <p>의견 내용 : {{ opinion.title }}</p>
+          <p>의견 내용</p>
+          <p
+            :class="$style['opinion-content']"
+            @mousedown.left="onClickOpinion(item.topic.id, opinion.id)"
+          >
+            {{ opinion.title }}
+          </p>
           <p>
             추천 {{ opinion.like }}, 비추천 {{ opinion.dislike }}
             <span><button>수정</button></span> <span><button>삭제</button></span>
@@ -32,6 +39,7 @@ import WaitButton from '@/components/buttons/WaitButton.vue';
 import { useAuthHandler } from '@/stores/auth';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinion } from '@/services/UserOpinions';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 enum eProcess {
   Init = 0,
@@ -68,6 +76,12 @@ export default defineComponent({
   methods: {
     switchToDiscussion(id: number) {
       this.$router.push(`/discussion/${id}`);
+    },
+    onClickOpinion(topicId: number, opinionId: number) {
+      this.$router.push(`/discussion/${topicId}`);
+
+      const handler = useDiscussionHandler();
+      handler.setOpinionIdWhenRedirect(opinionId);
     }
   },
   async created() {
@@ -132,9 +146,11 @@ export default defineComponent({
     border: $border-normal-line;
     box-shadow: $box-shadow-normal;
     margin: 1rem;
+    border-radius: 5px;
 
     > * {
       border: $border-weak-line;
+      border-radius: 5px;
     }
 
     .topic-info {
@@ -143,6 +159,16 @@ export default defineComponent({
       justify-content: center;
       max-width: 250px;
       padding: 1rem;
+      margin-right: 1rem;
+
+      > span {
+        text-align: center;
+        font-weight: bold;
+      }
+
+      > * {
+        margin-bottom: 0.5rem;
+      }
 
       &:hover {
         cursor: pointer;
@@ -157,11 +183,24 @@ export default defineComponent({
       .opinions {
         max-width: 300px;
         padding: 1rem;
+        border-radius: 5px;
+        border: $border-weak-line;
+
+        .opinion-content {
+          &:hover {
+            cursor: pointer;
+            box-shadow: $box-shadow-strong;
+          }
+        }
+
+        > p:first-of-type {
+          font-weight: bold;
+          text-align: center;
+        }
 
         > p {
           padding: 1rem;
           border-bottom: $border-weak-line;
-          border: $border-weak-line;
 
           &:last-child {
             display: flex;

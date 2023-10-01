@@ -155,6 +155,7 @@ export default defineComponent({
     margin: 1rem;
     box-shadow: $box-shadow-normal;
     border: $border-normal-line;
+    border-radius: 5px;
 
     .item {
       position: relative;

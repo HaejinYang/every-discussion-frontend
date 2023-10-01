@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useDiscussionHandler = defineStore('discussion', {
   state: () => {
-    return { isFoldOpinionList: false, selectedOpinionId: -1 };
+    return { isFoldOpinionList: false, selectedOpinionId: -1, isShowOpinionWhenRedirect: false };
   },
   actions: {
     foldList() {
@@ -18,6 +18,10 @@ export const useDiscussionHandler = defineStore('discussion', {
     hideOpinionDetaily() {
       this.spreadList();
       this.selectedOpinionId = -1;
+    },
+    setOpinionIdWhenRedirect(opinionId: number) {
+      this.isShowOpinionWhenRedirect = true;
+      this.selectedOpinionId = opinionId;
     }
   }
 });
