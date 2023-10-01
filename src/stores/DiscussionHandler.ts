@@ -18,6 +18,9 @@ export const useDiscussionHandler = defineStore('discussion', {
     hideOpinionDetaily() {
       this.spreadList();
       this.selectedOpinionId = -1;
+    },
+    setOpinionId(opinionId: number) {
+      this.selectedOpinionId = opinionId;
     }
   }
 });

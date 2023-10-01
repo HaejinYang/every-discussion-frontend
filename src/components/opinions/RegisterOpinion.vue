@@ -111,6 +111,7 @@ export default defineComponent({
     width: 60%;
     background-color: white;
     border: $border-normal-line;
+    border-radius: 5px;
 
     .header {
       text-align: center;
@@ -123,6 +124,7 @@ export default defineComponent({
         width: 100%;
         height: 100px;
         border: 1px solid gray;
+        border-radius: 5px;
       }
 
       > input {
@@ -136,10 +138,11 @@ export default defineComponent({
         color: white;
         font-size: 1rem;
         font-weight: bold;
+        border-radius: 5px;
 
         &:hover {
           cursor: pointer;
-          box-shadow: $box-shadow-normal;
+          filter: brightness(85%);
         }
       }
     }

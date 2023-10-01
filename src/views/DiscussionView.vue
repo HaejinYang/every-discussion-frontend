@@ -108,10 +108,16 @@ export default defineComponent({
   async created() {
     const topic = await Topic.fetch(this.topicId);
     this.topic = topic;
-  },
-  mounted() {
+
     const handler = useDiscussionHandler();
-    handler.hideOpinionDetaily();
+    if (handler.selectedOpinionId !== -1) {
+      console.log('displayOpinionDetailly');
+      handler.displayOpinionDetailly(handler.selectedOpinionId);
+    } else {
+      console.log('hideOpinionDetaily');
+
+      handler.hideOpinionDetaily();
+    }
   }
 });
 </script>
@@ -150,6 +156,7 @@ export default defineComponent({
       max-height: 1000px;
       overflow: hidden;
       transition: all 1s ease-in-out;
+      border-radius: 5px;
 
       .agree {
         display: flex;
@@ -158,6 +165,8 @@ export default defineComponent({
         min-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
+        border-radius: 5px;
+        margin-bottom: 1rem;
       }
 
       .disagree {
@@ -167,12 +176,18 @@ export default defineComponent({
         min-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
+        border-radius: 5px;
       }
 
       .submit-agree,
       .submit-disagree {
         text-align: center;
         margin-top: 1rem;
+        border-radius: 5px;
+
+        &:hover {
+          filter: brightness(85%);
+        }
 
         > button {
           width: 100%;
@@ -181,6 +196,10 @@ export default defineComponent({
           border: none;
           color: white;
           font-weight: bold;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
 
@@ -208,6 +227,11 @@ export default defineComponent({
     .content {
       .opinions {
         flex-direction: row;
+
+        .agree {
+          margin-bottom: 0rem;
+          margin-right: 1rem;
+        }
       }
     }
   }
