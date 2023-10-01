@@ -39,6 +39,13 @@ export default defineComponent({
   max-width: 300px;
   box-shadow: $box-shadow-normal;
   border: $border-weak-line;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(85%);
+  }
 
   .title {
     padding: 1rem;

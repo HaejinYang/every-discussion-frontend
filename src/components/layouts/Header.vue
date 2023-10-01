@@ -144,11 +144,13 @@ export default defineComponent({
       background-color: white;
       box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
       padding: 0.5rem;
+      border-radius: 5px;
 
       ul {
         li {
           padding: 0.5rem;
           list-style: none;
+          background-color: white;
 
           &:hover {
             cursor: pointer;
@@ -169,6 +171,7 @@ export default defineComponent({
 
     &:hover {
       cursor: pointer;
+      filter: brightness(85%);
     }
   }
 }
