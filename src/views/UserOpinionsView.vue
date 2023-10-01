@@ -81,7 +81,7 @@ export default defineComponent({
       this.$router.push(`/discussion/${topicId}`);
 
       const handler = useDiscussionHandler();
-      handler.setOpinionId(opinionId);
+      handler.setOpinionIdWhenRedirect(opinionId);
     }
   },
   async created() {

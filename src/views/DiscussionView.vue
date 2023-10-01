@@ -110,14 +110,12 @@ export default defineComponent({
     this.topic = topic;
 
     const handler = useDiscussionHandler();
-    if (handler.selectedOpinionId !== -1) {
-      console.log('displayOpinionDetailly');
+    if (handler.selectedOpinionId !== -1 && handler.isShowOpinionWhenRedirect) {
       handler.displayOpinionDetailly(handler.selectedOpinionId);
     } else {
-      console.log('hideOpinionDetaily');
-
       handler.hideOpinionDetaily();
     }
+    handler.isShowOpinionWhenRedirect = false;
   }
 });
 </script>

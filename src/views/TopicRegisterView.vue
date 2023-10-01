@@ -90,21 +90,23 @@ export default defineComponent({
       this.searchStep = eProcessStep.Wait;
       this.debouncedSearchSimilarTitle(newTitle);
     },
-    description(newDescription: string) {
-      console.log(`description: ${newDescription}`);
-    }
+    description(newDescription: string) {}
   },
   methods: {
     async submitTopic() {
-      if (this.submitStep > eProcessStep.Init) {
+      if (this.submitStep === eProcessStep.Wait) {
         return;
       }
 
       this.submitStep = eProcessStep.Wait;
-      const topic = await Topic.create(this.title, this.description);
-      this.createdTopicId = topic.id;
-
-      this.submitStep = eProcessStep.Success;
+      try {
+        const topic = await Topic.create(this.title, this.description);
+        this.createdTopicId = topic.id;
+        this.submitStep = eProcessStep.Success;
+      } catch (e) {
+        this.submitStep = eProcessStep.Fail;
+        reportError(getErrorMessage(e));
+      }
     },
     moveToTopic() {
       this.$router.push(`/discussion/${this.createdTopicId}`);
