@@ -33,6 +33,7 @@
       :isShowReference="isShowReferenceOfRegistering"
       :topicId="topicId"
       @remove-form="disableRegisterForm"
+      @register-opinion="onRegisterOpinion"
     />
   </div>
 </template>
@@ -42,12 +43,14 @@ import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
 import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
+import { OpinionData } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
 import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useAuthHandler } from '@/stores/auth';
 import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import { useNewOpinionHandler } from '@/stores/NewOpinion';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -103,6 +106,10 @@ export default defineComponent({
     onClickTitle() {
       const handler = useDiscussionHandler();
       handler.hideOpinionDetaily();
+    },
+    onRegisterOpinion(opinion: OpinionData) {
+      const handler = useNewOpinionHandler();
+      handler.addOpinion(this.topicId, opinion);
     }
   },
   async created() {

@@ -27,6 +27,7 @@ import { defineComponent } from 'vue';
 import { Opinion, type OpinionData } from '@/services/opinions';
 import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
 import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import { useNewOpinionHandler } from '@/stores/NewOpinion';
 
 export default defineComponent({
   name: 'Discussion',
@@ -43,7 +44,8 @@ export default defineComponent({
   data() {
     return {
       opinions: [] as OpinionData[],
-      displayedOpinions: [] as OpinionData[]
+      displayedOpinions: [] as OpinionData[],
+      checkNewOpiniontimerId: -1
     };
   },
   computed: {
@@ -68,16 +70,33 @@ export default defineComponent({
     onClickOpinion(index: number, opinionId: number) {
       const handler = useDiscussionHandler();
       handler.displayOpinionDetailly(opinionId);
+    },
+    addNewOpinion() {
+      const handler = useNewOpinionHandler();
+      if (handler.isAdded && handler.topicId === this.topicId && handler.item) {
+        if (handler.item.agreeType === this.agreeingType) {
+          handler.consume();
+          this.opinions.unshift(handler.item);
+          this.displayOpinions();
+        }
+      }
     }
   },
   async created() {
     const opinions = await Opinion.fetchFromTopic(this.topicId);
-    console.log(opinions);
-    this.opinions = opinions.filter((opinion: OpinionData) => {
-      return opinion.agreeType === this.agreeingType;
-    });
-
+    this.opinions.push(
+      ...opinions.filter((opinion: OpinionData) => {
+        return opinion.agreeType === this.agreeingType;
+      })
+    );
     this.displayOpinions();
+  },
+  mounted() {
+    this.checkNewOpiniontimerId = setInterval(this.addNewOpinion, 1000);
+  },
+  unmounted() {
+    console.log('clear');
+    clearInterval(this.checkNewOpiniontimerId);
   }
 });
 </script>
