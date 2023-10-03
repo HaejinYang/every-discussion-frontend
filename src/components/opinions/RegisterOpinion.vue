@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container" @mousedown.left="disableForm">
-    <div @mousedown.left.stop>
+    <div @mousedown.left.stop="onClickForm">
       <div :class="$style['header']">
         <h3>
           {{ agreeingType === 'agree' ? '찬성' : '반대' }}
@@ -28,13 +28,14 @@
         <input type="radio" id="disagree" value="disagree" v-model="pickedAgreeOrDisagree" />
         <label for="two">반박</label>
       </div>
-      <div :style="{ textAlign: 'center' }">
+      <div :class="$style['submit-wrapper']">
         <button
           :class="agreeingType === 'agree' ? $style.agree : $style.disagree"
           @click="submitOpinion"
         >
-          제출
+          {{ submitMsg[submitStep] }}
         </button>
+        <WaitButton v-if="isSubmitWaiting" />
       </div>
     </div>
   </div>
@@ -44,9 +45,19 @@
 import { defineComponent, type PropType } from 'vue';
 import { type AgreeingType } from '@/services/opinions';
 import { UserOpinion } from '@/services/UserOpinions';
+import { getErrorMessage } from '@/util/error';
+import WaitButton from '@/components/buttons/WaitButton.vue';
+
+enum eProcess {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3
+}
 
 export default defineComponent({
   name: 'RegisterOpinion',
+  components: { WaitButton },
   props: {
     agreeingType: {
       type: String as PropType<AgreeingType>,
@@ -66,29 +77,49 @@ export default defineComponent({
       pickedAgreeOrDisagree: 'agree',
       title: '',
       content: '',
-      isSubmitting: false
+      submitStep: eProcess.Init as eProcess,
+      submitMsg: ['제출하기', '', '제출성공', '제출실패']
     };
+  },
+  computed: {
+    isSubmitWaiting() {
+      return eProcess.Wait === this.submitStep;
+    }
   },
   methods: {
     disableForm() {
       this.$emit('remove-form');
     },
+    onClickForm() {
+      if (this.submitStep !== eProcess.Wait) {
+        this.submitStep = eProcess.Init;
+      }
+    },
     async submitOpinion() {
-      if (this.isSubmitting) {
+      if (this.submitStep === eProcess.Wait) {
         return;
       }
 
-      this.isSubmitting = true;
-
-      await UserOpinion.create({
-        topicId: this.topicId,
-        title: this.title,
-        content: this.content,
-        agreeingType: this.agreeingType
-      });
-
-      this.disableForm();
-      this.isSubmitting = false;
+      this.submitStep = eProcess.Wait;
+      try {
+        const created = await UserOpinion.create({
+          topicId: this.topicId,
+          title: this.title,
+          content: this.content,
+          agreeingType: this.agreeingType
+        });
+        this.submitStep = eProcess.Success;
+        this.$emit('register-opinion', created);
+      } catch (e) {
+        this.submitStep = eProcess.Fail;
+        reportError(getErrorMessage(e));
+      } finally {
+        if (this.submitStep === eProcess.Success) {
+          setTimeout(() => {
+            this.disableForm();
+          }, 500);
+        }
+      }
     }
   }
 });
@@ -117,6 +148,11 @@ export default defineComponent({
       text-align: center;
     }
 
+    .submit-wrapper {
+      position: relative;
+      text-align: center;
+    }
+
     > div {
       padding: 1rem;
 
@@ -139,6 +175,7 @@ export default defineComponent({
         font-size: 1rem;
         font-weight: bold;
         border-radius: 5px;
+        min-height: 3.3rem;
 
         &:hover {
           cursor: pointer;
