@@ -80,4 +80,4 @@ class Opinion {
   }
 }
 
-export { type OpinionData, type AgreeingType, OpinionWithReferenceItem, Opinion };
+export { OpinionData, type AgreeingType, OpinionWithReferenceItem, Opinion };

@@ -3,7 +3,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { useAuthHandler } from '@/stores/auth';
-import { OpinionWithReferenceItem } from '@/services/opinions';
+import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
 
 interface RegisterOpinion {
   topicId: number;
@@ -48,8 +48,10 @@ class UserOpinion {
     });
 
     throwErrorWhenResponseNotOk(response);
+    const result = await response.json();
+    const created = plainToInstance(OpinionData, result.data);
 
-    return true;
+    return created;
   }
 
   public static async update() {}
