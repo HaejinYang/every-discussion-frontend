@@ -12,9 +12,10 @@
       <TopicPreview
         :topic="topic"
         :isShowTopicInfo="index === selectedTopicIndex"
-        @mouseover="selectTopicIndex(index)"
+        :index="index"
         v-for="(topic, index) in topics"
         :key="index"
+        @on-click-more="onClickTopicDetail"
       />
     </div>
     <div :class="$style['more-wrapper']" ref="more-button">
@@ -91,6 +92,13 @@ export default defineComponent({
     onInputSearch(keyword: string) {
       this.searchKeyword = keyword;
       return searchTopics(keyword);
+    },
+    onClickTopicDetail(topicIndex: number) {
+      if (this.selectedTopicIndex === topicIndex) {
+        this.selectedTopicIndex = -1;
+      } else {
+        this.selectedTopicIndex = topicIndex;
+      }
     }
   },
   created() {
