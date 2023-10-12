@@ -1,6 +1,13 @@
 <template>
   <div :class="$style.container" @mousedown.left="moveToDiscussion">
-    <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
+    <div :class="$style['title-wrapper']">
+      <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
+      <img
+        :class="[$style.more, isFold ? null : $style.rotate]"
+        src="@/assets/caret.svg"
+        @mousedown.left.stop="onClickMore"
+      />
+    </div>
     <div :class="[$style.info, isShowTopicInfo ? $style.show : null]">
       <p>생성자: {{ topic.host }}</p>
       <p>
@@ -24,11 +31,32 @@ export default defineComponent({
     isShowTopicInfo: {
       type: Boolean,
       required: true
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      isFold: true
+    };
+  },
+  watch: {
+    isShowTopicInfo(state: boolean) {
+      if (state) {
+        this.isFold = false;
+      } else {
+        this.isFold = true;
+      }
     }
   },
   methods: {
     moveToDiscussion() {
       this.$router.push({ path: `/discussion/${this.topic.id}` });
+    },
+    onClickMore() {
+      this.$emit('on-click-more', this.index);
     }
   }
 });
@@ -44,11 +72,32 @@ export default defineComponent({
 
   &:hover {
     cursor: pointer;
-    filter: brightness(85%);
   }
 
-  .title {
+  .title-wrapper {
+    position: relative;
     padding: 1rem;
+
+    .title {
+    }
+
+    .more {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      transform: translate(0, -80%);
+      background-color: white;
+      border-radius: 50px;
+      transform-origin: center;
+
+      &:hover {
+        filter: brightness(95%);
+      }
+    }
+
+    .rotate {
+      transform: translate(0, -80%) rotateX(180deg);
+    }
   }
 
   .info {
