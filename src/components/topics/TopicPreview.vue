@@ -71,6 +71,7 @@ export default defineComponent({
   margin-bottom: 1rem;
 
   &:hover {
+    box-shadow: $box-shadow-strong;
     cursor: pointer;
   }
 
