@@ -12,7 +12,6 @@
       <TopicPreview
         :topic="topic"
         :isShowTopicInfo="index === selectedTopicIndex"
-        @mouseover="selectTopicIndex(index)"
         v-for="(topic, index) in topics"
         :key="index"
       />
