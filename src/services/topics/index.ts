@@ -64,7 +64,7 @@ class Topic {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const topics: TopicItem[] = plainToInstance(TopicItem, result.data);
+    const topics = plainToInstance(TopicItem, <any[]>result.data);
 
     return topics;
   }

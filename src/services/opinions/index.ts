@@ -58,6 +58,8 @@ class Opinion {
       result.data
     );
 
+    opinion.referTo = plainToInstance(OpinionData, opinion.referTo);
+    opinion.referred = plainToInstance(OpinionData, <any[]>opinion.referred);
     return opinion;
   }
 

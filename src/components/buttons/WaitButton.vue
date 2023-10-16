@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 
 type AlignPosition = 'left' | 'middle' | 'right';
 type SpinnerColor = 'black' | 'white';
@@ -23,7 +23,7 @@ export default defineComponent({
     }
   },
   computed: {
-    currentPoision() {
+    currentPoision(): string {
       if (this.position === 'left') {
         return this.$style['left'];
       }
@@ -41,10 +41,10 @@ export default defineComponent({
     spinnerImgUrl() {
       if (this.color === 'black') {
         console.log('black');
-        return new URL('/src/assets/spinner-black.svg', import.meta.url);
+        return new URL('/src/assets/spinner-black.svg', import.meta.url).toString();
       }
 
-      return new URL('/src/assets/spinner-white.svg', import.meta.url);
+      return new URL('/src/assets/spinner-white.svg', import.meta.url).toString();
     }
   }
 });

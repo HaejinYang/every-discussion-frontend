@@ -1,7 +1,7 @@
 <template>
   <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
-    <div>
-      <p>참조의견</p>
+    <div @mousedown.left="onClickOpinion">
+      <p>참조한 의견</p>
       <fieldset>
         <legend>타이틀</legend>
         <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
@@ -21,6 +21,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import { type OpinionData } from '@/services/opinions';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'ReferToOpinion',
@@ -28,6 +29,15 @@ export default defineComponent({
     opinion: {
       type: Object as PropType<OpinionData>,
       required: true
+    }
+  },
+  methods: {
+    onClickOpinion() {
+      this.moveToOpinion();
+    },
+    moveToOpinion() {
+      const handler = useDiscussionHandler();
+      handler.displayOpinionDetailly(this.opinion.id);
     }
   }
 });
@@ -40,6 +50,7 @@ export default defineComponent({
 
   div {
     padding: 0.5rem;
+    background-color: inherit;
 
     > p {
       text-align: center;
@@ -52,6 +63,10 @@ export default defineComponent({
       p {
         padding: 0.5rem;
       }
+    }
+
+    &:hover {
+      cursor: pointer;
     }
   }
 }

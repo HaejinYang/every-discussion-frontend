@@ -62,23 +62,33 @@ export default defineComponent({
       referred: [] as OpinionData[]
     };
   },
+  watch: {
+    opinionId(newOpinionId: number) {
+      Opinion.fetch(newOpinionId).then((opinion: OpinionWithReferenceItem) => {
+        this.assignOpinion(opinion);
+      });
+    }
+  },
   methods: {
     onClickPage() {
       this.$emit('on-click-anywhere');
+    },
+    assignOpinion(opinion: OpinionWithReferenceItem) {
+      this.opinion = opinion;
+      this.referTo = opinion.referTo;
+      let temp = [] as OpinionData[];
+      temp.push(...opinion.referred);
+      temp.push(...opinion.referred);
+      temp.push(...opinion.referred);
+      temp.push(...opinion.referred);
+      temp.push(...opinion.referred);
+
+      this.referred = temp;
     }
   },
   async created() {
     const opinion = await Opinion.fetch(this.opinionId);
-    this.opinion = opinion;
-    this.referTo = opinion.referTo;
-    let temp = [] as OpinionData[];
-    temp.push(...opinion.referred);
-    temp.push(...opinion.referred);
-    temp.push(...opinion.referred);
-    temp.push(...opinion.referred);
-    temp.push(...opinion.referred);
-
-    this.referred = temp;
+    this.assignOpinion(opinion);
   }
 });
 </script>

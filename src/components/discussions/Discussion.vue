@@ -92,7 +92,7 @@ export default defineComponent({
     this.displayOpinions();
   },
   mounted() {
-    this.checkNewOpiniontimerId = setInterval(this.addNewOpinion, 1000);
+    this.checkNewOpiniontimerId = window.setInterval(this.addNewOpinion, 1000);
   },
   unmounted() {
     console.log('clear');

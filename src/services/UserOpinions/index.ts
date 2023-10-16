@@ -3,7 +3,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { useAuthHandler } from '@/stores/auth';
-import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
+import { type AgreeingType, OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
 
 interface RegisterOpinion {
   topicId: number;
