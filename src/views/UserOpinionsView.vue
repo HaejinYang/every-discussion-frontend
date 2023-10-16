@@ -40,6 +40,7 @@ import { useAuthHandler } from '@/stores/auth';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinion } from '@/services/UserOpinions';
 import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import Header from '@/App.vue';
 
 enum eProcess {
   Init = 0,
@@ -51,7 +52,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { WaitButton, Discussion },
+  components: { Header, WaitButton, Discussion },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
@@ -157,7 +158,8 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       justify-content: center;
-      max-width: 250px;
+      width: 250px;
+
       padding: 1rem;
       margin-right: 1rem;
 
@@ -178,10 +180,10 @@ export default defineComponent({
 
     .opinions-wrapper {
       overflow-y: scroll;
-      max-height: 200px;
+      height: 250px;
 
       .opinions {
-        max-width: 300px;
+        width: 300px;
         padding: 1rem;
         border-radius: 5px;
         border: $border-weak-line;
