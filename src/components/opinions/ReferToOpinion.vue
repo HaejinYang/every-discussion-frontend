@@ -1,7 +1,7 @@
 <template>
   <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
     <div>
-      <p>참조의견</p>
+      <p>참조한 의견</p>
       <fieldset>
         <legend>타이틀</legend>
         <p>{{ opinion.title.substring(0, 20).concat('...') }}</p>
@@ -40,6 +40,7 @@ export default defineComponent({
 
   div {
     padding: 0.5rem;
+    background-color: inherit;
 
     > p {
       text-align: center;

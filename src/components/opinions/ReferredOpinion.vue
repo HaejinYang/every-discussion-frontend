@@ -6,7 +6,7 @@
         v-for="(opinion, index) in referredOpinions"
         :key="opinion.id"
       >
-        <p>참조의견</p>
+        <p>참조된 의견</p>
         <fieldset>
           <legend>의견 {{ index + 1 }}</legend>
           <fieldset>
