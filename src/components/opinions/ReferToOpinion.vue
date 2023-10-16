@@ -1,6 +1,6 @@
 <template>
   <div :class="[$style.container, opinion.agreeType === 'agree' ? $style.agree : $style.disagree]">
-    <div>
+    <div @mousedown.left="onClickOpinion">
       <p>참조한 의견</p>
       <fieldset>
         <legend>타이틀</legend>
@@ -21,6 +21,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import { type OpinionData } from '@/services/opinions';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'ReferToOpinion',
@@ -28,6 +29,15 @@ export default defineComponent({
     opinion: {
       type: Object as PropType<OpinionData>,
       required: true
+    }
+  },
+  methods: {
+    onClickOpinion() {
+      this.moveToOpinion();
+    },
+    moveToOpinion() {
+      const handler = useDiscussionHandler();
+      handler.displayOpinionDetailly(this.opinion.id);
     }
   }
 });
@@ -53,6 +63,10 @@ export default defineComponent({
       p {
         padding: 0.5rem;
       }
+    }
+
+    &:hover {
+      cursor: pointer;
     }
   }
 }
