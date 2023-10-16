@@ -1,21 +1,21 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style.content">
-      <div :class="$style.title" @mousedown.left="onClickTitle">
+    <div :class="$style['content']">
+      <div :class="$style['title']" @mousedown.left="onClickTitle">
         <h1>{{ topic?.title }}</h1>
-        <div :class="[$style.spread, isFold ? $style.show : null]">
-          <img src="@/assets/caret.svg" />
+        <div :class="[$style['spread'], isFold ? $style.show : null]">
+          <img src="@/assets/caret.svg" alt="참조" />
         </div>
       </div>
-      <div :class="[$style.opinions, isFold ? $style.short : null]">
-        <div :class="$style.agree">
+      <div :class="[$style['opinions'], isFold ? $style.short : null]">
+        <div :class="$style['agree']">
           <Discussion agreeingType="agree" :topicId="topicId" />
           <div :class="$style['submit-agree']">
             <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
           </div>
         </div>
 
-        <div :class="$style.disagree">
+        <div :class="$style['disagree']">
           <Discussion agreeingType="disagree" :topicId="topicId" />
           <div :class="$style['submit-disagree']">
             <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
@@ -41,7 +41,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Discussion from '@/components/discussions/Discussion.vue';
-import OpinionList from '@/components/opinions/OpinionList.vue';
 import type { AgreeingType } from '@/services/opinions';
 import { OpinionData } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
@@ -54,7 +53,7 @@ import { useNewOpinionHandler } from '@/stores/NewOpinion';
 
 export default defineComponent({
   name: 'DiscussionView',
-  components: { OpinionItem, RegisterOpinion, OpinionList, Discussion },
+  components: { OpinionItem, RegisterOpinion, Discussion },
   props: {
     id: {
       type: String,
@@ -86,6 +85,7 @@ export default defineComponent({
       return handler.selectedOpinionId;
     }
   },
+
   methods: {
     displayRegisterOpinion(type: AgreeingType) {
       const authHandler = useAuthHandler();
@@ -113,8 +113,7 @@ export default defineComponent({
     }
   },
   async created() {
-    const topic = await Topic.fetch(this.topicId);
-    this.topic = topic;
+    this.topic = await Topic.fetch(this.topicId);
 
     const handler = useDiscussionHandler();
     if (handler.selectedOpinionId !== -1 && handler.isShowOpinionWhenRedirect) {
@@ -234,7 +233,7 @@ export default defineComponent({
         flex-direction: row;
 
         .agree {
-          margin-bottom: 0rem;
+          margin-bottom: 0;
           margin-right: 1rem;
         }
       }
@@ -243,7 +242,7 @@ export default defineComponent({
 }
 
 .short {
-  max-height: 0px !important;
+  max-height: 0 !important;
 }
 
 .show {

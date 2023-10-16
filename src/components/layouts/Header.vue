@@ -54,7 +54,7 @@ export default defineComponent({
   data() {
     return {
       isUserMenuHovered: false,
-      userMenuHoveredTimer: -1 as ReturnType<typeof setTimeout>,
+      userMenuHoveredTimer: -1,
       ignoreEmptyKeyword: false
     };
   },
@@ -97,7 +97,7 @@ export default defineComponent({
         if (this.userMenuHoveredTimer) {
           clearTimeout(this.userMenuHoveredTimer);
         }
-        this.userMenuHoveredTimer = setTimeout(() => {
+        this.userMenuHoveredTimer = window.setTimeout(() => {
           this.isUserMenuHovered = false;
         }, 500);
 

@@ -218,7 +218,7 @@ export default defineComponent({
   },
   methods: {
     onClickMenu(event: Event) {
-      const select: string = (event.target as HTMLElement).getAttribute('data-select');
+      const select: string | null = (event.target as HTMLElement).getAttribute('data-select');
       if (!select) {
         return;
       }
