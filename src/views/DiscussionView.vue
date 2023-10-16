@@ -83,7 +83,6 @@ export default defineComponent({
     },
     selectedOpinionId() {
       const handler = useDiscussionHandler();
-      console.log('selectedOpinionId', handler.selectedOpinionId);
       return handler.selectedOpinionId;
     }
   },

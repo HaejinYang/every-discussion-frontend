@@ -5,6 +5,7 @@
         :class="[opinion.agreeType === 'agree' ? $style.agree : $style.disagree]"
         v-for="(opinion, index) in referredOpinions"
         :key="opinion.id"
+        @mousedown.left="onClickOpinion(opinion.id)"
       >
         <p>참조된 의견</p>
         <fieldset>
@@ -26,6 +27,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import { type OpinionData } from '@/services/opinions';
+import { useDiscussionHandler } from '@/stores/DiscussionHandler';
 
 export default defineComponent({
   name: 'ReferredOpinion',
@@ -33,6 +35,15 @@ export default defineComponent({
     referredOpinions: {
       type: Array as PropType<OpinionData[]>,
       required: true
+    }
+  },
+  methods: {
+    onClickOpinion(id: number) {
+      this.moveToOpinion(id);
+    },
+    moveToOpinion(id: number) {
+      const handler = useDiscussionHandler();
+      handler.displayOpinionDetailly(id);
     }
   }
 });
@@ -62,6 +73,10 @@ export default defineComponent({
             padding: 0.5rem;
           }
         }
+      }
+
+      &:hover {
+        cursor: pointer;
       }
     }
   }
