@@ -1,52 +1,64 @@
-# frontend
+# 개요
 
-This template should help get you started developing with Vue 3 in Vite.
+토론 웹 서비스 모두의 토론의 프론트엔드 레포지토리이다.
+[백엔드 바로가기](https://github.com/HaejinYang/every-discussion-backend)
 
-## Recommended IDE Setup
+# 목업
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+프로젝트 진행 전 구상을 위한 [목업](https://ovenapp.io/view/vHYglcf3PXrqDKcqUOXYsBKKf7CJflvs/OvHxh)
 
-## Type Support for `.vue` Imports in TS
+# 기술 스택
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+vue3, typescript를 기반으로, 상태 관리를 위해 pinia를 사용하였음.
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+# 구현
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## 구현 내용
 
-## Customize configuration
+TODO: 페이지 스크린샷과 함께 일부 설명을 포함하자.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## 구현 중 해결한 문제
 
-## Project Setup
+### 문제 1. 틱톡과 같이 고정된 헤더와 어사이드를 유지하며 메인에 스크롤 적용
 
-```sh
-npm install
+#### 상황
+
+브라우저에서 본 틱톡은 헤더와 어사이드가 고정되어 있고, 메인이 유동적으로 변한다. 메인엔 스크롤이 적용되어 있으며, 메인에 스크롤링을 하더라도 헤더와 어사이드는 유지된다. 이를 구현하고 싶었다.
+
+#### 해결
+
+헤더와 어사이드를 고정하면서, 브라우저의 세로 높이가 변하더라도 스크롤이 생기지 않게 여백이 채워지도록 레이아웃에 flex를 사용하였다. 문제가 생긴 부분은 메인에 스크롤이 적용이 안되는 것이었다.
+왜냐하면, 고정된 높이를 가져야 세로 스크롤이 생기지만, flex item은 유동적이기 때문이다.
+
+이를 해결하려면 `height: 100px`과 같은 고정된 높이를 메인에 부여해야 했다. 그러나, 브라우저 사이즈 변화에 따라 크기가 변해야 했기에 다른 방식이 필요했다. 적용한 방식은 다음과 같다.
+
+```
+position: absoulte;
+left: 0; top: 0; right: 0; bottom: 0;
 ```
 
-### Compile and Hot-Reload for Development
+위 속성을 적용하여, 부모 엘리먼트(position이 relative인)의 공간을 전부 확보하면서 브라우저의 변화에도 따라갈 수 있는 메인을 만들 수 있었다.
 
-```sh
-npm run dev
-```
+### 문제 2. console.log 코드 관리
 
-### Type-Check, Compile and Minify for Production
+#### 상황
 
-```sh
-npm run build
-```
+개발 과정 중에 사용한 console.log 안에는 중요한 내용이 포함될 수 있으므로 프러덕션 빌드에선 제거되어야 한다.
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+#### 해결
 
-```sh
-npm run test:unit
-```
+환경변수 `MODE`를 이용하여 프러덕션 빌드시에는 console 객체에서 사용중인 함수들을 빈 함수로 대체함
 
-### Lint with [ESLint](https://eslint.org/)
+### 문제 3. 서버로부터 받은 데이터를 자동으로 변환
 
-```sh
-npm run lint
-```
+#### 상황
+
+서버로부터 받은 데이터는 JSON이다. 서버에서 내려주는 키의 이름을 프론트에서 바로 쓰기엔 어울리지 않는 부분이 있었다.
+서버에서 받은 JSON의 키를 프론트에 맞게 변경시켜주고 싶었다.
+
+#### 해결
+
+처음엔 서버로부터 받은 JSON과 동일한 클래스를 만들고, 프론트에서 사용할 또다른 클래스를 만들어서 일일이 변환시켰다. 그런데, 이를 자동으로 해주는 `class-transformer`라이브러리를 찾을 수 있었고
+적용하게 되었다.
+
+
