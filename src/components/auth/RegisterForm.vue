@@ -97,7 +97,7 @@ export default defineComponent({
       isEmailForm: true,
       isDuplicatedName: false,
       isPasswordShort: false,
-      submitBtnMsg: ['회원가입', '', '회원가입 완료!', '회원가입'],
+      submitBtnMsg: ['회원가입', '', '인증 메일 확인', '회원가입'],
       submitStep: eProcessStep.Init as eProcessStep,
       debouncedCheckPassword: (...args: any[]): void => {},
       debouncedCheckEmail: (...args: any[]): void => {},
@@ -190,7 +190,7 @@ export default defineComponent({
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
           this.$emit('register-success');
-        }, 1000);
+        }, 2000);
       } catch (e) {
         this.isFailRegister = true;
         this.submitStep = eProcessStep.Fail;

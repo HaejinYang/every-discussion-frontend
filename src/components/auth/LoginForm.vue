@@ -50,12 +50,14 @@ import { isEmailValid } from '@/util/validation';
 import { getErrorMessage } from '@/util/error';
 import { User } from '@/services/users';
 import WaitButton from '@/components/buttons/WaitButton.vue';
+import type TinyError from '@/util/error/TinyError';
 
 enum eProcessStep {
   Init = 0,
   Wait = 1,
   Success = 2,
-  Fail = 3
+  Unauthenticated = 3,
+  Fail = 4
 }
 
 export default defineComponent({
@@ -67,7 +69,7 @@ export default defineComponent({
       password: '',
       isValidEmailForm: true,
       isValidPasswordForm: true,
-      submitBtnMsg: ['로그인', '', '로그인 성공', '로그인 실패'],
+      submitBtnMsg: ['로그인', '', '로그인 성공', '이메일 인증이 필요합니다', '로그인 실패'],
       submitStep: eProcessStep.Init as eProcessStep,
       debouncedEmailCheck: (...args: any[]): void => {},
       debouncedPasswordCheck: (...args: any[]): void => {}
@@ -107,9 +109,13 @@ export default defineComponent({
         setTimeout(() => {
           this.$emit('close-form');
         }, 1000);
-      } catch (e) {
+      } catch (e: TinyError) {
         reportError(getErrorMessage(e));
-        this.submitStep = eProcessStep.Fail;
+        if (e.code === 403) {
+          this.submitStep = eProcessStep.Unauthenticated;
+        } else {
+          this.submitStep = eProcessStep.Fail;
+        }
       }
     },
     onClickLoginForm() {
