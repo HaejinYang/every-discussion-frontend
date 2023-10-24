@@ -2,7 +2,7 @@
   <div :class="$style['container']">
     <div :class="$style['login-form']" @mousedown.left.stop="onClickLoginForm">
       <div>
-        <p :class="$style.title">모두의토론</p>
+        <p :class="$style.title">로그인</p>
       </div>
       <div :class="$style['email-wrapper']">
         <input
@@ -29,8 +29,11 @@
         <small v-if="!isValidPasswordForm">비밀번호 길이 8보다 짧음</small>
       </div>
       <div :class="$style['login-from-footer']">
-        <span @mousedown.left="switchRegisterForm"><small>회원가입</small></span>
-        <span><small>아이디 / 비밀번호 찾기</small></span>
+        <LoginAndRegisterSwitch @switch-register-form="switchRegisterForm" select="register" />
+        <FindAccountAndPasswordSwitch
+          @switch-find-account-form="switchFindAccountForm"
+          @switch-find-password-form="switchFindPasswordForm"
+        />
       </div>
       <div :class="$style['login-btn-wrapper']">
         <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
@@ -51,6 +54,8 @@ import { getErrorMessage } from '@/util/error';
 import { User } from '@/services/users';
 import WaitButton from '@/components/buttons/WaitButton.vue';
 import type TinyError from '@/util/error/TinyError';
+import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
+import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -62,7 +67,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'LoginForm',
-  components: { WaitButton },
+  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
   data() {
     return {
       email: '',
@@ -97,6 +102,10 @@ export default defineComponent({
     switchRegisterForm() {
       this.$emit('switch-register-form');
     },
+    switchFindAccountForm() {
+      this.$emit('switch-find-account-form');
+    },
+    switchFindPasswordForm() {},
     async onClickLogin() {
       if (this.submitStep === eProcessStep.Wait) {
         return;
@@ -208,16 +217,6 @@ export default defineComponent({
 
     .login-from-footer {
       border-bottom: none;
-
-      span {
-        color: gray;
-        font-weight: lighter;
-
-        &:hover {
-          cursor: pointer;
-          color: blue;
-        }
-      }
 
       span:first-child {
         float: left;

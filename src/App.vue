@@ -12,6 +12,8 @@
     <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
       <RegisterForm
         @switch-login-form="switchLoginForm"
+        @switch-find-account-form="switchFindAccountForm"
+        @switch-find-password-form="switchFindPasswordForm"
         @register-success="switchLoginForm"
         v-show="isShowRegisterForm"
       />
@@ -20,7 +22,11 @@
         @switch-find-account-form="switchFindAccountForm"
         v-show="isShowLoginForm"
       />
-      <FindAccountForm v-show="isShowFindAccountForm" />
+      <FindAccountForm
+        @switch-register-form="switchRegisterForm"
+        @switch-login-form="switchLoginForm"
+        v-show="isShowFindAccountForm"
+      />
     </div>
   </div>
 </template>
@@ -74,6 +80,7 @@ export default defineComponent({
       const handler = useShowAuthFormHandler();
       handler.show(eAuthForm.FindAccount);
     },
+    switchFindPasswordForm() {},
     hideAuthForm() {
       const handler = useShowAuthFormHandler();
       handler.hide();
