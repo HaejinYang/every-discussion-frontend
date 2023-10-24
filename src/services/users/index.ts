@@ -66,7 +66,7 @@ class User {
   }
 
   public static async isDuplicated(userInfo: CheckDuplicatedUserParam) {
-    let URI = '/api/auth/check-duplicated';
+    let URI = '/api/auth/duplicated';
     const queryString = objectToQueryString(userInfo);
     URI += '?' + queryString;
     const response = await fetchApi(URI, {
@@ -159,6 +159,24 @@ class User {
     });
 
     throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async find(name: string) {
+    const URI = `/api/auth/email?name=${name}`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    let email = '';
+    if ('email' in result.data) {
+      email = result.data.email;
+    }
+
+    return email;
   }
 }
 
