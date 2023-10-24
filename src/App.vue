@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <Header :class="$style.header" @show-login="showAuthForm" />
+    <Header :class="$style.header" @show-login="switchLoginForm" />
     <section>
       <Aside :class="$style.aside" />
       <main ref="main">
@@ -13,13 +13,14 @@
       <RegisterForm
         @switch-login-form="switchLoginForm"
         @register-success="switchLoginForm"
-        v-show="!isShowLoginForm"
+        v-show="isShowRegisterForm"
       />
       <LoginForm
         @switch-register-form="switchRegisterForm"
-        @close-form="hideAuthForm"
+        @switch-find-account-form="switchFindAccountForm"
         v-show="isShowLoginForm"
       />
+      <FindAccountForm v-show="isShowFindAccountForm" />
     </div>
   </div>
 </template>
@@ -32,41 +33,50 @@ import { RouterView } from 'vue-router';
 import { useMainWheelHandler } from '@/stores/MainWheel';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
-import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import { eAuthForm, useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import FindAccountForm from '@/components/auth/FindAccountForm.vue';
 
 export default defineComponent({
   name: 'App',
-  components: { RegisterForm, LoginForm, Aside, Header, RouterView },
+  components: { FindAccountForm, RegisterForm, LoginForm, Aside, Header, RouterView },
   computed: {
     isDisabledWheel() {
       const handler = useMainWheelHandler();
       return handler.isDisabled;
     },
-    isShowLoginForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShowLogin;
-    },
     isShowAuthForm() {
       const handler = useShowAuthFormHandler();
-      return handler.isShowAuth;
+      return handler.isShow;
+    },
+    isShowLoginForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShow && handler.selectedAuthForm === eAuthForm.Login;
+    },
+    isShowRegisterForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShow && handler.selectedAuthForm === eAuthForm.Register;
+    },
+    isShowFindAccountForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShow && handler.selectedAuthForm === eAuthForm.FindAccount;
     }
   },
   methods: {
     switchLoginForm() {
       const handler = useShowAuthFormHandler();
-      handler.showLogin();
+      handler.show(eAuthForm.Login);
     },
     switchRegisterForm() {
       const handler = useShowAuthFormHandler();
-      handler.hideLogin();
+      handler.show(eAuthForm.Register);
     },
-    showAuthForm() {
+    switchFindAccountForm() {
       const handler = useShowAuthFormHandler();
-      handler.showAuth();
+      handler.show(eAuthForm.FindAccount);
     },
     hideAuthForm() {
       const handler = useShowAuthFormHandler();
-      handler.hideAuth();
+      handler.hide();
     }
   }
 });
