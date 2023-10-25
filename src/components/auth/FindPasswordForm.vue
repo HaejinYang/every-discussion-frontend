@@ -137,11 +137,11 @@ export default defineComponent({
         // 유저가 인증 토큰을 서버에 전송
         this.submitStep = eProcessStep.VerfiedWait;
         try {
-          await User.findPassword(this.mail);
-          this.submitStep = eProcessStep.EmailSent;
+          await User.sendTokenForChangePassword(this.mail, this.verifyToken);
+          this.submitStep = eProcessStep.Verified;
         } catch (e) {
           reportError(getErrorMessage(e));
-          this.submitStep = eProcessStep.EmailSentFail;
+          this.submitStep = eProcessStep.VerifiedFail;
         }
 
         return;
