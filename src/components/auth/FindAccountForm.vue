@@ -33,7 +33,7 @@
         <WaitButton v-show="isSubmitWaiting" />
         <div :class="$style['result-box']" v-if="isSubmitSuccess">
           <small>이메일은 다음과 같습니다.</small><br />
-          <small>abcd@gmail.com</small>
+          <small>{{ email }}</small>
         </div>
       </div>
     </div>
@@ -61,6 +61,7 @@ export default defineComponent({
   data() {
     return {
       name: '',
+      email: '',
       submitBtnMsg: ['아이디 찾기', '', '찾기 성공', '찾기 실패'],
       submitStep: eProcessStep.Init as eProcessStep
     };
@@ -99,6 +100,7 @@ export default defineComponent({
 
       try {
         const email = await User.find(this.name);
+        this.email = email;
         this.submitStep = eProcessStep.Success;
       } catch (e) {
         reportError(getErrorMessage(e));
@@ -111,11 +113,11 @@ export default defineComponent({
     },
     switchLoginForm() {
       this.clear();
-
       this.$emit('switch-login-form');
     },
     switchFindPasswordForm() {
       this.clear();
+      this.$emit('switch-find-password-form');
     }
   }
 });
