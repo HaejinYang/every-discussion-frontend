@@ -1,7 +1,7 @@
 <template>
   <span>
     <small v-if="select === 'both' || select === 'account'" @mousedown.left="switchFindAccountForm"
-      >아이디</small
+      >아이디 {{ select === 'account' ? '찾기' : '' }}</small
     >
     <small v-if="select === 'both'"> / </small>
     <small

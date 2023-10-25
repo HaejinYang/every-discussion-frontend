@@ -178,6 +178,16 @@ class User {
 
     return email;
   }
+
+  public static async findPassword(email: string) {
+    const URI = `/api/auth/password?email=${email}`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
 }
 
 export { User, UserItem };

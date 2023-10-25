@@ -105,7 +105,9 @@ export default defineComponent({
     switchFindAccountForm() {
       this.$emit('switch-find-account-form');
     },
-    switchFindPasswordForm() {},
+    switchFindPasswordForm() {
+      this.$emit('switch-find-password-form');
+    },
     async onClickLogin() {
       if (this.submitStep === eProcessStep.Wait) {
         return;

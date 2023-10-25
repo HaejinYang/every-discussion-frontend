@@ -20,12 +20,20 @@
       <LoginForm
         @switch-register-form="switchRegisterForm"
         @switch-find-account-form="switchFindAccountForm"
+        @switch-find-password-form="switchFindPasswordForm"
         v-show="isShowLoginForm"
       />
       <FindAccountForm
         @switch-register-form="switchRegisterForm"
         @switch-login-form="switchLoginForm"
+        @switch-find-password-form="switchFindPasswordForm"
         v-show="isShowFindAccountForm"
+      />
+      <FindPasswordForm
+        @switch-register-form="switchRegisterForm"
+        @switch-login-form="switchLoginForm"
+        @switch-find-account-form="switchFindAccountForm"
+        v-show="isShowFindPasswordForm"
       />
     </div>
   </div>
@@ -41,10 +49,19 @@ import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
 import { eAuthForm, useShowAuthFormHandler } from '@/stores/ShowAuthForm';
 import FindAccountForm from '@/components/auth/FindAccountForm.vue';
+import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
 
 export default defineComponent({
   name: 'App',
-  components: { FindAccountForm, RegisterForm, LoginForm, Aside, Header, RouterView },
+  components: {
+    FindPasswordForm,
+    FindAccountForm,
+    RegisterForm,
+    LoginForm,
+    Aside,
+    Header,
+    RouterView
+  },
   computed: {
     isDisabledWheel() {
       const handler = useMainWheelHandler();
@@ -65,6 +82,10 @@ export default defineComponent({
     isShowFindAccountForm() {
       const handler = useShowAuthFormHandler();
       return handler.isShow && handler.selectedAuthForm === eAuthForm.FindAccount;
+    },
+    isShowFindPasswordForm() {
+      const handler = useShowAuthFormHandler();
+      return handler.isShow && handler.selectedAuthForm === eAuthForm.FindPassword;
     }
   },
   methods: {
@@ -80,7 +101,10 @@ export default defineComponent({
       const handler = useShowAuthFormHandler();
       handler.show(eAuthForm.FindAccount);
     },
-    switchFindPasswordForm() {},
+    switchFindPasswordForm() {
+      const handler = useShowAuthFormHandler();
+      handler.show(eAuthForm.FindPassword);
+    },
     hideAuthForm() {
       const handler = useShowAuthFormHandler();
       handler.hide();
