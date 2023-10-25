@@ -75,7 +75,7 @@ export default defineComponent({
       mail: '',
       verifyToken: '',
       submitBtnMsg: [
-        '비밀번호 찾기',
+        '인증 메일 전송',
         '',
         '인증번호 제출',
         '메일 전송 실패',
@@ -123,7 +123,7 @@ export default defineComponent({
         // 이메일로 인증 토큰 보냄
         this.submitStep = eProcessStep.EmailSentWait;
         try {
-          await User.findPassword(this.mail);
+          await User.sendEmailForTransferingToken(this.mail);
           this.submitStep = eProcessStep.EmailSent;
         } catch (e) {
           reportError(getErrorMessage(e));
@@ -136,9 +136,13 @@ export default defineComponent({
       if (this.submitStep === eProcessStep.EmailSent) {
         // 유저가 인증 토큰을 서버에 전송
         this.submitStep = eProcessStep.VerfiedWait;
-        setTimeout(() => {
-          this.submitStep = eProcessStep.Verified;
-        }, 1000);
+        try {
+          await User.findPassword(this.mail);
+          this.submitStep = eProcessStep.EmailSent;
+        } catch (e) {
+          reportError(getErrorMessage(e));
+          this.submitStep = eProcessStep.EmailSentFail;
+        }
 
         return;
       }

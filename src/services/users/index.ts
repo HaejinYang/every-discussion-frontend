@@ -179,8 +179,8 @@ class User {
     return email;
   }
 
-  public static async findPassword(email: string) {
-    const URI = `/api/auth/password?email=${email}`;
+  public static async sendEmailForTransferingToken(email: string) {
+    const URI = `/api/auth/password/token?email=${email}`;
     const response = await fetchApi(URI, {
       method: 'GET',
       credentials: 'include'
