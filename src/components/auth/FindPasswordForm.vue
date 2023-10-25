@@ -2,7 +2,7 @@
   <div :class="$style['container']">
     <div :class="$style['form']" @mousedown.left.stop="onClickForm">
       <div :class="$style['header']">
-        <p>비밀번호 찾기</p>
+        <p>비밀번호 변경</p>
       </div>
       <div :class="$style['body']">
         <div :class="$style['input-box']">
@@ -25,6 +25,32 @@
               @input="(event) => (verifyToken = (event.target as HTMLInputElement).value)"
             />
             <label for="verify-email"><small>인증번호</small></label>
+          </div>
+        </div>
+        <div v-if="isVerified">
+          <div :class="$style['input-box']">
+            <input
+              type="password"
+              id="change-password"
+              placeholder=" "
+              :value="password"
+              @input="(event) => (password = (event.target as HTMLInputElement).value)"
+            />
+            <label for="change-password"><small>새로운 비밀번호</small></label>
+            <small v-if="isPasswordShort">비밀번호 길이 8보다 짧음</small>
+          </div>
+        </div>
+        <div v-if="isVerified">
+          <div :class="$style['input-box']">
+            <input
+              type="password"
+              id="change-password-confirmation"
+              placeholder=" "
+              :value="passwordConfirm"
+              @input="(event) => (passwordConfirm = (event.target as HTMLInputElement).value)"
+            />
+            <label for="change-password-confirmation"><small>새로운 비밀번호 확인</small></label>
+            <small v-if="isPasswordDifferent">비밀번호 불일치</small>
           </div>
         </div>
       </div>
@@ -74,6 +100,8 @@ export default defineComponent({
     return {
       mail: '',
       verifyToken: '',
+      password: '',
+      passwordConfirm: '',
       submitBtnMsg: [
         '인증 메일 전송',
         '',
@@ -98,19 +126,56 @@ export default defineComponent({
       );
     },
     isSentEmail() {
-      return this.submitStep === eProcessStep.EmailSent;
+      return (
+        this.submitStep === eProcessStep.EmailSent ||
+        this.submitStep === eProcessStep.VerfiedWait ||
+        this.submitStep === eProcessStep.VerifiedFail
+      );
+    },
+    isVerified() {
+      return (
+        this.submitStep === eProcessStep.Verified ||
+        this.submitStep === eProcessStep.ChangeWait ||
+        this.submitStep === eProcessStep.Fail
+      );
+    },
+    isPasswordShort() {
+      return this.password.length > 0 && this.password.length < 8;
+    },
+    isPasswordDifferent() {
+      return (
+        this.password.length > 0 &&
+        this.passwordConfirm.length > 0 &&
+        this.password !== this.passwordConfirm
+      );
     }
   },
   watch: {
-    mail() {}
+    mail() {
+      if (this.submitStep === eProcessStep.EmailSentFail) {
+        this.submitStep = eProcessStep.Init;
+      }
+    },
+    verifyToken() {
+      if (this.submitStep === eProcessStep.VerifiedFail) {
+        this.submitStep = eProcessStep.EmailSent;
+      }
+    }
   },
   methods: {
     clear() {
       this.submitStep = eProcessStep.Init;
       this.mail = '';
+      this.verifyToken = '';
+      this.password = '';
+      this.passwordConfirm = '';
     },
     onClickForm() {},
     async onClickFind() {
+      if (this.isPasswordDifferent) {
+        return;
+      }
+
       if (
         this.submitStep === eProcessStep.EmailSentWait ||
         this.submitStep === eProcessStep.VerfiedWait ||
@@ -150,10 +215,21 @@ export default defineComponent({
       if (this.submitStep === eProcessStep.Verified) {
         // 유저가 비밀번호를 변경
         this.submitStep = eProcessStep.ChangeWait;
-        setTimeout(() => {
+        try {
+          await User.changePassword(
+            this.mail,
+            this.verifyToken,
+            this.password,
+            this.passwordConfirm
+          );
+          this.submitStep = eProcessStep.Success;
+          setTimeout(() => {
+            this.switchLoginForm();
+          }, 1500);
+        } catch (e) {
+          reportError(getErrorMessage(e));
           this.submitStep = eProcessStep.Fail;
-        }, 1000);
-
+        }
         return;
       }
     },

@@ -202,6 +202,25 @@ class User {
 
     throwErrorWhenResponseNotOk(response);
   }
+
+  public static async changePassword(
+    email: string,
+    token: string,
+    password: string,
+    password_confirmation: string
+  ) {
+    const URI = '/api/auth/password';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, token, password, password_confirmation })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
 }
 
 export { User, UserItem };

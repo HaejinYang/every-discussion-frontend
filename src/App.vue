@@ -21,6 +21,7 @@
         @switch-register-form="switchRegisterForm"
         @switch-find-account-form="switchFindAccountForm"
         @switch-find-password-form="switchFindPasswordForm"
+        @close-form="hideAuthForm"
         v-show="isShowLoginForm"
       />
       <FindAccountForm
