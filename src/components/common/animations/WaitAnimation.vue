@@ -11,7 +11,7 @@ type AlignPosition = 'left' | 'middle' | 'right';
 type SpinnerColor = 'black' | 'white';
 
 export default defineComponent({
-  name: 'WaitButton',
+  name: 'WaitAnimation',
   props: {
     position: {
       type: String as PropType<AlignPosition>,

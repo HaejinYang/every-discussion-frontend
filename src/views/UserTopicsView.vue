@@ -40,7 +40,7 @@ import type { TopicItem } from '@/services/topics';
 import { Topic } from '@/services/topics';
 import { useAuthHandler } from '@/stores/auth';
 import SearchBar from '@/components/SearchBar.vue';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 
 enum eProcess {

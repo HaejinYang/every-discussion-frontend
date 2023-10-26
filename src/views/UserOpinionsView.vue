@@ -35,7 +35,7 @@ import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
 import { OpinionWithReferenceItem } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthHandler } from '@/stores/auth';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinion } from '@/services/UserOpinions';

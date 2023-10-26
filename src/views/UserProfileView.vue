@@ -138,7 +138,7 @@ import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { useAuthHandler } from '@/stores/auth';
 import * as events from 'events';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 
 enum eSelectMenu {
   Profile = 0,

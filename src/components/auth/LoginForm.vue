@@ -52,7 +52,7 @@ import { debounce } from '@/util/timing';
 import { isEmailValid } from '@/util/validation';
 import { getErrorMessage } from '@/util/error';
 import { User } from '@/services/users';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import type TinyError from '@/util/error/TinyError';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';

@@ -41,7 +41,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem } from '@/services/topics';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { debounce } from '@/util/timing';
 import SimilarTopics from '@/components/topics/SimilarTopics.vue';
 import { getErrorMessage } from '@/util/error';

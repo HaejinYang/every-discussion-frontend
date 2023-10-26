@@ -34,7 +34,7 @@ import SearchBar from '@/components/SearchBar.vue';
 import { type TopicItem } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
 import { TopTopics, type TopTopicsItem } from '@/services/topics/TopTopics';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 
 export default defineComponent({
   name: 'HomeView',
