@@ -45,8 +45,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
-import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
-import { useAuthHandler } from '@/stores/auth';
+import { useSearchOpinionStore } from '@/stores/SearchOpinionStore';
+import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
   name: 'Header',
@@ -63,8 +63,8 @@ export default defineComponent({
       return this.$route.name === 'discussion';
     },
     isLogin() {
-      const authHandler = useAuthHandler();
-      return authHandler.isAuth;
+      const authStore = useAuthStore();
+      return authStore.isAuth;
     },
     isShowUserMenu() {
       return this.isLogin && this.isUserMenuHovered;
@@ -72,8 +72,8 @@ export default defineComponent({
   },
   methods: {
     async onInputSearch(keyword: string) {
-      const searchOpinionHandler = useSearchOpinionHandler();
-      searchOpinionHandler.set(keyword);
+      const searchOpinionStore = useSearchOpinionStore();
+      searchOpinionStore.set(keyword);
 
       return true;
     },
@@ -88,8 +88,8 @@ export default defineComponent({
       //this.$router.push('/');
     },
     onClickLogout() {
-      const authHandler = useAuthHandler();
-      authHandler.logout();
+      const authStore = useAuthStore();
+      authStore.logout();
       this.$router.push('/');
     },
     userMenuHoveredChanged(hover: boolean) {

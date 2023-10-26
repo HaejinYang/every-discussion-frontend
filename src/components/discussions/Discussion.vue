@@ -25,9 +25,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Opinion, type OpinionData } from '@/services/opinions';
-import { useSearchOpinionHandler } from '@/stores/SearchOpinion';
-import { useDiscussionHandler } from '@/stores/DiscussionHandler';
-import { useNewOpinionHandler } from '@/stores/NewOpinion';
+import { useSearchOpinionStore } from '@/stores/SearchOpinionStore';
+import { useDiscussionStore } from '@/stores/DiscussionStore';
+import { useNewOpinionStore } from '@/stores/NewOpinionStore';
 
 export default defineComponent({
   name: 'Discussion',
@@ -50,8 +50,8 @@ export default defineComponent({
   },
   computed: {
     filterKeyword() {
-      const handler = useSearchOpinionHandler();
-      return handler.filterKeyword;
+      const store = useSearchOpinionStore();
+      return store.filterKeyword;
     }
   },
   watch: {
@@ -61,22 +61,22 @@ export default defineComponent({
   },
   methods: {
     displayOpinions() {
-      const handler = useSearchOpinionHandler();
+      const store = useSearchOpinionStore();
       const filtered = this.opinions.filter((opinion) =>
-        opinion.title.includes(handler.filterKeyword)
+        opinion.title.includes(store.filterKeyword)
       );
       this.displayedOpinions = [...filtered];
     },
     onClickOpinion(index: number, opinionId: number) {
-      const handler = useDiscussionHandler();
-      handler.displayOpinionDetailly(opinionId);
+      const store = useDiscussionStore();
+      store.displayOpinionDetailly(opinionId);
     },
     addNewOpinion() {
-      const handler = useNewOpinionHandler();
-      if (handler.isAdded && handler.topicId === this.topicId && handler.item) {
-        if (handler.item.agreeType === this.agreeingType) {
-          handler.consume();
-          this.opinions.unshift(handler.item);
+      const store = useNewOpinionStore();
+      if (store.isAdded && store.topicId === this.topicId && store.item) {
+        if (store.item.agreeType === this.agreeingType) {
+          store.consume();
+          this.opinions.unshift(store.item);
           this.displayOpinions();
         }
       }
@@ -119,6 +119,10 @@ export default defineComponent({
   .title {
     padding: 1rem 1rem 0 1rem;
     text-align: center;
+
+    > span {
+      color: white;
+    }
   }
 
   .opinion {

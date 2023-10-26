@@ -136,7 +136,7 @@ import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
-import { useAuthHandler } from '@/stores/auth';
+import { useAuthStore } from '@/stores/AuthStore';
 import * as events from 'events';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 
@@ -271,8 +271,8 @@ export default defineComponent({
       try {
         await User.delete(this.passwordCheck);
 
-        const authHandler = useAuthHandler();
-        authHandler.delete();
+        const authStore = useAuthStore();
+        authStore.delete();
         this.userQuitStep = eProcess.Success;
 
         this.$router.push('/');
@@ -291,23 +291,23 @@ export default defineComponent({
       }
 
       this.userInfoModifyStep = eProcess.Wait;
-      const authHandler = useAuthHandler();
+      const authStore = useAuthStore();
 
       try {
         await User.update({ name: this.userName });
         this.userInfoModifyStep = eProcess.Success;
       } catch (e) {
         reportError(getErrorMessage(e));
-        this.userName = authHandler.user.name;
+        this.userName = authStore.user.name;
         this.userInfoModifyStep = eProcess.Fail;
       } finally {
         this.isModifyMode = false;
-        console.log(authHandler.user.name);
+        console.log(authStore.user.name);
       }
     },
     onClickModifyCancel() {
-      const authHandler = useAuthHandler();
-      this.userName = authHandler.user.name;
+      const authStore = useAuthStore();
+      this.userName = authStore.user.name;
       this.isModifyMode = false;
     },
     onClickQuitInput() {
@@ -317,9 +317,9 @@ export default defineComponent({
     }
   },
   created() {
-    const authHandler = useAuthHandler();
-    this.userName = authHandler.user.name;
-    this.userEmail = authHandler.user.email;
+    const authStore = useAuthStore();
+    this.userName = authStore.user.name;
+    this.userEmail = authStore.user.email;
 
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;

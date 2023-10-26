@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { User, type UserItem } from '@/services/users';
 
-export const useAuthHandler = defineStore('auth-handler', {
+export const useAuthStore = defineStore('auth-store', {
   state: () => {
     return {
       isAuth: false,

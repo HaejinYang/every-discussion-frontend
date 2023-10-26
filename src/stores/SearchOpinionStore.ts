@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useSearchOpinionHandler = defineStore('search-opinion', {
+export const useSearchOpinionStore = defineStore('search-opinion-store', {
   state: () => {
     return {
       filterKeyword: ''

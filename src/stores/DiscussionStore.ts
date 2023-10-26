@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useDiscussionHandler = defineStore('discussion', {
+export const useDiscussionStore = defineStore('discussion-store', {
   state: () => {
     return { isFoldOpinionList: false, selectedOpinionId: -1, isShowOpinionWhenRedirect: false };
   },

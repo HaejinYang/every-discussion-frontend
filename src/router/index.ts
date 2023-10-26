@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import DiscussionView from '@/views/DiscussionView.vue';
 import ErrorView from '@/views/ErrorView.vue';
-import { useAuthHandler } from '@/stores/auth';
-import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthFromStore } from '@/stores/AuthFormStore';
 import TopicRegisterView from '@/views/TopicRegisterView.vue';
 import UserTopicsView from '@/views/UserTopicsView.vue';
 import UserProfileView from '@/views/UserProfileView.vue';
@@ -53,7 +53,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-  const authHandler = useAuthHandler();
+  const authStore = useAuthStore();
   switch (to.name) {
     case 'user-opinions':
     // fall-through
@@ -62,10 +62,10 @@ router.beforeEach((to, from) => {
     case 'topic-register':
     // fall-through
     case 'user-profile':
-      if (!authHandler.isAuth) {
-        const authFormHandler = useShowAuthFormHandler();
-        authFormHandler.showAuth();
-        authFormHandler.showLogin();
+      if (!authStore.isAuth) {
+        const authFormStore = useAuthFromStore();
+        authFormStore.showAuth();
+        authFormStore.showLogin();
 
         return { name: 'home' };
       }

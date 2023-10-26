@@ -2,7 +2,7 @@ import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
-import { useAuthHandler } from '@/stores/auth';
+import { useAuthStore } from '@/stores/AuthStore';
 import { type AgreeingType, OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
 
 interface RegisterOpinion {
@@ -14,13 +14,13 @@ interface RegisterOpinion {
 
 class UserOpinion {
   public static async fetch(topicId: number) {
-    const authHandler = useAuthHandler();
-    const userId = authHandler.user.id;
+    const authStore = useAuthStore();
+    const userId = authStore.user.id;
     const response = await fetchApi(`/api/users/${userId}/topics/${topicId}/opinions`, {
       method: 'GET',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.user.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       }
     });
 
@@ -36,12 +36,12 @@ class UserOpinion {
   }
 
   public static async create(opinion: RegisterOpinion) {
-    const authHandler = useAuthHandler();
+    const authStore = useAuthStore();
     const response = await fetchApi('/api/opinions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authHandler.user.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       },
       credentials: 'include',
       body: JSON.stringify(opinion)
