@@ -1,21 +1,25 @@
 import { defineStore } from 'pinia';
 
-export const useShowAuthFormHandler = defineStore('show-auth-form', {
+enum eAuthForm {
+  Login = 0,
+  Register = 1,
+  FindAccount = 2,
+  FindPassword = 3
+}
+
+const useShowAuthFormHandler = defineStore('show-auth-form', {
   state: () => {
-    return { isShowAuth: false, isShowLogin: true };
+    return { isShow: false, selectedAuthForm: eAuthForm.Login as eAuthForm };
   },
   actions: {
-    showAuth() {
-      this.isShowAuth = true;
+    hide() {
+      this.isShow = false;
     },
-    hideAuth() {
-      this.isShowAuth = false;
-    },
-    showLogin() {
-      this.isShowLogin = true;
-    },
-    hideLogin() {
-      this.isShowLogin = false;
+    show(form: eAuthForm) {
+      this.isShow = true;
+      this.selectedAuthForm = form;
     }
   }
 });
+
+export { useShowAuthFormHandler, eAuthForm };

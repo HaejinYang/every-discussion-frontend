@@ -66,7 +66,7 @@ class User {
   }
 
   public static async isDuplicated(userInfo: CheckDuplicatedUserParam) {
-    let URI = '/api/auth/check-duplicated';
+    let URI = '/api/auth/duplicated';
     const queryString = objectToQueryString(userInfo);
     URI += '?' + queryString;
     const response = await fetchApi(URI, {
@@ -156,6 +156,67 @@ class User {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ password })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async find(name: string) {
+    const URI = `/api/auth/email?name=${name}`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    let email = '';
+    if ('email' in result.data) {
+      email = result.data.email;
+    }
+
+    return email;
+  }
+
+  public static async sendEmailForTransferingToken(email: string) {
+    const URI = `/api/auth/password/token?email=${email}`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async sendTokenForChangePassword(email: string, token: string) {
+    const URI = '/api/auth/password/token';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, token })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async changePassword(
+    email: string,
+    token: string,
+    password: string,
+    password_confirmation: string
+  ) {
+    const URI = '/api/auth/password';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, token, password, password_confirmation })
     });
 
     throwErrorWhenResponseNotOk(response);

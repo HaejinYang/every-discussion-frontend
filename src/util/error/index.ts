@@ -1,3 +1,5 @@
+import TinyError from '@/util/error/TinyError';
+
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
@@ -21,8 +23,11 @@ function throwErrorWhenResponseNotOk(response: Response, ignoreAuth = false) {
   }
 
   if (!response.ok) {
-    const errorMessage = `Network response was not ok: ${response.status} ${response.statusText}`;
-    throw new Error(errorMessage);
+    const error = new TinyError(
+      `Network response was not ok: ${response.status} ${response.statusText}`,
+      response.status
+    );
+    throw error;
   }
 }
 

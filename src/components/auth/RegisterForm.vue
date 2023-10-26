@@ -2,7 +2,7 @@
   <div :class="$style.container">
     <div :class="$style['register-form']" @mousedown.left.stop="onClickRegisterForm">
       <div>
-        <p :class="$style.title">모두의토론</p>
+        <p :class="$style.title">회원가입</p>
       </div>
       <div :class="$style['email-wrapper']">
         <input
@@ -53,8 +53,11 @@
         <small v-if="!isPasswordSame">비밀번호 불일치</small>
       </div>
       <div :class="$style['register-from-footer']">
-        <span @mousedown.left="switchToLoginForm"><small>로그인</small></span>
-        <span><small>아이디 / 비밀번호 찾기</small></span>
+        <LoginAndRegisterSwitch @switch-login-form="switchToLoginForm" select="login" />
+        <FindAccountAndPasswordSwitch
+          @switch-find-account-form="switchFindAccountForm"
+          @switch-find-password-form="switchFindPasswordForm"
+        />
       </div>
       <div :class="$style['register-btn-wrapper']">
         <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
@@ -74,6 +77,8 @@ import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { isEmailValid } from '@/util/validation';
 import WaitButton from '@/components/buttons/WaitButton.vue';
+import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
+import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -84,7 +89,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'RegisterForm',
-  components: { WaitButton },
+  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
   data() {
     return {
       name: '',
@@ -97,7 +102,7 @@ export default defineComponent({
       isEmailForm: true,
       isDuplicatedName: false,
       isPasswordShort: false,
-      submitBtnMsg: ['회원가입', '', '회원가입 완료!', '회원가입'],
+      submitBtnMsg: ['회원가입', '', '인증 메일 확인', '회원가입'],
       submitStep: eProcessStep.Init as eProcessStep,
       debouncedCheckPassword: (...args: any[]): void => {},
       debouncedCheckEmail: (...args: any[]): void => {},
@@ -168,6 +173,12 @@ export default defineComponent({
     }, 500);
   },
   methods: {
+    switchFindAccountForm() {
+      this.$emit('switch-find-account-form');
+    },
+    switchFindPasswordForm() {
+      this.$emit('switch-find-password-form');
+    },
     onClickRegisterForm() {
       this.isFailRegister = false;
     },
@@ -190,7 +201,7 @@ export default defineComponent({
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
           this.$emit('register-success');
-        }, 1000);
+        }, 2000);
       } catch (e) {
         this.isFailRegister = true;
         this.submitStep = eProcessStep.Fail;
@@ -264,16 +275,6 @@ export default defineComponent({
 
     .register-from-footer {
       border-bottom: none;
-
-      span {
-        color: gray;
-        font-weight: lighter;
-
-        &:hover {
-          cursor: pointer;
-          color: blue;
-        }
-      }
 
       span:first-child {
         float: left;
