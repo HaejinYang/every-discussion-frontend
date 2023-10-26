@@ -5,17 +5,7 @@
         <p>아이디 찾기</p>
       </div>
       <div :class="$style['body']">
-        <div :class="$style['input-box']">
-          <input
-            type="text"
-            id="find-account-name"
-            placeholder=" "
-            :value="name"
-            @input="(event) => (name = (event.target as HTMLInputElement).value)"
-          />
-          <label for="find-account-name"><small>이름</small></label>
-          <!--          <small v-if="!isValidEmailForm">잘못된 email 형식</small>-->
-        </div>
+        <LabeledInputText @input-text="inputName" label-text="이름" input-type="text" />
       </div>
       <div :class="$style['footer']">
         <LoginAndRegisterSwitch
@@ -47,6 +37,7 @@ import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
+import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -57,7 +48,12 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'FindAccountForm',
-  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
+  components: {
+    LabeledInputText,
+    LoginAndRegisterSwitch,
+    FindAccountAndPasswordSwitch,
+    WaitButton
+  },
   data() {
     return {
       name: '',
@@ -118,6 +114,9 @@ export default defineComponent({
     switchFindPasswordForm() {
       this.clear();
       this.$emit('switch-find-password-form');
+    },
+    inputName(name: string) {
+      this.name = name;
     }
   }
 });
@@ -160,44 +159,6 @@ export default defineComponent({
     }
 
     .body {
-      .input-box {
-        position: relative;
-        padding-top: 0.5rem;
-
-        input {
-          border: none;
-        }
-
-        input:focus {
-          outline: none;
-        }
-
-        label {
-          position: absolute;
-          left: 0;
-          color: gray;
-          transition: all 300ms ease-in-out;
-        }
-
-        > small {
-          position: absolute;
-          color: red;
-          right: 0;
-        }
-
-        &:focus-within label,
-        input:not(:placeholder-shown) + label {
-          transform: translateY(-20px);
-        }
-
-        &:focus-within label {
-          color: blue;
-        }
-
-        &:focus-within {
-          border-bottom: 1px solid blue;
-        }
-      }
     }
 
     .footer {

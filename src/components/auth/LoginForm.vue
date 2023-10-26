@@ -4,30 +4,20 @@
       <div>
         <p :class="$style.title">로그인</p>
       </div>
-      <div :class="$style['email-wrapper']">
-        <input
-          :class="$style.email"
-          type="text"
-          id="login-email"
-          placeholder=" "
-          :value="email"
-          @input="(event) => (email = (event.target as HTMLInputElement).value)"
-        />
-        <label ref="email-label" for="login-email"><small>계정</small></label>
-        <small v-if="!isValidEmailForm">잘못된 email 형식</small>
-      </div>
-      <div :class="$style['password-wrapper']">
-        <input
-          :class="$style.password"
-          type="password"
-          id="login-password"
-          placeholder=" "
-          :value="password"
-          @input="(event) => (password = (event.target as HTMLInputElement).value)"
-        />
-        <label for="login-password"><small>비밀번호</small></label>
-        <small v-if="!isValidPasswordForm">비밀번호 길이 8보다 짧음</small>
-      </div>
+      <LabeledInputText
+        @input-text="inputEmail"
+        label-text="이메일 계정"
+        input-type="text"
+        :is-show-warn-text="!isValidEmailForm"
+        warn-text="잘못된 메일 형식"
+      />
+      <LabeledInputText
+        @input-text="inputPassword"
+        label-text="비밀번호"
+        input-type="password"
+        :is-show-warn-text="!isValidPasswordForm"
+        warn-text="비밀번호 길이가 8보다 짧음"
+      />
       <div :class="$style['login-from-footer']">
         <LoginAndRegisterSwitch @switch-register-form="switchRegisterForm" select="register" />
         <FindAccountAndPasswordSwitch
@@ -56,6 +46,7 @@ import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import type TinyError from '@/util/error/TinyError';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
+import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -67,7 +58,12 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'LoginForm',
-  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
+  components: {
+    LabeledInputText,
+    LoginAndRegisterSwitch,
+    FindAccountAndPasswordSwitch,
+    WaitButton
+  },
   data() {
     return {
       email: '',
@@ -133,6 +129,12 @@ export default defineComponent({
       if (this.submitStep !== eProcessStep.Wait) {
         this.submitStep = eProcessStep.Init;
       }
+    },
+    inputPassword(password: string) {
+      this.password = password;
+    },
+    inputEmail(mail: string) {
+      this.email = mail;
     }
   },
   created() {
@@ -145,7 +147,7 @@ export default defineComponent({
       this.isValidEmailForm = true;
     }, 1000);
     this.debouncedPasswordCheck = debounce(() => {
-      if (this.password.length < 8) {
+      if (this.password.length > 0 && this.password.length < 8) {
         this.isValidPasswordForm = false;
         return;
       }
@@ -233,46 +235,6 @@ export default defineComponent({
       text-align: center;
       font-weight: bold;
       border-bottom: none;
-    }
-
-    .email-wrapper,
-    .password-wrapper {
-      position: relative;
-      padding-top: 0.5rem;
-
-      input {
-        border: none;
-      }
-
-      input:focus {
-        outline: none;
-      }
-
-      label {
-        position: absolute;
-        left: 0;
-        color: gray;
-        transition: all 300ms ease-in-out;
-      }
-
-      > small {
-        position: absolute;
-        color: red;
-        right: 0;
-      }
-
-      &:focus-within label,
-      input:not(:placeholder-shown) + label {
-        transform: translateY(-20px);
-      }
-
-      &:focus-within label {
-        color: blue;
-      }
-
-      &:focus-within {
-        border-bottom: 1px solid blue;
-      }
     }
   }
 }
