@@ -45,11 +45,11 @@ import type { AgreeingType } from '@/services/opinions';
 import { OpinionData } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { Topic, type TopicItem } from '@/services/topics';
-import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import { useDiscussionStore } from '@/stores/DiscussionStore';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
-import { useAuthHandler } from '@/stores/auth';
-import { useShowAuthFormHandler } from '@/stores/ShowAuthForm';
-import { useNewOpinionHandler } from '@/stores/NewOpinion';
+import { useAuthStore } from '@/stores/AuthStore';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { useNewOpinionStore } from '@/stores/NewOpinionStore';
 
 export default defineComponent({
   name: 'DiscussionView',
@@ -73,26 +73,25 @@ export default defineComponent({
       return parseInt(this.id);
     },
     isFold() {
-      const handler = useDiscussionHandler();
-      return handler.isFoldOpinionList;
+      const store = useDiscussionStore();
+      return store.isFoldOpinionList;
     },
     isShowOpinionDetail() {
-      const handler = useDiscussionHandler();
-      return handler.selectedOpinionId !== -1;
+      const store = useDiscussionStore();
+      return store.selectedOpinionId !== -1;
     },
     selectedOpinionId() {
-      const handler = useDiscussionHandler();
-      return handler.selectedOpinionId;
+      const store = useDiscussionStore();
+      return store.selectedOpinionId;
     }
   },
 
   methods: {
     displayRegisterOpinion(type: AgreeingType) {
-      const authHandler = useAuthHandler();
-      if (!authHandler.isAuth) {
-        const authFormHandler = useShowAuthFormHandler();
-        authFormHandler.showAuth();
-        authFormHandler.showLogin();
+      const authStore = useAuthStore();
+      if (!authStore.isAuth) {
+        const authFormStore = useAuthFromStore();
+        authFormStore.show(eAuthForm.Login);
 
         return;
       }
@@ -104,24 +103,24 @@ export default defineComponent({
       this.isDisplayingRegisterForm = false;
     },
     onClickTitle() {
-      const handler = useDiscussionHandler();
-      handler.hideOpinionDetaily();
+      const store = useDiscussionStore();
+      store.hideOpinionDetaily();
     },
     onRegisterOpinion(opinion: OpinionData) {
-      const handler = useNewOpinionHandler();
-      handler.addOpinion(this.topicId, opinion);
+      const store = useNewOpinionStore();
+      store.addOpinion(this.topicId, opinion);
     }
   },
   async created() {
     this.topic = await Topic.fetch(this.topicId);
 
-    const handler = useDiscussionHandler();
-    if (handler.selectedOpinionId !== -1 && handler.isShowOpinionWhenRedirect) {
-      handler.displayOpinionDetailly(handler.selectedOpinionId);
+    const store = useDiscussionStore();
+    if (store.selectedOpinionId !== -1 && store.isShowOpinionWhenRedirect) {
+      store.displayOpinionDetailly(store.selectedOpinionId);
     } else {
-      handler.hideOpinionDetaily();
+      store.hideOpinionDetaily();
     }
-    handler.isShowOpinionWhenRedirect = false;
+    store.isShowOpinionWhenRedirect = false;
   }
 });
 </script>

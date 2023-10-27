@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import type { OpinionData } from '@/services/opinions';
 
-export const useNewOpinionHandler = defineStore('new-opinion', {
+export const useNewOpinionStore = defineStore('new-opinion-store', {
   state: () => {
     return { isAdded: false, topicId: -1, item: null as OpinionData | null };
   },

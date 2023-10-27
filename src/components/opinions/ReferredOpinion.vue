@@ -27,7 +27,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import { type OpinionData } from '@/services/opinions';
-import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import { useDiscussionStore } from '@/stores/DiscussionStore';
 
 export default defineComponent({
   name: 'ReferredOpinion',
@@ -42,8 +42,8 @@ export default defineComponent({
       this.moveToOpinion(id);
     },
     moveToOpinion(id: number) {
-      const handler = useDiscussionHandler();
-      handler.displayOpinionDetailly(id);
+      const store = useDiscussionStore();
+      store.displayOpinionDetailly(id);
     }
   }
 });

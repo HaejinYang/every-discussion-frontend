@@ -2,7 +2,7 @@ import { fetchApi, objectToQueryString } from '@/util/network';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
-import { useAuthHandler } from '@/stores/auth';
+import { useAuthStore } from '@/stores/AuthStore';
 
 class UserItem {
   @Expose()
@@ -98,20 +98,20 @@ class User {
     const result = await response.json();
     const user: UserItem = plainToInstance(UserItem, result.data);
 
-    const authHandler = useAuthHandler();
-    authHandler.login(user);
+    const authStore = useAuthStore();
+    authStore.login(user);
 
     return user;
   }
 
   public static async logout() {
-    const authHandler = useAuthHandler();
+    const authStore = useAuthStore();
     const URI = '/api/auth/logout';
     const response = await fetchApi(URI, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.user.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       }
     });
 
@@ -124,14 +124,14 @@ class User {
   }
 
   public static async update(updates: Partial<UserChangeParam>) {
-    const authHandler = useAuthHandler();
+    const authStore = useAuthStore();
 
     const URI = '/api/users';
     const response = await fetchApi(URI, {
       method: 'PUT',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.user.token}`,
+        Authorization: `Bearer ${authStore.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(updates)
@@ -140,19 +140,19 @@ class User {
     throwErrorWhenResponseNotOk(response);
 
     if ('name' in updates) {
-      authHandler.update(updates);
+      authStore.update(updates);
     }
   }
 
   public static async delete(password: string) {
-    const authHandler = useAuthHandler();
+    const authStore = useAuthStore();
 
     const URI = '/api/users';
     const response = await fetchApi(URI, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authHandler.user.token}`,
+        Authorization: `Bearer ${authStore.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ password })

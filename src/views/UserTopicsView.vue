@@ -38,9 +38,9 @@
 import { defineComponent } from 'vue';
 import type { TopicItem } from '@/services/topics';
 import { Topic } from '@/services/topics';
-import { useAuthHandler } from '@/stores/auth';
+import { useAuthStore } from '@/stores/AuthStore';
 import SearchBar from '@/components/SearchBar.vue';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 
 enum eProcess {
@@ -91,15 +91,15 @@ export default defineComponent({
     }
   },
   created() {
-    const authHandler = useAuthHandler();
+    const authStore = useAuthStore();
 
-    if (!authHandler.isAuth) {
+    if (!authStore.isAuth) {
       this.$router.push('/error/인증이 필요합니다.');
 
       return;
     }
 
-    const userId = authHandler.user.id;
+    const userId = authStore.user.id;
 
     this.step = eProcess.Wait;
     Topic.fetchByUser(userId)

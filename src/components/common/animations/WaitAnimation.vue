@@ -1,6 +1,15 @@
 <template>
   <div :class="$style.container">
-    <img :src="spinnerImgUrl" :class="currentPoision" />
+    <img
+      :src="spinnerImgUrl"
+      :class="
+        position === 'middle'
+          ? $style['middle']
+          : position === 'left'
+          ? $style['left']
+          : $style['right']
+      "
+    />
   </div>
 </template>
 
@@ -11,7 +20,7 @@ type AlignPosition = 'left' | 'middle' | 'right';
 type SpinnerColor = 'black' | 'white';
 
 export default defineComponent({
-  name: 'WaitButton',
+  name: 'WaitAnimation',
   props: {
     position: {
       type: String as PropType<AlignPosition>,
@@ -23,21 +32,6 @@ export default defineComponent({
     }
   },
   computed: {
-    currentPoision(): string {
-      if (this.position === 'left') {
-        return this.$style['left'];
-      }
-
-      if (this.position === 'middle') {
-        return this.$style['middle'];
-      }
-
-      if (this.position === 'right') {
-        return this.$style['right'];
-      }
-
-      return this.$style['middle'];
-    },
     spinnerImgUrl() {
       if (this.color === 'black') {
         console.log('black');

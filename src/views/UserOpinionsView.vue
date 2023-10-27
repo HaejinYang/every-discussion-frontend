@@ -35,11 +35,11 @@ import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
 import { OpinionWithReferenceItem } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
-import WaitButton from '@/components/buttons/WaitButton.vue';
-import { useAuthHandler } from '@/stores/auth';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
+import { useAuthStore } from '@/stores/AuthStore';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinion } from '@/services/UserOpinions';
-import { useDiscussionHandler } from '@/stores/DiscussionHandler';
+import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
 
 enum eProcess {
@@ -81,20 +81,20 @@ export default defineComponent({
     onClickOpinion(topicId: number, opinionId: number) {
       this.$router.push(`/discussion/${topicId}`);
 
-      const handler = useDiscussionHandler();
-      handler.setOpinionIdWhenRedirect(opinionId);
+      const store = useDiscussionStore();
+      store.setOpinionIdWhenRedirect(opinionId);
     }
   },
   async created() {
-    const authHandler = useAuthHandler();
-    if (!authHandler.isAuth) {
+    const authStore = useAuthStore();
+    if (!authStore.isAuth) {
       this.$router.push('/error/인증이 필요합니다.');
 
       return;
     }
 
     this.step = eProcess.Wait;
-    const userId = authHandler.user.id;
+    const userId = authStore.user.id;
     try {
       const topics = await Topic.fetchByUser(userId);
       this.step = eProcess.Success;

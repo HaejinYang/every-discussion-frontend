@@ -45,10 +45,10 @@ import { defineComponent } from 'vue';
 import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
-import { useMainWheelHandler } from '@/stores/MainWheel';
+import { useRootWheelStore } from '@/stores/RootWheelStore';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
-import { eAuthForm, useShowAuthFormHandler } from '@/stores/ShowAuthForm';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
 import FindAccountForm from '@/components/auth/FindAccountForm.vue';
 import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
 
@@ -65,50 +65,50 @@ export default defineComponent({
   },
   computed: {
     isDisabledWheel() {
-      const handler = useMainWheelHandler();
-      return handler.isDisabled;
+      const store = useRootWheelStore();
+      return store.isDisabled;
     },
     isShowAuthForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShow;
+      const store = useAuthFromStore();
+      return store.isShow;
     },
     isShowLoginForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShow && handler.selectedAuthForm === eAuthForm.Login;
+      const store = useAuthFromStore();
+      return store.isShow && store.selectedAuthForm === eAuthForm.Login;
     },
     isShowRegisterForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShow && handler.selectedAuthForm === eAuthForm.Register;
+      const store = useAuthFromStore();
+      return store.isShow && store.selectedAuthForm === eAuthForm.Register;
     },
     isShowFindAccountForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShow && handler.selectedAuthForm === eAuthForm.FindAccount;
+      const store = useAuthFromStore();
+      return store.isShow && store.selectedAuthForm === eAuthForm.FindAccount;
     },
     isShowFindPasswordForm() {
-      const handler = useShowAuthFormHandler();
-      return handler.isShow && handler.selectedAuthForm === eAuthForm.FindPassword;
+      const store = useAuthFromStore();
+      return store.isShow && store.selectedAuthForm === eAuthForm.FindPassword;
     }
   },
   methods: {
     switchLoginForm() {
-      const handler = useShowAuthFormHandler();
-      handler.show(eAuthForm.Login);
+      const store = useAuthFromStore();
+      store.show(eAuthForm.Login);
     },
     switchRegisterForm() {
-      const handler = useShowAuthFormHandler();
-      handler.show(eAuthForm.Register);
+      const store = useAuthFromStore();
+      store.show(eAuthForm.Register);
     },
     switchFindAccountForm() {
-      const handler = useShowAuthFormHandler();
-      handler.show(eAuthForm.FindAccount);
+      const store = useAuthFromStore();
+      store.show(eAuthForm.FindAccount);
     },
     switchFindPasswordForm() {
-      const handler = useShowAuthFormHandler();
-      handler.show(eAuthForm.FindPassword);
+      const store = useAuthFromStore();
+      store.show(eAuthForm.FindPassword);
     },
     hideAuthForm() {
-      const handler = useShowAuthFormHandler();
-      handler.hide();
+      const store = useAuthFromStore();
+      store.hide();
     }
   }
 });

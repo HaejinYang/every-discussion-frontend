@@ -30,7 +30,7 @@
       <div :class="$style['btn-create-wrapper']">
         <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">
           {{ submitBtnMessags[submitStep] }}
-          <a href="#" v-if="isRegisterSuccess" @mousedown.left="moveToTopic"> 토론 바로가기</a>
+          <a href="#" v-if="isRegisterSuccess" @mousedown.left.stop="moveToTopic"> 토론 바로가기</a>
         </button>
         <WaitButton v-show="isWait" />
       </div>
@@ -41,7 +41,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem } from '@/services/topics';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { debounce } from '@/util/timing';
 import SimilarTopics from '@/components/topics/SimilarTopics.vue';
 import { getErrorMessage } from '@/util/error';
@@ -94,7 +94,7 @@ export default defineComponent({
   },
   methods: {
     async submitTopic() {
-      if (this.submitStep === eProcessStep.Wait) {
+      if (this.submitStep === eProcessStep.Wait || this.submitStep === eProcessStep.Success) {
         return;
       }
 

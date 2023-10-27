@@ -41,7 +41,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useAuthHandler } from '@/stores/auth';
+import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
   name: 'Aside',
@@ -52,20 +52,20 @@ export default defineComponent({
   },
   computed: {
     isLogin() {
-      const authHandler = useAuthHandler();
-      return authHandler.isAuth;
+      const authStore = useAuthStore();
+      return authStore.isAuth;
     },
     name() {
-      const authHandler = useAuthHandler();
-      return authHandler.user.name;
+      const authStore = useAuthStore();
+      return authStore.user.name;
     },
     topicsCount() {
-      const authHandler = useAuthHandler();
-      return authHandler.user.topicsCount;
+      const authStore = useAuthStore();
+      return authStore.user.topicsCount;
     },
     opinionsCount() {
-      const authHandler = useAuthHandler();
-      return authHandler.user.opinionsCount;
+      const authStore = useAuthStore();
+      return authStore.user.opinionsCount;
     }
   },
   methods: {

@@ -4,54 +4,34 @@
       <div>
         <p :class="$style.title">회원가입</p>
       </div>
-      <div :class="$style['email-wrapper']">
-        <input
-          :class="$style.email"
-          type="text"
-          id="email"
-          placeholder=" "
-          :value="email"
-          @input="(event) => (email = (event.target as HTMLInputElement).value)"
-        />
-        <label ref="email-label" for="email"><small>계정</small></label>
-        <small v-if="isDuplicatedEmail">email 중복</small>
-        <small v-if="!isEmailForm">잘못된 email 형식</small>
-      </div>
-      <div :class="$style['name-wrapper']">
-        <input
-          type="text"
-          id="name"
-          placeholder=" "
-          :value="name"
-          @input="(event) => (name = (event.target as HTMLInputElement).value)"
-        />
-        <label for="name"><small>이름</small></label>
-        <small v-if="isDuplicatedName">이름 중복</small>
-      </div>
-      <div :class="$style['password-wrapper']">
-        <input
-          :class="$style.password"
-          type="password"
-          id="password"
-          placeholder=" "
-          :value="password"
-          @input="(event) => (password = (event.target as HTMLInputElement).value)"
-        />
-        <label for="password"><small>비밀번호</small></label>
-        <small v-if="isPasswordShort">비밀번호 길이 8보다 짧음</small>
-      </div>
-      <div :class="$style['password-wrapper']">
-        <input
-          :class="$style.password"
-          type="password"
-          id="password-confirm"
-          placeholder=" "
-          :value="passwordConfirm"
-          @input="(event) => (passwordConfirm = (event.target as HTMLInputElement).value)"
-        />
-        <label for="password-confirm"><small>비밀번호 확인</small></label>
-        <small v-if="!isPasswordSame">비밀번호 불일치</small>
-      </div>
+      <LabeledInputText
+        @input-text="inputEmail"
+        label-text="이메일 계정"
+        input-type="text"
+        :is-show-warn-text="isDuplicatedEmail || !isEmailForm"
+        :warn-text="invalidEmailWarnText"
+      />
+      <LabeledInputText
+        @input-text="inputName"
+        label-text="이름"
+        input-type="text"
+        :is-show-warn-text="isDuplicatedName"
+        warn-text="이름 중복"
+      />
+      <LabeledInputText
+        @input-text="inputPassword"
+        label-text="비밀번호"
+        input-type="password"
+        :is-show-warn-text="isPasswordShort"
+        warn-text="비밀번호 길이 8보다 짧음"
+      />
+      <LabeledInputText
+        @input-text="inputPasswordConfirm"
+        label-text="비밀번호 확인"
+        input-type="password"
+        :is-show-warn-text="!isPasswordSame"
+        warn-text="비밀번호 불일치"
+      />
       <div :class="$style['register-from-footer']">
         <LoginAndRegisterSwitch @switch-login-form="switchToLoginForm" select="login" />
         <FindAccountAndPasswordSwitch
@@ -76,9 +56,10 @@ import { debounce } from '@/util/timing';
 import { User } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { isEmailValid } from '@/util/validation';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
+import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -89,7 +70,12 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'RegisterForm',
-  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
+  components: {
+    LabeledInputText,
+    LoginAndRegisterSwitch,
+    FindAccountAndPasswordSwitch,
+    WaitButton
+  },
   data() {
     return {
       name: '',
@@ -131,6 +117,15 @@ export default defineComponent({
   computed: {
     isSubmitWaiting() {
       return this.submitStep === eProcessStep.Wait;
+    },
+    invalidEmailWarnText() {
+      if (this.isDuplicatedEmail) {
+        return '이메일 중복';
+      }
+
+      if (!this.isEmailForm) {
+        return '잘못된 이메일 형식';
+      }
     }
   },
   created() {
@@ -207,6 +202,18 @@ export default defineComponent({
         this.submitStep = eProcessStep.Fail;
         reportError(getErrorMessage(e));
       }
+    },
+    inputEmail(mail: string) {
+      this.email = mail;
+    },
+    inputName(name: string) {
+      this.name = name;
+    },
+    inputPassword(password: string) {
+      this.password = password;
+    },
+    inputPasswordConfirm(passwordConfirm: string) {
+      this.passwordConfirm = passwordConfirm;
     }
   }
 });
@@ -289,47 +296,6 @@ export default defineComponent({
       text-align: center;
       font-weight: bold;
       border-bottom: none;
-    }
-
-    .email-wrapper,
-    .password-wrapper,
-    .name-wrapper {
-      position: relative;
-      padding-top: 0.5rem;
-
-      input {
-        border: none;
-      }
-
-      input:focus {
-        outline: none;
-      }
-
-      label {
-        position: absolute;
-        left: 0;
-        transition: all 300ms ease-in-out;
-        color: gray;
-      }
-
-      > small {
-        position: absolute;
-        color: red;
-        right: 0;
-      }
-
-      &:focus-within label,
-      input:not(:placeholder-shown) + label {
-        transform: translateY(-20px);
-      }
-
-      &:focus-within label {
-        color: blue;
-      }
-
-      &:focus-within {
-        border-bottom: 1px solid blue;
-      }
     }
   }
 }

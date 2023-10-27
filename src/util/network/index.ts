@@ -10,15 +10,14 @@ const fetchApi = (path: RequestInfo, init?: RequestInit) => {
   return fetch(`${domain}${path}`, init);
 };
 
-function objectToQueryString(params: Record<string, string | undefined>): string {
-  const queryParams = new URLSearchParams();
-  for (const key in params) {
-    if (params[key] !== undefined) {
-      queryParams.append(key, params[key]!);
-    }
+function objectToQueryString(obj: { [key: string]: any }): string {
+  const params = new URLSearchParams();
+
+  for (const key in obj) {
+    params.append(key, obj[key]);
   }
 
-  return queryParams.toString();
+  return params.toString();
 }
 
 export { fetchApi, objectToQueryString };

@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span :class="$style['login-and-register-switch']">
     <small v-if="select === 'both' || select === 'register'" @mousedown.left="switchRegisterForm"
       >회원가입</small
     >
@@ -36,11 +36,11 @@ export default {
 </script>
 
 <style module lang="scss">
-span {
+.login-and-register-switch {
   color: gray;
   font-weight: lighter;
 
-  small {
+  > small {
     &:hover {
       cursor: pointer;
       color: blue;

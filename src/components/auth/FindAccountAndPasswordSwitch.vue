@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span :class="$style['find-account-and-password-switch']">
     <small v-if="select === 'both' || select === 'account'" @mousedown.left="switchFindAccountForm"
       >아이디 {{ select === 'account' ? '찾기' : '' }}</small
     >
@@ -37,11 +37,11 @@ export default {
 </script>
 
 <style module lang="scss">
-span {
+.find-account-and-password-switch {
   color: gray;
   font-weight: lighter;
 
-  small {
+  > small {
     &:hover {
       cursor: pointer;
       color: blue;

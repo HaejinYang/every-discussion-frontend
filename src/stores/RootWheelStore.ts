@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useMainWheelHandler = defineStore('main-wheel', {
+export const useRootWheelStore = defineStore('root-wheel-store', {
   state: () => {
     return { isDisabled: false };
   },

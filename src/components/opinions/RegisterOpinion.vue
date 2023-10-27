@@ -46,7 +46,7 @@ import { defineComponent, type PropType } from 'vue';
 import { type AgreeingType } from '@/services/opinions';
 import { UserOpinion } from '@/services/UserOpinions';
 import { getErrorMessage } from '@/util/error';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 
 enum eProcess {
   Init = 0,

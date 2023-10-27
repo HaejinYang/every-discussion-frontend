@@ -5,54 +5,29 @@
         <p>비밀번호 변경</p>
       </div>
       <div :class="$style['body']">
-        <div :class="$style['input-box']">
-          <input
-            type="text"
-            id="find-account-email"
-            placeholder=" "
-            :value="mail"
-            @input="(event) => (mail = (event.target as HTMLInputElement).value)"
-          />
-          <label for="find-account-email"><small>이메일</small></label>
-        </div>
-        <div v-if="isSentEmail">
-          <div :class="$style['input-box']">
-            <input
-              type="text"
-              id="verify-email"
-              placeholder=" "
-              :value="verifyToken"
-              @input="(event) => (verifyToken = (event.target as HTMLInputElement).value)"
-            />
-            <label for="verify-email"><small>인증번호</small></label>
-          </div>
-        </div>
-        <div v-if="isVerified">
-          <div :class="$style['input-box']">
-            <input
-              type="password"
-              id="change-password"
-              placeholder=" "
-              :value="password"
-              @input="(event) => (password = (event.target as HTMLInputElement).value)"
-            />
-            <label for="change-password"><small>새로운 비밀번호</small></label>
-            <small v-if="isPasswordShort">비밀번호 길이 8보다 짧음</small>
-          </div>
-        </div>
-        <div v-if="isVerified">
-          <div :class="$style['input-box']">
-            <input
-              type="password"
-              id="change-password-confirmation"
-              placeholder=" "
-              :value="passwordConfirm"
-              @input="(event) => (passwordConfirm = (event.target as HTMLInputElement).value)"
-            />
-            <label for="change-password-confirmation"><small>새로운 비밀번호 확인</small></label>
-            <small v-if="isPasswordDifferent">비밀번호 불일치</small>
-          </div>
-        </div>
+        <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
+        <LabeledInputText
+          v-if="isSentEmail"
+          label-text="인증번호"
+          input-type="text"
+          @input-text="inputVerifyToken"
+        />
+        <LabeledInputText
+          v-if="isVerified"
+          @input-text="inputPassword"
+          label-text="새로운 비밀번호"
+          input-type="password"
+          :isShowWarnText="isPasswordShort"
+          warn-text="비밀번호 길이 8보다 짧음"
+        />
+        <LabeledInputText
+          v-if="isVerified"
+          @input-text="inputPasswordConfirm"
+          label-text="새로운 비밀번호 확인"
+          input-type="password"
+          :isShowWarnText="isPasswordDifferent"
+          warn-text="비밀번호 불일치"
+        />
       </div>
       <div :class="$style['option']">
         <LoginAndRegisterSwitch
@@ -74,11 +49,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import WaitButton from '@/components/buttons/WaitButton.vue';
+import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import { User } from '@/services/users';
+import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -95,7 +71,12 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'FindPasswordForm',
-  components: { LoginAndRegisterSwitch, FindAccountAndPasswordSwitch, WaitButton },
+  components: {
+    LabeledInputText,
+    LoginAndRegisterSwitch,
+    FindAccountAndPasswordSwitch,
+    WaitButton
+  },
   data() {
     return {
       mail: '',
@@ -244,6 +225,18 @@ export default defineComponent({
     switchFindAccountForm() {
       this.clear();
       this.$emit('switch-find-account-form');
+    },
+    inputEmail(mail: string) {
+      this.mail = mail;
+    },
+    inputVerifyToken(token: string) {
+      this.verifyToken = token;
+    },
+    inputPassword(password: string) {
+      this.password = password;
+    },
+    inputPasswordConfirm(passwordConfirm: string) {
+      this.passwordConfirm = passwordConfirm;
     }
   }
 });
@@ -286,45 +279,6 @@ export default defineComponent({
     }
 
     .body {
-      .input-box {
-        position: relative;
-        padding-top: 0.5rem;
-        margin-top: 1.5rem;
-
-        input {
-          border: none;
-        }
-
-        input:focus {
-          outline: none;
-        }
-
-        label {
-          position: absolute;
-          left: 0;
-          color: gray;
-          transition: all 300ms ease-in-out;
-        }
-
-        > small {
-          position: absolute;
-          color: red;
-          right: 0;
-        }
-
-        &:focus-within label,
-        input:not(:placeholder-shown) + label {
-          transform: translateY(-20px);
-        }
-
-        &:focus-within label {
-          color: blue;
-        }
-
-        &:focus-within {
-          border-bottom: 1px solid blue;
-        }
-      }
     }
 
     .option {
