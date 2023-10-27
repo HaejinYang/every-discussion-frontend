@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import DiscussionView from '@/views/DiscussionView.vue';
 import ErrorView from '@/views/ErrorView.vue';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
 import TopicRegisterView from '@/views/TopicRegisterView.vue';
 import UserTopicsView from '@/views/UserTopicsView.vue';
 import UserProfileView from '@/views/UserProfileView.vue';
@@ -64,8 +64,7 @@ router.beforeEach((to, from) => {
     case 'user-profile':
       if (!authStore.isAuth) {
         const authFormStore = useAuthFromStore();
-        authFormStore.showAuth();
-        authFormStore.showLogin();
+        authFormStore.show(eAuthForm.Login);
 
         return { name: 'home' };
       }

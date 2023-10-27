@@ -116,9 +116,10 @@ export default defineComponent({
         setTimeout(() => {
           this.$emit('close-form');
         }, 1000);
-      } catch (e: TinyError) {
+      } catch (e) {
         reportError(getErrorMessage(e));
-        if (e.code === 403) {
+
+        if ((e as TinyError).code) {
           this.submitStep = eProcessStep.Unauthenticated;
         } else {
           this.submitStep = eProcessStep.Fail;

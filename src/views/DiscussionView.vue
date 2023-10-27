@@ -48,7 +48,7 @@ import { Topic, type TopicItem } from '@/services/topics';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
 import { useNewOpinionStore } from '@/stores/NewOpinionStore';
 
 export default defineComponent({
@@ -91,8 +91,7 @@ export default defineComponent({
       const authStore = useAuthStore();
       if (!authStore.isAuth) {
         const authFormStore = useAuthFromStore();
-        authFormStore.showAuth();
-        authFormStore.showLogin();
+        authFormStore.show(eAuthForm.Login);
 
         return;
       }
