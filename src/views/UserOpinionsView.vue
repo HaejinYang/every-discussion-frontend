@@ -107,6 +107,10 @@ export default defineComponent({
       const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
       topics.map((topic: TopicItem) => {
         userOpinion.fetch(topic.id).then((opinions: OpinionWithReferenceItem[]) => {
+          if (opinions.length === 0) {
+            return;
+          }
+
           const topicWithOpinions: TopicWithOpinions = {
             topic: topic,
             opinions: opinions
