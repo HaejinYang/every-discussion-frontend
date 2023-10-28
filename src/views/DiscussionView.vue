@@ -30,7 +30,6 @@
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion
       :agreeingType="opinionTypeOfRegistering"
-      :isShowReference="isShowReferenceOfRegistering"
       :topicId="topicId"
       @remove-form="disableRegisterForm"
       @register-opinion="onRegisterOpinion"
