@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container">
+  <div :class="$style['container']" @mousedown.left="onClickPage">
     <div :class="$style['info']" v-for="item in topicWithOpinions" :key="item.topic.id">
       <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
         <span>참여토론</span>
@@ -18,7 +18,11 @@
           </p>
           <p>
             추천 {{ opinion.like }}, 비추천 {{ opinion.dislike }}
-            <span><button>수정</button></span>
+            <span
+              ><button @mousedown.left.stop="onClickModify(opinion, item.topic.id)">
+                수정
+              </button></span
+            >
             <span><button @mousedown.left="onClickRemove(opinion.id)">삭제</button></span>
           </p>
         </div>
@@ -28,13 +32,24 @@
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
+    <div :class="$style['modify-opinion']">
+      <RegisterOpinion
+        v-if="isShowModifyOpinion"
+        :topicid="modifyOpinionParam.topicId"
+        :agreeingType="modifyOpinionParam.agreeingType"
+        :prevTitle="modifyOpinionParam.prevTitle"
+        :prevContent="modifyOpinionParam.prevContent"
+        :opinionId="modifyOpinionParam.opinionId"
+        @update-opinion="onUpdateOpinion"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
-import { OpinionWithReferenceItem } from '@/services/opinions';
+import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -42,6 +57,7 @@ import { getErrorMessage } from '@/util/error';
 import { UserOpinion } from '@/services/opinions/UserOpinion';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
+import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 
 enum eProcess {
   Init = 0,
@@ -53,7 +69,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { Header, WaitButton, Discussion },
+  components: { RegisterOpinion, Header, WaitButton, Discussion },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
@@ -64,7 +80,21 @@ export default defineComponent({
         '',
         '의견 가져오기 실패',
         '작성한 의견이 없습니다.'
-      ]
+      ],
+      isShowModifyOpinion: false,
+      modifyOpinionParam: {
+        topicId: -1,
+        agreeingType: 'agree',
+        prevTitle: '',
+        prevContent: '',
+        opinionId: -1
+      } as {
+        topicId: number;
+        agreeingType: 'agree' | 'disagree';
+        prevTitle: string;
+        prevContent: string;
+        opinionId: number;
+      }
     };
   },
   computed: {
@@ -76,6 +106,9 @@ export default defineComponent({
     }
   },
   methods: {
+    onClickPage() {
+      this.isShowModifyOpinion = false;
+    },
     switchToDiscussion(id: number) {
       this.$router.push(`/discussion/${id}`);
     },
@@ -101,6 +134,39 @@ export default defineComponent({
       } catch (e) {
         reportError(getErrorMessage(e));
       }
+    },
+    onClickModify(opinion: OpinionData, topicId: number) {
+      this.modifyOpinionParam = {
+        topicId: topicId,
+        agreeingType: opinion.agreeType,
+        prevTitle: opinion.title,
+        prevContent: opinion.content,
+        opinionId: opinion.id
+      };
+
+      this.isShowModifyOpinion = true;
+    },
+    onUpdateOpinion(updated: OpinionData) {
+      this.topicWithOpinions = this.topicWithOpinions.map((item) => {
+        const newOpinions = item.opinions.map((opinion) => {
+          if (opinion.id === updated.id) {
+            return updated;
+          }
+
+          return opinion;
+        });
+
+        const newItem: TopicWithOpinions = {
+          topic: item.topic,
+          opinions: newOpinions
+        };
+
+        return newItem;
+      });
+
+      setTimeout(() => {
+        this.isShowModifyOpinion = false;
+      }, 500);
     }
   },
   async created() {
@@ -152,6 +218,15 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .modify-opinion {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+
+    transform: translate(-40%, -50%);
+  }
 
   .wait {
     position: relative;

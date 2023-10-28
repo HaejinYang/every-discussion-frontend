@@ -6,7 +6,6 @@
           {{ agreeingType === 'agree' ? '찬성' : '반대' }}
         </h3>
       </div>
-
       <div>
         <textarea
           placeholder="제목"
@@ -20,13 +19,6 @@
           :value="content"
           @input="(event) => (content = (event.target as HTMLTextAreaElement).value)"
         />
-      </div>
-      <div :style="{ textAlign: 'right' }" v-if="isShowReference">
-        <input type="radio" id="agree" value="agree" v-model="pickedAgreeOrDisagree" />
-        <label for="one">보강</label>
-
-        <input type="radio" id="disagree" value="disagree" v-model="pickedAgreeOrDisagree" />
-        <label for="two">반박</label>
       </div>
       <div :class="$style['submit-wrapper']">
         <button
@@ -64,20 +56,28 @@ export default defineComponent({
       type: String as PropType<AgreeingType>,
       required: true
     },
-    isShowReference: {
-      type: Boolean,
-      required: true
-    },
     topicId: {
       type: Number,
       required: true
+    },
+    prevTitle: {
+      type: String,
+      default: ''
+    },
+    prevContent: {
+      type: String,
+      default: ''
+    },
+    opinionId: {
+      type: Number,
+      required: true,
+      default: -1
     }
   },
   data() {
     return {
-      pickedAgreeOrDisagree: 'agree',
-      title: '',
-      content: '',
+      title: this.prevTitle ?? '',
+      content: this.prevContent ?? '',
       submitStep: eProcess.Init as eProcess,
       submitMsg: ['제출하기', '', '제출성공', '제출실패']
     };
@@ -105,14 +105,30 @@ export default defineComponent({
       try {
         const authStore = useAuthStore();
         const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
-        const created = await userOpinion.create({
-          topicId: this.topicId,
-          title: this.title,
-          content: this.content,
-          agreeingType: this.agreeingType
-        });
+
+        if (this.opinionId === -1) {
+          const created = await userOpinion.create({
+            topicId: this.topicId,
+            title: this.title,
+            content: this.content,
+            agreeingType: this.agreeingType
+          });
+          this.$emit('register-opinion', created);
+        } else {
+          const updated = await userOpinion.update(
+            {
+              topicId: this.topicId,
+              title: this.title,
+              content: this.content,
+              agreeingType: this.agreeingType
+            },
+            this.opinionId
+          );
+
+          this.$emit('update-opinion', updated);
+        }
+
         this.submitStep = eProcess.Success;
-        this.$emit('register-opinion', created);
       } catch (e) {
         this.submitStep = eProcess.Fail;
         reportError(getErrorMessage(e));

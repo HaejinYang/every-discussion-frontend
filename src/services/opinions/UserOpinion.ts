@@ -62,6 +62,24 @@ class UserOpinion {
     return created;
   }
 
+  public async update(opinion: RegisterOpinion, opinionId: number) {
+    const response = await fetchApi(`/api/opinions/${opinionId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.token}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(opinion)
+    });
+
+    throwErrorWhenResponseNotOk(response);
+    const result = await response.json();
+    const updated = plainToInstance(OpinionData, result.data);
+
+    return updated;
+  }
+
   public async delete(opinionId: number) {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'DELETE',
