@@ -38,7 +38,7 @@ import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { getErrorMessage } from '@/util/error';
-import { UserOpinion } from '@/services/UserOpinions';
+import { UserOpinion } from '@/services/opinions/UserOpinion';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
 
@@ -104,8 +104,9 @@ export default defineComponent({
         return;
       }
 
+      const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
       topics.map((topic: TopicItem) => {
-        UserOpinion.fetch(topic.id).then((opinions: OpinionWithReferenceItem[]) => {
+        userOpinion.fetch(topic.id).then((opinions: OpinionWithReferenceItem[]) => {
           const topicWithOpinions: TopicWithOpinions = {
             topic: topic,
             opinions: opinions
