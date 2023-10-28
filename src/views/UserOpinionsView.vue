@@ -58,6 +58,7 @@ import { UserOpinion } from '@/services/opinions/UserOpinion';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
+import { debounce } from '@/util/timing';
 
 enum eProcess {
   Init = 0,
@@ -94,7 +95,8 @@ export default defineComponent({
         prevTitle: string;
         prevContent: string;
         opinionId: number;
-      }
+      },
+      debouncedCheckTopicWithOpinionsEmpty: (...args: any): void => {}
     };
   },
   computed: {
@@ -131,6 +133,7 @@ export default defineComponent({
         this.topicWithOpinions = temp.filter((item) => {
           return item.opinions.length !== 0;
         });
+        this.debouncedCheckTopicWithOpinionsEmpty();
       } catch (e) {
         reportError(getErrorMessage(e));
       }
@@ -170,6 +173,12 @@ export default defineComponent({
     }
   },
   async created() {
+    this.debouncedCheckTopicWithOpinionsEmpty = debounce(() => {
+      if (this.topicWithOpinions.length === 0) {
+        this.step = eProcess.NoResult;
+      }
+    }, 3000);
+
     const authStore = useAuthStore();
     if (!authStore.isAuth) {
       this.$router.push('/error/인증이 필요합니다.');
@@ -194,16 +203,18 @@ export default defineComponent({
             return;
           }
 
-          this.step = eProcess.Success;
-
           const topicWithOpinions: TopicWithOpinions = {
             topic: topic,
             opinions: opinions
           };
 
+          this.step = eProcess.Success;
           this.topicWithOpinions.push(topicWithOpinions);
+          this.debouncedCheckTopicWithOpinionsEmpty();
         });
       });
+
+      this.debouncedCheckTopicWithOpinionsEmpty();
     } catch (e) {
       reportError(getErrorMessage(e));
       this.step = eProcess.Fail;
