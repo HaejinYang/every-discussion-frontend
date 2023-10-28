@@ -35,7 +35,7 @@
     <div :class="$style['modify-opinion']">
       <RegisterOpinion
         v-if="isShowModifyOpinion"
-        :topicid="modifyOpinionParam.topicId"
+        :topicId="modifyOpinionParam.topicId"
         :agreeingType="modifyOpinionParam.agreeingType"
         :prevTitle="modifyOpinionParam.prevTitle"
         :prevContent="modifyOpinionParam.prevContent"
