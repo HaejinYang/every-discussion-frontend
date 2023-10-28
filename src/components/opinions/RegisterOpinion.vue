@@ -104,7 +104,7 @@ export default defineComponent({
       this.submitStep = eProcess.Wait;
       try {
         const authStore = useAuthStore();
-        const userOpinion = new UserOpinion(authStore.user.id, authStore.user.email);
+        const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
         const created = await userOpinion.create({
           topicId: this.topicId,
           title: this.title,
