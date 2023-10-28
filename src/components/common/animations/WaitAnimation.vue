@@ -34,7 +34,6 @@ export default defineComponent({
   computed: {
     spinnerImgUrl() {
       if (this.color === 'black') {
-        console.log('black');
         return new URL('/src/assets/spinner-black.svg', import.meta.url).toString();
       }
 

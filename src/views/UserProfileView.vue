@@ -250,7 +250,6 @@ export default defineComponent({
 
       this.passwordModifyStep = eProcess.Wait;
       try {
-        console.log('change password');
         await User.update({ password: this.password, password_confirmation: this.passwordConfirm });
         this.passwordModifyStep = eProcess.Success;
         setTimeout(() => {
@@ -302,7 +301,6 @@ export default defineComponent({
         this.userInfoModifyStep = eProcess.Fail;
       } finally {
         this.isModifyMode = false;
-        console.log(authStore.user.name);
       }
     },
     onClickModifyCancel() {

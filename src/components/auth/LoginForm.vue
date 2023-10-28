@@ -119,7 +119,7 @@ export default defineComponent({
       } catch (e) {
         reportError(getErrorMessage(e));
 
-        if ((e as TinyError).code) {
+        if ((e as TinyError).code === 403) {
           this.submitStep = eProcessStep.Unauthenticated;
         } else {
           this.submitStep = eProcessStep.Fail;

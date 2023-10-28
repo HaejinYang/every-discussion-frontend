@@ -95,7 +95,6 @@ export default defineComponent({
     this.checkNewOpiniontimerId = window.setInterval(this.addNewOpinion, 1000);
   },
   unmounted() {
-    console.log('clear');
     clearInterval(this.checkNewOpiniontimerId);
   }
 });
