@@ -18,7 +18,8 @@
           </p>
           <p>
             추천 {{ opinion.like }}, 비추천 {{ opinion.dislike }}
-            <span><button>수정</button></span> <span><button>삭제</button></span>
+            <span><button>수정</button></span>
+            <span><button @mousedown.left="onClickRemove(opinion.id)">삭제</button></span>
           </p>
         </div>
       </div>
@@ -62,7 +63,7 @@ export default defineComponent({
         '의견을 가져오고 있습니다.',
         '',
         '의견 가져오기 실패',
-        '작성된 의견이 없습니다.'
+        '작성한 의견이 없습니다.'
       ]
     };
   },
@@ -83,6 +84,23 @@ export default defineComponent({
 
       const store = useDiscussionStore();
       store.setOpinionIdWhenRedirect(opinionId);
+    },
+    async onClickRemove(opinionId: number) {
+      const authStore = useAuthStore();
+      const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
+      try {
+        await userOpinion.delete(opinionId);
+        const temp = this.topicWithOpinions.map((item) => {
+          const converts = item.opinions.filter((opinion) => opinion.id !== opinionId);
+          return { topic: item.topic, opinions: converts };
+        });
+
+        this.topicWithOpinions = temp.filter((item) => {
+          return item.opinions.length !== 0;
+        });
+      } catch (e) {
+        reportError(getErrorMessage(e));
+      }
     }
   },
   async created() {
@@ -97,7 +115,6 @@ export default defineComponent({
     const userId = authStore.user.id;
     try {
       const topics = await Topic.fetchByUser(userId);
-      this.step = eProcess.Success;
       if (topics.length < 1) {
         this.step = eProcess.NoResult;
 
@@ -110,6 +127,8 @@ export default defineComponent({
           if (opinions.length === 0) {
             return;
           }
+
+          this.step = eProcess.Success;
 
           const topicWithOpinions: TopicWithOpinions = {
             topic: topic,

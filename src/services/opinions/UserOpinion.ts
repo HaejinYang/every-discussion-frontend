@@ -61,6 +61,18 @@ class UserOpinion {
 
     return created;
   }
+
+  public async delete(opinionId: number) {
+    const response = await fetchApi(`/api/opinions/${opinionId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
 }
 
 export { UserOpinion };
