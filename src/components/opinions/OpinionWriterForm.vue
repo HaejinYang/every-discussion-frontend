@@ -42,7 +42,7 @@ import String = types.String;
 export default defineComponent({
   name: 'OpinionWriterForm',
   components: { WaitButton },
-  emits: ['on-click-close', 'on-click-form', 'submit-form'],
+  emits: ['on-click-close', 'on-click-form', 'on-submit-form'],
   props: {
     headerTitle: {
       type: String,
@@ -85,7 +85,7 @@ export default defineComponent({
       this.$emit('on-click-form');
     },
     onClickSubmit() {
-      this.$emit('submit-form', {
+      this.$emit('on-submit-form', {
         title: this.contentTitle,
         body: this.contentBody
       });

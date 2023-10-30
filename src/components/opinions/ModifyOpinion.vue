@@ -1,7 +1,7 @@
 <template>
   <div :class="$style['container']">
     <OpinionWriterForm
-      @submit-form="onClickSubmit"
+      @on-submit-form="onClickSubmit"
       @on-click-form="onClickForm"
       :type="agreeingType"
       :isShowWait="isShowWait"
