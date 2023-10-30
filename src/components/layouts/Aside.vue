@@ -31,10 +31,13 @@
         </p>
       </div>
     </div>
-    <footer>
-      Lorem ipsum dolor sit amet. Et pariatur dolorem qui incidunt corporis ut exercitationem facere
-      quo adipisci sunt. Rem atque fugiat ea voluptas possimus est quos excepturi vel dolor earum et
-      sequi
+    <footer :class="$style['footer']">
+      <div><span>@2023 모두의토론</span></div>
+
+      <div>
+        <img src="@/assets/github.svg" @mousedown.left.stop="onClickGoGithub" />
+        <img src="@/assets/blog.svg" @mousedown.left.stop="onClickGoBlog" />
+      </div>
     </footer>
   </aside>
 </template>
@@ -69,6 +72,12 @@ export default defineComponent({
     }
   },
   methods: {
+    onClickGoGithub() {
+      window.open('https://github.com/HaejinYang', '_blank');
+    },
+    onClickGoBlog() {
+      window.open('https://crmerry.tistory.com/', '_blank');
+    },
     onClickHomePage() {
       this.$router.push('/');
     },
@@ -123,7 +132,7 @@ export default defineComponent({
     }
   }
 
-  footer {
+  .footer {
     visibility: hidden;
   }
 
@@ -163,8 +172,23 @@ export default defineComponent({
       }
     }
 
-    footer {
+    .footer {
       visibility: visible;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      > div {
+        > * {
+          margin: 0.5rem;
+        }
+
+        > img {
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
     }
 
     nav {
