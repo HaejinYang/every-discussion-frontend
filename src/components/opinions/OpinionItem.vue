@@ -5,37 +5,53 @@
         <div :class="$style['refer-opinion']" v-if="referTo !== null">
           <ReferToOpinionComponent :opinion="referTo" />
         </div>
-        <div
-          :class="[
-            $style['opinion-info'],
-            opinion.agreeType === 'agree' ? $style.agree : $style.disagree
-          ]"
-          v-if="opinion !== null"
-        >
-          <div>
-            <p>선택의견</p>
-            <fieldset>
-              <legend>타이틀</legend>
-              <p>{{ opinion.title }}</p>
-            </fieldset>
-            <fieldset>
-              <legend>요약</legend>
-              <p>{{ opinion.summary }}</p>
-            </fieldset>
-            <fieldset>
-              <legend>본문</legend>
-              <p>{{ opinion.content }}</p>
-            </fieldset>
-            <fieldset>
-              <legend>추천</legend>
-              <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
-            </fieldset>
+        <div :class="$style['opinion-info-wrapper']">
+          <div
+            :class="[
+              $style['opinion-info'],
+              opinion.agreeType === 'agree' ? $style.agree : $style.disagree
+            ]"
+            v-if="opinion !== null"
+          >
+            <div>
+              <p>선택의견</p>
+              <fieldset>
+                <legend>타이틀</legend>
+                <p>{{ opinion.title }}</p>
+              </fieldset>
+              <fieldset>
+                <legend>요약</legend>
+                <p>{{ opinion.summary }}</p>
+              </fieldset>
+              <fieldset>
+                <legend>본문</legend>
+                <p>{{ opinion.content }}</p>
+              </fieldset>
+              <fieldset>
+                <legend>추천</legend>
+                <p>추천{{ opinion.like }}, 비추천{{ opinion.dislike }}</p>
+              </fieldset>
+            </div>
+          </div>
+          <div :class="$style['register-opinion']" v-if="opinion !== null">
+            <button @mousedown.left.stop="onClickRegisterOpinion('agree')">보강</button>
+            <button @mousedown.left.stop="onClickRegisterOpinion('disagree')">반박</button>
           </div>
         </div>
         <div :class="$style['related-opinions']" v-if="referred.length !== 0">
           <ReferredOpinionComponent :referredOpinions="referred" />
         </div>
       </div>
+    </div>
+    <div>
+      <AddingToOpinion
+        v-if="isDisplayRegisterOpinion && opinion !== null"
+        :type="registerOpinionType"
+        :targetOpinionId="opinion.id"
+        :topicId="topicId"
+        @result="onRecvResultAddingToOpinion"
+        @on-click-close="onClickAddingToOpinionClose"
+      />
     </div>
   </div>
 </template>
@@ -45,12 +61,25 @@ import { defineComponent } from 'vue';
 import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
 import { Opinion, type OpinionData, type OpinionWithReferenceItem } from '@/services/opinions';
+import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
+import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
+import AddingToOpinion from '@/components/opinions/AddingToOpinion.vue';
 
 export default defineComponent({
   name: 'OpinionItem',
-  components: { ReferToOpinionComponent, ReferredOpinionComponent },
+  components: {
+    AddingToOpinion,
+    OpinionWriter,
+    RegisterOpinion,
+    ReferToOpinionComponent,
+    ReferredOpinionComponent
+  },
   props: {
     opinionId: {
+      type: Number,
+      required: true
+    },
+    topicId: {
       type: Number,
       required: true
     }
@@ -59,7 +88,9 @@ export default defineComponent({
     return {
       referTo: null as OpinionData | null,
       opinion: null as OpinionWithReferenceItem | null,
-      referred: [] as OpinionData[]
+      referred: [] as OpinionData[],
+      isDisplayRegisterOpinion: false,
+      registerOpinionType: 'agree' as 'agree' | 'disagree'
     };
   },
   watch: {
@@ -70,7 +101,18 @@ export default defineComponent({
     }
   },
   methods: {
+    onClickAddingToOpinionClose() {
+      this.isDisplayRegisterOpinion = false;
+    },
+    onRecvResultAddingToOpinion(result: 'success' | 'fail') {
+      if (result === 'success') {
+        setTimeout(() => {
+          this.isDisplayRegisterOpinion = false;
+        }, 1000);
+      }
+    },
     onClickPage() {
+      this.isDisplayRegisterOpinion = false;
       this.$emit('on-click-anywhere');
     },
     assignOpinion(opinion: OpinionWithReferenceItem) {
@@ -84,6 +126,10 @@ export default defineComponent({
       temp.push(...opinion.referred);
 
       this.referred = temp;
+    },
+    onClickRegisterOpinion(type: 'agree' | 'disagree') {
+      this.isDisplayRegisterOpinion = true;
+      this.registerOpinionType = type;
     }
   },
   async created() {
@@ -128,22 +174,44 @@ export default defineComponent({
       .refer-opinion {
       }
 
-      .opinion-info {
-        color: white;
+      .opinion-info-wrapper {
+        .opinion-info {
+          color: white;
 
-        div {
-          padding: 0.5rem;
+          div {
+            padding: 0.5rem;
 
-          > p {
-            text-align: center;
+            > p {
+              text-align: center;
+            }
+
+            fieldset {
+              border: $border-weak-line;
+              margin-top: 0.5rem;
+
+              p {
+                padding: 0.5rem;
+              }
+            }
           }
+        }
 
-          fieldset {
-            border: $border-weak-line;
+        .register-opinion {
+          display: flex;
+          justify-content: end;
+
+          > * {
+            padding: 0.5rem;
+            margin-left: 0.5rem;
             margin-top: 0.5rem;
+            background-color: white;
+            border: $border-normal-line;
+            border-radius: 5px;
+            font-weight: bold;
 
-            p {
-              padding: 0.5rem;
+            &:hover {
+              filter: brightness(95%);
+              cursor: pointer;
             }
           }
         }
