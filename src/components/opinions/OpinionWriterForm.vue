@@ -1,6 +1,6 @@
 <template>
-  <div :class="$style['container']">
-    <div :class="$style['box']" @mousedown.left.stop>
+  <div :class="$style['container']" @mousedown.left.stop="onClickClose">
+    <div :class="$style['box']" @mousedown.left.stop="onClickForm">
       <div :class="$style['header']">
         <h3>
           {{ headerTitle }}
@@ -36,10 +36,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
+import { types } from 'sass';
+import String = types.String;
 
 export default defineComponent({
   name: 'OpinionWriterForm',
   components: { WaitButton },
+  emits: ['on-click-close', 'on-click-form', 'submit-form'],
   props: {
     headerTitle: {
       type: String,
@@ -60,15 +63,27 @@ export default defineComponent({
       type: String as PropType<'agree' | 'disagree'>,
       required: true,
       default: 'agree'
+    },
+    prevTitle: {
+      type: String
+    },
+    prevContent: {
+      type: String
     }
   },
   data() {
     return {
-      contentTitle: '',
-      contentBody: ''
+      contentTitle: this.prevTitle ?? '',
+      contentBody: this.prevContent ?? ''
     };
   },
   methods: {
+    onClickClose() {
+      this.$emit('on-click-close');
+    },
+    onClickForm() {
+      this.$emit('on-click-form');
+    },
     onClickSubmit() {
       this.$emit('submit-form', {
         title: this.contentTitle,

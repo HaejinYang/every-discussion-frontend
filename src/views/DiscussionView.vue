@@ -25,7 +25,7 @@
     </div>
   </div>
   <div>
-    <OpinionItem v-if="isShowOpinionDetail" :opinion-id="selectedOpinionId" />
+    <OpinionItem v-if="isShowOpinionDetail" :opinionId="selectedOpinionId" :topicId="topicId" />
   </div>
   <div v-if="isDisplayingRegisterForm" :class="$style.register">
     <RegisterOpinion

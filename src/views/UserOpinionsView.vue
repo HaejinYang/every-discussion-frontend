@@ -33,13 +33,12 @@
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
     <div :class="$style['modify-opinion']">
-      <RegisterOpinion
+      <ModifyOpinion
         v-if="isShowModifyOpinion"
-        :topicId="modifyOpinionParam.topicId"
-        :agreeingType="modifyOpinionParam.agreeingType"
         :prevTitle="modifyOpinionParam.prevTitle"
         :prevContent="modifyOpinionParam.prevContent"
         :opinionId="modifyOpinionParam.opinionId"
+        :agreeingType="modifyOpinionParam.agreeingType"
         @update-opinion="onUpdateOpinion"
       />
     </div>
@@ -59,6 +58,7 @@ import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { debounce } from '@/util/timing';
+import ModifyOpinion from '@/components/opinions/ModifyOpinion.vue';
 
 enum eProcess {
   Init = 0,
@@ -70,7 +70,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { RegisterOpinion, Header, WaitButton, Discussion },
+  components: { ModifyOpinion, RegisterOpinion, Header, WaitButton, Discussion },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
