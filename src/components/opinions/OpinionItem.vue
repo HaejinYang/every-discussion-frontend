@@ -97,7 +97,9 @@ export default defineComponent({
   },
   watch: {
     opinionId(newOpinionId: number) {
+      console.log('new:', newOpinionId);
       Opinion.fetch(newOpinionId).then((opinion: OpinionWithReferenceItem) => {
+        console.log('new:', opinion);
         this.assignOpinion(opinion);
       });
     }
@@ -120,14 +122,7 @@ export default defineComponent({
     assignOpinion(opinion: OpinionWithReferenceItem) {
       this.opinion = opinion;
       this.referTo = opinion.referTo;
-      let temp = [] as OpinionData[];
-      temp.push(...opinion.referred);
-      temp.push(...opinion.referred);
-      temp.push(...opinion.referred);
-      temp.push(...opinion.referred);
-      temp.push(...opinion.referred);
-
-      this.referred = temp;
+      this.referred = opinion.referred;
     },
     onClickRegisterOpinion(type: 'agree' | 'disagree') {
       const authFormStore = useAuthFromStore();
@@ -137,6 +132,16 @@ export default defineComponent({
       } else {
         this.isDisplayRegisterOpinion = true;
         this.registerOpinionType = type;
+
+        if (this.opinion) {
+          if (this.opinion.agreeType === 'disagree') {
+            if (type === 'agree') {
+              this.registerOpinionType = 'disagree';
+            } else {
+              this.registerOpinionType = 'agree';
+            }
+          }
+        }
       }
     }
   },
