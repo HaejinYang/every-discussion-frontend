@@ -44,7 +44,12 @@ class UserOpinion {
     return opinions;
   }
 
-  public async create(opinion: RegisterOpinion) {
+  public async create(opinion: RegisterOpinion, addTo?: number) {
+    let body = opinion;
+    if (addTo) {
+      body = Object.assign(body, { addTo: addTo });
+    }
+
     const response = await fetchApi('/api/opinions', {
       method: 'POST',
       headers: {
@@ -52,7 +57,7 @@ class UserOpinion {
         Authorization: `Bearer ${this.token}`
       },
       credentials: 'include',
-      body: JSON.stringify(opinion)
+      body: JSON.stringify(body)
     });
 
     throwErrorWhenResponseNotOk(response);
@@ -62,7 +67,7 @@ class UserOpinion {
     return created;
   }
 
-  public async update(opinion: RegisterOpinion, opinionId: number) {
+  public async update(opinionId: number, title: string, content: string) {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'PUT',
       headers: {
@@ -70,7 +75,7 @@ class UserOpinion {
         Authorization: `Bearer ${this.token}`
       },
       credentials: 'include',
-      body: JSON.stringify(opinion)
+      body: JSON.stringify({ title, content })
     });
 
     throwErrorWhenResponseNotOk(response);
