@@ -64,6 +64,8 @@ import { Opinion, type OpinionData, type OpinionWithReferenceItem } from '@/serv
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
 import AddingToOpinion from '@/components/opinions/AddingToOpinion.vue';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
   name: 'OpinionItem',
@@ -128,8 +130,14 @@ export default defineComponent({
       this.referred = temp;
     },
     onClickRegisterOpinion(type: 'agree' | 'disagree') {
-      this.isDisplayRegisterOpinion = true;
-      this.registerOpinionType = type;
+      const authFormStore = useAuthFromStore();
+      const authSrote = useAuthStore();
+      if (!authSrote.isAuth) {
+        authFormStore.show(eAuthForm.Login);
+      } else {
+        this.isDisplayRegisterOpinion = true;
+        this.registerOpinionType = type;
+      }
     }
   },
   async created() {
