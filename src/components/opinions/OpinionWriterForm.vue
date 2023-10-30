@@ -64,17 +64,17 @@ export default defineComponent({
       required: true,
       default: 'agree'
     },
-    prevTitle: {
+    defaultTitle: {
       type: String
     },
-    prevContent: {
+    defaultContent: {
       type: String
     }
   },
   data() {
     return {
-      contentTitle: this.prevTitle ?? '',
-      contentBody: this.prevContent ?? ''
+      contentTitle: this.defaultTitle ?? '',
+      contentBody: this.defaultContent ?? ''
     };
   },
   methods: {

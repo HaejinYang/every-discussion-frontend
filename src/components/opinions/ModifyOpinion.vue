@@ -7,8 +7,8 @@
       :isShowWait="isShowWait"
       :submitBtnMsg="processingMsg[processingStep]"
       headerTitle="수정"
-      :prevContent="prevContent"
-      :prevTitle="prevTitle"
+      :defaultContent="prevContent"
+      :defaultTitle="prevTitle"
     />
   </div>
 </template>
