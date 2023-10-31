@@ -41,7 +41,7 @@ interface TopicWithOpinions {
 }
 
 class Topic {
-  public static async fetch(topicId: number) {
+  static async fetch(topicId: number) {
     const response = await fetchApi(`/api/topics/${topicId}`, {
       method: 'GET',
       credentials: 'include'
@@ -54,7 +54,7 @@ class Topic {
     return topic;
   }
 
-  public static async fetchByUser(userId: number) {
+  static async fetchByUser(userId: number) {
     const URI = `/api/users/${userId}/topics`;
     const response = await fetchApi(URI, {
       method: 'GET',
@@ -69,7 +69,7 @@ class Topic {
     return topics;
   }
 
-  public static async create(title: string, description: string) {
+  static async create(title: string, description: string) {
     const authStore = useAuthStore();
     const URI = `/api/topics`;
     const response = await fetchApi(URI, {
@@ -89,7 +89,7 @@ class Topic {
     return topic;
   }
 
-  public static async search(title: string) {
+  static async search(title: string) {
     const URI = `/api/topics?keyword=${title}`;
     const response = await fetchApi(URI, {
       method: 'GET',

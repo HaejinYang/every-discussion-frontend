@@ -19,7 +19,7 @@ interface UpdateOpinionParam {
 }
 
 class UserOpinionService {
-  public async fetchAllInTopic(topicId: number) {
+  async fetchAllInTopic(topicId: number) {
     const authStore = useAuthStore();
     const response = await fetchApi(`/api/users/${authStore.user.id}/topics/${topicId}/opinions`, {
       method: 'GET',
@@ -37,7 +37,7 @@ class UserOpinionService {
     return opinions;
   }
 
-  public async create(opinion: RegisterOpinionParam) {
+  async create(opinion: RegisterOpinionParam) {
     const authStore = useAuthStore();
     const response = await fetchApi('/api/opinions', {
       method: 'POST',
@@ -56,7 +56,7 @@ class UserOpinionService {
     return created;
   }
 
-  public async update(opinion: UpdateOpinionParam) {
+  async update(opinion: UpdateOpinionParam) {
     const authStore = useAuthStore();
     const response = await fetchApi(`/api/opinions/${opinion.id}`, {
       method: 'PUT',
@@ -75,7 +75,7 @@ class UserOpinionService {
     return updated;
   }
 
-  public async delete(opinionId: number) {
+  async delete(opinionId: number) {
     const authStore = useAuthStore();
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'DELETE',

@@ -4,7 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { LinkedOpinion, OpinionData } from '@/services/opinions/index';
 
 class OpinionService {
-  public async fetch(opinionId: number) {
+  async fetch(opinionId: number) {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'GET',
       credentials: 'include'
@@ -20,7 +20,7 @@ class OpinionService {
     return opinion;
   }
 
-  public async fetchAllInTopic(topicId: number, keyword = '') {
+  async fetchAllInTopic(topicId: number, keyword = '') {
     let URI = `/api/topics/${topicId}/opinions`;
     if (keyword.length > 0) {
       URI += `?keyword=${keyword}`;
