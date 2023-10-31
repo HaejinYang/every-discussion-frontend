@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Topic, TopicItem } from '@/services/topics';
+import { TopicItem, TopicService } from '@/services/topics';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { debounce } from '@/util/timing';
 import SimilarTopics from '@/components/topics/SimilarTopics.vue';
@@ -100,7 +100,11 @@ export default defineComponent({
 
       this.submitStep = eProcessStep.Wait;
       try {
-        const topic = await Topic.create(this.title, this.description);
+        const topicService = new TopicService();
+        const topic = await topicService.create({
+          title: this.title,
+          description: this.description
+        });
         this.createdTopicId = topic.id;
         this.submitStep = eProcessStep.Success;
       } catch (e) {
@@ -117,7 +121,8 @@ export default defineComponent({
 
     this.debouncedSearchSimilarTitle = debounce(async (title: string) => {
       try {
-        const topics = await Topic.search(title);
+        const topicService = new TopicService();
+        const topics = await topicService.search(title);
         this.similarTopics = topics.data;
       } catch (e) {
         reportError(getErrorMessage(e));

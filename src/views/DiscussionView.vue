@@ -43,7 +43,7 @@ import Discussion from '@/components/discussions/Discussion.vue';
 import type { AgreeingType } from '@/services/opinions';
 import { OpinionData } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
-import { Topic, type TopicItem } from '@/services/topics';
+import { type TopicItem, TopicService } from '@/services/topics';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -111,7 +111,8 @@ export default defineComponent({
     }
   },
   async created() {
-    this.topic = await Topic.fetch(this.topicId);
+    const topicService = new TopicService();
+    this.topic = await topicService.fetch(this.topicId);
 
     const store = useDiscussionStore();
     if (store.selectedOpinionId !== -1 && store.isShowOpinionWhenRedirect) {

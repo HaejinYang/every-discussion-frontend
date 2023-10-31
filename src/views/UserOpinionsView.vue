@@ -47,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
+import { TopicItem, TopicService, type TopicWithOpinions } from '@/services/topics';
 import { LinkedOpinion, OpinionData } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
@@ -189,7 +189,8 @@ export default defineComponent({
     this.step = eProcess.Wait;
     const userId = authStore.user.id;
     try {
-      const topics = await Topic.fetchByUser(userId);
+      const topicService = new TopicService();
+      const topics = await topicService.fetchByUser(userId);
       if (topics.length < 1) {
         this.step = eProcess.NoResult;
 

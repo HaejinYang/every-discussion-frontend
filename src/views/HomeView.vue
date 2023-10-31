@@ -33,7 +33,7 @@ import TopicPreview from '@/components/topics/TopicPreview.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { type TopicItem } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
-import { TopTopics, type TopTopicsItem } from '@/services/topics/TopTopics';
+import { type TopTopicsItem, TopTopicsService } from '@/services/topics/TopTopicsService';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 
 export default defineComponent({
@@ -63,8 +63,9 @@ export default defineComponent({
 
       this.selectedTopicIndex = -1;
       this.isWaitingMoreTopics = true;
+      const topTopicsService = new TopTopicsService();
 
-      const topics = await TopTopics.fetchNext(
+      const topics = await topTopicsService.fetchNext(
         this.nextTopicsUrl + (this.searchKeyword.length > 0 ? `&keyword=${this.searchKeyword}` : '')
       );
       this.topics.push(...topics.data);
@@ -103,7 +104,8 @@ export default defineComponent({
   },
   created() {
     this.isWaitingMoreTopics = true;
-    TopTopics.fetch().then((topTopics: TopTopicsItem) => {
+    const topTopicsService = new TopTopicsService();
+    topTopicsService.fetch().then((topTopics: TopTopicsItem) => {
       this.topics = topTopics.data;
       this.isWaitingMoreTopics = false;
       this.nextTopicsUrl = topTopics.nextPageUrl;
