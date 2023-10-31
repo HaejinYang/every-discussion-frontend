@@ -37,7 +37,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { TopicItem } from '@/services/topics';
-import { Topic } from '@/services/topics';
+import { TopicService } from '@/services/topics';
 import { useAuthStore } from '@/stores/AuthStore';
 import SearchBar from '@/components/SearchBar.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
@@ -102,7 +102,9 @@ export default defineComponent({
     const userId = authStore.user.id;
 
     this.step = eProcess.Wait;
-    Topic.fetchByUser(userId)
+    const topicService = new TopicService();
+    topicService
+      .fetchByUser(userId)
       .then((topics: TopicItem[]) => {
         if (topics.length < 1) {
           this.step = eProcess.NoResult;

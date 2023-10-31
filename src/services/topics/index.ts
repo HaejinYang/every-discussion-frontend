@@ -40,8 +40,8 @@ interface TopicWithOpinions {
   opinions: OpinionData[];
 }
 
-class Topic {
-  static async fetch(topicId: number) {
+class TopicService {
+  async fetch(topicId: number) {
     const response = await fetchApi(`/api/topics/${topicId}`, {
       method: 'GET',
       credentials: 'include'
@@ -54,7 +54,7 @@ class Topic {
     return topic;
   }
 
-  static async fetchByUser(userId: number) {
+  async fetchByUser(userId: number) {
     const URI = `/api/users/${userId}/topics`;
     const response = await fetchApi(URI, {
       method: 'GET',
@@ -69,7 +69,7 @@ class Topic {
     return topics;
   }
 
-  static async create(title: string, description: string) {
+  async create(topic: { title: string; description: string }) {
     const authStore = useAuthStore();
     const URI = `/api/topics`;
     const response = await fetchApi(URI, {
@@ -79,17 +79,17 @@ class Topic {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authStore.user.token}`
       },
-      body: JSON.stringify({ title, description })
+      body: JSON.stringify(topic)
     });
 
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const topic: TopicItem = plainToInstance(TopicItem, result.data);
-    return topic;
+    const newTopic: TopicItem = plainToInstance(TopicItem, result.data);
+    return newTopic;
   }
 
-  static async search(title: string) {
+  async search(title: string) {
     const URI = `/api/topics?keyword=${title}`;
     const response = await fetchApi(URI, {
       method: 'GET',
@@ -104,4 +104,4 @@ class Topic {
   }
 }
 
-export { TopicItem, type TopicWithOpinions, Topic };
+export { TopicItem, type TopicWithOpinions, TopicService };
