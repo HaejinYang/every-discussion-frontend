@@ -41,12 +41,12 @@ import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { isEmailValid } from '@/util/validation';
 import { getErrorMessage } from '@/util/error';
-import { User } from '@/services/users';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import type TinyError from '@/util/error/TinyError';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
+import { AuthService } from '@/services/auth';
 
 enum eProcessStep {
   Init = 0,
@@ -111,7 +111,8 @@ export default defineComponent({
 
       this.submitStep = eProcessStep.Wait;
       try {
-        const user = await User.login(this.email, this.password);
+        const auth = new AuthService();
+        const user = await auth.login({ email: this.email, password: this.password });
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
           this.$emit('close-form');

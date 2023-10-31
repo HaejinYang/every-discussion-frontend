@@ -46,7 +46,7 @@ interface UserChangeParam {
 }
 
 class User {
-  public static async create(registerInfo: UserRegisterParam) {
+  public static async create(registerParam: UserRegisterParam) {
     const URI = '/api/auth/register';
     const response = await fetchApi(URI, {
       method: 'POST',
@@ -54,65 +54,7 @@ class User {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(registerInfo)
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    const result = await response.json();
-    const user: UserItem = plainToInstance(UserItem, result.data);
-
-    return user;
-  }
-
-  public static async isDuplicated(userInfo: CheckDuplicatedUserParam) {
-    let URI = '/api/auth/duplicated';
-    const queryString = objectToQueryString(userInfo);
-    URI += '?' + queryString;
-    const response = await fetchApi(URI, {
-      method: 'GET',
-      credentials: 'include'
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    return true;
-  }
-
-  public static async login(email: string, password: string) {
-    const URI = '/api/auth/login';
-    const response = await fetchApi(URI, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    });
-
-    throwErrorWhenResponseNotOk(response, true);
-
-    const result = await response.json();
-    const user: UserItem = plainToInstance(UserItem, result.data);
-
-    const authStore = useAuthStore();
-    authStore.login(user);
-
-    return user;
-  }
-
-  public static async logout() {
-    const authStore = useAuthStore();
-    const URI = '/api/auth/logout';
-    const response = await fetchApi(URI, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${authStore.user.token}`
-      }
+      body: JSON.stringify(registerParam)
     });
 
     throwErrorWhenResponseNotOk(response);
@@ -144,23 +86,6 @@ class User {
     }
   }
 
-  public static async delete(password: string) {
-    const authStore = useAuthStore();
-
-    const URI = '/api/users';
-    const response = await fetchApi(URI, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${authStore.user.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ password })
-    });
-
-    throwErrorWhenResponseNotOk(response);
-  }
-
   public static async find(name: string) {
     const URI = `/api/auth/email?name=${name}`;
     const response = await fetchApi(URI, {
@@ -179,47 +104,35 @@ class User {
     return email;
   }
 
-  public static async sendEmailForTransferingToken(email: string) {
-    const URI = `/api/auth/password/token?email=${email}`;
+  public static async delete(password: string) {
+    const authStore = useAuthStore();
+
+    const URI = '/api/users';
+    const response = await fetchApi(URI, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${authStore.user.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password })
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
+
+  public static async isDuplicated(userInfo: CheckDuplicatedUserParam) {
+    let URI = '/api/auth/duplicated';
+    const queryString = objectToQueryString(userInfo);
+    URI += '?' + queryString;
     const response = await fetchApi(URI, {
       method: 'GET',
       credentials: 'include'
     });
 
     throwErrorWhenResponseNotOk(response);
-  }
 
-  public static async sendTokenForChangePassword(email: string, token: string) {
-    const URI = '/api/auth/password/token';
-    const response = await fetchApi(URI, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, token })
-    });
-
-    throwErrorWhenResponseNotOk(response);
-  }
-
-  public static async changePassword(
-    email: string,
-    token: string,
-    password: string,
-    password_confirmation: string
-  ) {
-    const URI = '/api/auth/password';
-    const response = await fetchApi(URI, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, token, password, password_confirmation })
-    });
-
-    throwErrorWhenResponseNotOk(response);
+    return true;
   }
 }
 
