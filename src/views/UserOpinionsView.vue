@@ -48,17 +48,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
-import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
+import { LinkedOpinion, OpinionData } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { getErrorMessage } from '@/util/error';
-import { UserOpinion } from '@/services/opinions/UserOpinion';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import Header from '@/App.vue';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { debounce } from '@/util/timing';
 import ModifyOpinion from '@/components/opinions/ModifyOpinion.vue';
+import { UserOpinionService } from '@/services/opinions/UserOpinionService';
 
 enum eProcess {
   Init = 0,
@@ -121,10 +121,10 @@ export default defineComponent({
       store.setOpinionIdWhenRedirect(opinionId);
     },
     async onClickRemove(opinionId: number) {
-      const authStore = useAuthStore();
-      const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
+      const userOpinionService = new UserOpinionService();
+
       try {
-        await userOpinion.delete(opinionId);
+        await userOpinionService.delete(opinionId);
         const temp = this.topicWithOpinions.map((item) => {
           const converts = item.opinions.filter((opinion) => opinion.id !== opinionId);
           return { topic: item.topic, opinions: converts };
@@ -196,9 +196,10 @@ export default defineComponent({
         return;
       }
 
-      const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
+      const userOpinionService = new UserOpinionService();
+
       topics.map((topic: TopicItem) => {
-        userOpinion.fetch(topic.id).then((opinions: OpinionWithReferenceItem[]) => {
+        userOpinionService.fetchAllInTopic(topic.id).then((opinions: LinkedOpinion[]) => {
           if (opinions.length === 0) {
             return;
           }

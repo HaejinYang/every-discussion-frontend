@@ -15,11 +15,10 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import { type AgreeingType } from '@/services/opinions';
-import { UserOpinion } from '@/services/opinions/UserOpinion';
 import { getErrorMessage } from '@/util/error';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
-import { useAuthStore } from '@/stores/AuthStore';
 import OpinionWriterForm from '@/components/opinions/OpinionWriterForm.vue';
+import { UserOpinionService } from '@/services/opinions/UserOpinionService';
 
 enum eProcess {
   Init = 0,
@@ -76,9 +75,8 @@ export default defineComponent({
 
       try {
         this.submitStep = eProcess.Wait;
-        const authStore = useAuthStore();
-        const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
-        const created = await userOpinion.create({
+        const userOpinionService = new UserOpinionService();
+        const created = await userOpinionService.create({
           topicId: this.topicId,
           title: opinion.title,
           content: opinion.body,

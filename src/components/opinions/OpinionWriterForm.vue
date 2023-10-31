@@ -34,10 +34,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
-import { types } from 'sass';
-import String = types.String;
 
 export default defineComponent({
   name: 'OpinionWriterForm',

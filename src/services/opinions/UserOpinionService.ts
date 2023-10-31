@@ -1,63 +1,52 @@
+import { type AgreeingType, LinkedOpinion, OpinionData } from '@/services/opinions/index';
 import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
-import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
-import {
-  type AgreeingType,
-  OpinionData,
-  OpinionWithReferenceItem
-} from '@/services/opinions/index';
+import { useAuthStore } from '@/stores/AuthStore';
 
-interface RegisterOpinion {
+interface RegisterOpinionParam {
   topicId: number;
   title: string;
   content: string;
   agreeingType: AgreeingType;
+  addTo?: number;
 }
 
-class UserOpinion {
-  private userId: number;
-  private token: string;
+interface UpdateOpinionParam {
+  id: number;
+  title: string;
+  content: string;
+}
 
-  constructor(userId: number, token: string) {
-    this.userId = userId;
-    this.token = token;
-  }
-
-  public async fetch(topicId: number) {
-    const response = await fetchApi(`/api/users/${this.userId}/topics/${topicId}/opinions`, {
+class UserOpinionService {
+  public async fetchAllInTopic(topicId: number) {
+    const authStore = useAuthStore();
+    const response = await fetchApi(`/api/users/${authStore.user.id}/topics/${topicId}/opinions`, {
       method: 'GET',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       }
     });
 
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinions: OpinionWithReferenceItem[] = plainToInstance(
-      OpinionWithReferenceItem,
-      <any[]>result.data
-    );
+    const opinions: LinkedOpinion[] = plainToInstance(LinkedOpinion, <any[]>result.data);
 
     return opinions;
   }
 
-  public async create(opinion: RegisterOpinion, addTo?: number) {
-    let body = opinion;
-    if (addTo) {
-      body = Object.assign(body, { addTo: addTo });
-    }
-
+  public async create(opinion: RegisterOpinionParam) {
+    const authStore = useAuthStore();
     const response = await fetchApi('/api/opinions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       },
       credentials: 'include',
-      body: JSON.stringify(body)
+      body: JSON.stringify(opinion)
     });
 
     throwErrorWhenResponseNotOk(response);
@@ -67,15 +56,16 @@ class UserOpinion {
     return created;
   }
 
-  public async update(opinionId: number, title: string, content: string) {
-    const response = await fetchApi(`/api/opinions/${opinionId}`, {
+  public async update(opinion: UpdateOpinionParam) {
+    const authStore = useAuthStore();
+    const response = await fetchApi(`/api/opinions/${opinion.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       },
       credentials: 'include',
-      body: JSON.stringify({ title, content })
+      body: JSON.stringify({ title: opinion.title, content: opinion.content })
     });
 
     throwErrorWhenResponseNotOk(response);
@@ -86,10 +76,11 @@ class UserOpinion {
   }
 
   public async delete(opinionId: number) {
+    const authStore = useAuthStore();
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${authStore.user.token}`
       },
       credentials: 'include'
     });
@@ -98,4 +89,4 @@ class UserOpinion {
   }
 }
 
-export { UserOpinion };
+export { UserOpinionService, type RegisterOpinionParam, type UpdateOpinionParam };

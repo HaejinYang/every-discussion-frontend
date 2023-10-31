@@ -1,7 +1,5 @@
 import 'reflect-metadata';
-import { fetchApi } from '@/util/network';
-import { Expose, plainToInstance, Type } from 'class-transformer';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import { Expose, Type } from 'class-transformer';
 
 type AgreeingType = 'agree' | 'disagree';
 
@@ -34,7 +32,7 @@ class OpinionData {
   updatedAt: string;
 }
 
-class OpinionWithReferenceItem extends OpinionData {
+class LinkedOpinion extends OpinionData {
   @Expose({ name: 'refer_to' })
   referTo: OpinionData;
 
@@ -43,43 +41,4 @@ class OpinionWithReferenceItem extends OpinionData {
   referred: OpinionData[];
 }
 
-class Opinion {
-  public static async fetch(opinionId: number) {
-    const response = await fetchApi(`/api/opinions/${opinionId}`, {
-      method: 'GET',
-      credentials: 'include'
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    const result = await response.json();
-    const opinion: OpinionWithReferenceItem = plainToInstance(
-      OpinionWithReferenceItem,
-      result.data
-    );
-
-    opinion.referTo = plainToInstance(OpinionData, opinion.referTo);
-
-    return opinion;
-  }
-
-  public static async fetchFromTopic(topicId: number, keyword = '') {
-    let URI = `/api/topics/${topicId}/opinions`;
-    if (keyword.length > 0) {
-      URI += `?keyword=${keyword}`;
-    }
-
-    const response = await fetchApi(URI, {
-      method: 'GET',
-      credentials: 'include'
-    });
-
-    throwErrorWhenResponseNotOk(response);
-
-    const result = await response.json();
-    const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
-    return opinions;
-  }
-}
-
-export { OpinionData, type AgreeingType, OpinionWithReferenceItem, Opinion };
+export { type AgreeingType, OpinionData, LinkedOpinion };
