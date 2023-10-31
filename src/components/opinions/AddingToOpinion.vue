@@ -15,9 +15,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
-import { UserOpinion } from '@/services/opinions/UserOpinion';
-import { useAuthStore } from '@/stores/AuthStore';
 import { getErrorMessage } from '@/util/error';
+import { UserOpinionService } from '@/services/opinions/UserOpinionService';
 
 enum eProcess {
   Init = 0,
@@ -78,20 +77,16 @@ export default defineComponent({
       const title = opinion.title;
       const body = opinion.body;
 
-      const authStore = useAuthStore();
-      const userOpinion = new UserOpinion(authStore.user.id, authStore.user.token);
-
+      const userOpinionService = new UserOpinionService();
       try {
         this.processingStep = eProcess.Wait;
-        await userOpinion.create(
-          {
-            topicId: this.topicId,
-            title: title,
-            content: body,
-            agreeingType: this.type
-          },
-          this.targetOpinionId
-        );
+        await userOpinionService.create({
+          topicId: this.topicId,
+          title: title,
+          content: body,
+          agreeingType: this.type,
+          addTo: this.targetOpinionId
+        });
         this.processingStep = eProcess.Success;
         this.$emit('result', 'success');
       } catch (e) {
