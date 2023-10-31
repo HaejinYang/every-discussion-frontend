@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import OpinionWriterForm from '@/components/opinions/OpinionWriterForm.vue';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
