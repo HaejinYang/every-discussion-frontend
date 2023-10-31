@@ -45,8 +45,8 @@ interface UserChangeParam {
   password_confirmation: string;
 }
 
-class User {
-  public static async create(registerParam: UserRegisterParam) {
+class UserService {
+  async create(registerParam: UserRegisterParam) {
     const URI = '/api/auth/register';
     const response = await fetchApi(URI, {
       method: 'POST',
@@ -65,7 +65,7 @@ class User {
     return user;
   }
 
-  public static async update(updates: Partial<UserChangeParam>) {
+  async update(updates: Partial<UserChangeParam>) {
     const authStore = useAuthStore();
 
     const URI = '/api/users';
@@ -86,7 +86,7 @@ class User {
     }
   }
 
-  public static async find(name: string) {
+  async find(name: string) {
     const URI = `/api/auth/email?name=${name}`;
     const response = await fetchApi(URI, {
       method: 'GET',
@@ -104,7 +104,7 @@ class User {
     return email;
   }
 
-  public static async delete(password: string) {
+  async delete(password: string) {
     const authStore = useAuthStore();
 
     const URI = '/api/users';
@@ -121,7 +121,7 @@ class User {
     throwErrorWhenResponseNotOk(response);
   }
 
-  public static async isDuplicated(userInfo: CheckDuplicatedUserParam) {
+  async isDuplicated(userInfo: CheckDuplicatedUserParam) {
     let URI = '/api/auth/duplicated';
     const queryString = objectToQueryString(userInfo);
     URI += '?' + queryString;
@@ -136,4 +136,4 @@ class User {
   }
 }
 
-export { User, UserItem };
+export { UserService, UserItem };
