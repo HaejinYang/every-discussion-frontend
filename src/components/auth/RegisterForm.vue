@@ -53,7 +53,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
-import { User } from '@/services/users';
+import { UserService } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { isEmailValid } from '@/util/validation';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
@@ -154,14 +154,16 @@ export default defineComponent({
       }
 
       try {
-        const result = await User.isDuplicated({ email: this.email });
+        const userService = new UserService();
+        const result = await userService.isDuplicated({ email: this.email });
       } catch (e) {
         this.isDuplicatedEmail = true;
       }
     }, 500);
     this.debouncedCheckName = debounce(async () => {
       try {
-        const result = await User.isDuplicated({ name: this.name });
+        const userService = new UserService();
+        const result = await userService.isDuplicated({ name: this.name });
       } catch (e) {
         this.isDuplicatedName = true;
       }
@@ -187,7 +189,8 @@ export default defineComponent({
 
       this.submitStep = eProcessStep.Wait;
       try {
-        const user = await User.create({
+        const userService = new UserService();
+        const user = await userService.create({
           email: this.email,
           name: this.name,
           password: this.password,

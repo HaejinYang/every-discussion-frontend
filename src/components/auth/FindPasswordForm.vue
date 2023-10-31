@@ -53,8 +53,8 @@ import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
-import { User } from '@/services/users';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
+import { AuthService } from '@/services/auth';
 
 enum eProcessStep {
   Init = 0,
@@ -169,7 +169,8 @@ export default defineComponent({
         // 이메일로 인증 토큰 보냄
         this.submitStep = eProcessStep.EmailSentWait;
         try {
-          await User.sendEmailForTransferingToken(this.mail);
+          const auth = new AuthService();
+          await auth.sendEmailForTransferingToken(this.mail);
           this.submitStep = eProcessStep.EmailSent;
         } catch (e) {
           reportError(getErrorMessage(e));
@@ -183,7 +184,8 @@ export default defineComponent({
         // 유저가 인증 토큰을 서버에 전송
         this.submitStep = eProcessStep.VerfiedWait;
         try {
-          await User.sendTokenForChangePassword(this.mail, this.verifyToken);
+          const auth = new AuthService();
+          await auth.sendTokenForChangePassword(this.mail, this.verifyToken);
           this.submitStep = eProcessStep.Verified;
         } catch (e) {
           reportError(getErrorMessage(e));
@@ -197,13 +199,16 @@ export default defineComponent({
         // 유저가 비밀번호를 변경
         this.submitStep = eProcessStep.ChangeWait;
         try {
-          await User.changePassword(
-            this.mail,
-            this.verifyToken,
-            this.password,
-            this.passwordConfirm
-          );
+          const auth = new AuthService();
+          await auth.changePassword({
+            email: this.mail,
+            token: this.verifyToken,
+            password: this.password,
+            password_confirmation: this.passwordConfirm
+          });
+
           this.submitStep = eProcessStep.Success;
+
           setTimeout(() => {
             this.switchLoginForm();
           }, 1500);

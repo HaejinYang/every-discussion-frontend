@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { User, type UserItem } from '@/services/users';
+import { type UserItem } from '@/services/users';
+import { AuthService } from '@/services/auth';
 
 export const useAuthStore = defineStore('auth-store', {
   state: () => {
@@ -22,7 +23,8 @@ export const useAuthStore = defineStore('auth-store', {
     },
     logout() {
       this.isAuth = false;
-      User.logout().then((user: UserItem) => {
+      const auth = new AuthService();
+      auth.logout().then((user: UserItem) => {
         console.log('logout', user);
       });
     },

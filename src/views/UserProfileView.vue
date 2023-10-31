@@ -134,7 +134,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
-import { User } from '@/services/users';
+import { UserService } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { useAuthStore } from '@/stores/AuthStore';
 import * as events from 'events';
@@ -250,7 +250,11 @@ export default defineComponent({
 
       this.passwordModifyStep = eProcess.Wait;
       try {
-        await User.update({ password: this.password, password_confirmation: this.passwordConfirm });
+        const userService = new UserService();
+        await userService.update({
+          password: this.password,
+          password_confirmation: this.passwordConfirm
+        });
         this.passwordModifyStep = eProcess.Success;
         setTimeout(() => {
           this.$router.push('/');
@@ -268,7 +272,8 @@ export default defineComponent({
       this.userQuitStep = eProcess.Wait;
 
       try {
-        await User.delete(this.passwordCheck);
+        const userService = new UserService();
+        await userService.delete(this.passwordCheck);
 
         const authStore = useAuthStore();
         authStore.delete();
@@ -293,7 +298,8 @@ export default defineComponent({
       const authStore = useAuthStore();
 
       try {
-        await User.update({ name: this.userName });
+        const userService = new UserService();
+        await userService.update({ name: this.userName });
         this.userInfoModifyStep = eProcess.Success;
       } catch (e) {
         reportError(getErrorMessage(e));

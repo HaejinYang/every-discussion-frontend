@@ -33,7 +33,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
-import { User } from '@/services/users';
+import { UserService } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
@@ -95,7 +95,8 @@ export default defineComponent({
       this.submitStep = eProcessStep.Wait;
 
       try {
-        const email = await User.find(this.name);
+        const userService = new UserService();
+        const email = await userService.find(this.name);
         this.email = email;
         this.submitStep = eProcessStep.Success;
       } catch (e) {
