@@ -32,7 +32,7 @@ class OpinionData {
   updatedAt: string;
 }
 
-class OpinionWithReferenceItem extends OpinionData {
+class LinkedOpinion extends OpinionData {
   @Expose({ name: 'refer_to' })
   referTo: OpinionData;
 
@@ -41,4 +41,4 @@ class OpinionWithReferenceItem extends OpinionData {
   referred: OpinionData[];
 }
 
-export { OpinionData, type AgreeingType, OpinionWithReferenceItem };
+export { type AgreeingType, OpinionData, LinkedOpinion };

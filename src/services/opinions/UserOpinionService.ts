@@ -1,8 +1,4 @@
-import {
-  type AgreeingType,
-  OpinionData,
-  OpinionWithReferenceItem
-} from '@/services/opinions/index';
+import { type AgreeingType, LinkedOpinion, OpinionData } from '@/services/opinions/index';
 import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import { plainToInstance } from 'class-transformer';
@@ -36,10 +32,7 @@ class UserOpinionService {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinions: OpinionWithReferenceItem[] = plainToInstance(
-      OpinionWithReferenceItem,
-      <any[]>result.data
-    );
+    const opinions: LinkedOpinion[] = plainToInstance(LinkedOpinion, <any[]>result.data);
 
     return opinions;
   }

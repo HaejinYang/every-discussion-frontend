@@ -1,7 +1,7 @@
 import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import { plainToInstance } from 'class-transformer';
-import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions/index';
+import { LinkedOpinion, OpinionData } from '@/services/opinions/index';
 
 class OpinionService {
   public async fetch(opinionId: number) {
@@ -13,10 +13,7 @@ class OpinionService {
     throwErrorWhenResponseNotOk(response);
 
     const result = await response.json();
-    const opinion: OpinionWithReferenceItem = plainToInstance(
-      OpinionWithReferenceItem,
-      result.data
-    );
+    const opinion: LinkedOpinion = plainToInstance(LinkedOpinion, result.data);
 
     opinion.referTo = plainToInstance(OpinionData, opinion.referTo);
 

@@ -48,7 +48,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Topic, TopicItem, type TopicWithOpinions } from '@/services/topics';
-import { OpinionData, OpinionWithReferenceItem } from '@/services/opinions';
+import { LinkedOpinion, OpinionData } from '@/services/opinions';
 import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -199,22 +199,20 @@ export default defineComponent({
       const userOpinionService = new UserOpinionService();
 
       topics.map((topic: TopicItem) => {
-        userOpinionService
-          .fetchAllInTopic(topic.id)
-          .then((opinions: OpinionWithReferenceItem[]) => {
-            if (opinions.length === 0) {
-              return;
-            }
+        userOpinionService.fetchAllInTopic(topic.id).then((opinions: LinkedOpinion[]) => {
+          if (opinions.length === 0) {
+            return;
+          }
 
-            const topicWithOpinions: TopicWithOpinions = {
-              topic: topic,
-              opinions: opinions
-            };
+          const topicWithOpinions: TopicWithOpinions = {
+            topic: topic,
+            opinions: opinions
+          };
 
-            this.step = eProcess.Success;
-            this.topicWithOpinions.push(topicWithOpinions);
-            this.debouncedCheckTopicWithOpinionsEmpty();
-          });
+          this.step = eProcess.Success;
+          this.topicWithOpinions.push(topicWithOpinions);
+          this.debouncedCheckTopicWithOpinionsEmpty();
+        });
       });
 
       this.debouncedCheckTopicWithOpinionsEmpty();
