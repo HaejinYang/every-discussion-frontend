@@ -35,8 +35,8 @@ class TopTopicsItem {
 
 class SearchTopicsItem extends TopTopicsItem {}
 
-class TopTopics {
-  public static async fetch() {
+class TopTopicsService {
+  async fetch() {
     const response = await fetchApi('/api/topics', {
       method: 'GET',
       credentials: 'include'
@@ -49,7 +49,7 @@ class TopTopics {
     return topics;
   }
 
-  public static async fetchNext(pageUrlFromServer: string) {
+  async fetchNext(pageUrlFromServer: string) {
     const response = await fetch(pageUrlFromServer, {
       method: 'GET',
       credentials: 'include'
@@ -63,4 +63,4 @@ class TopTopics {
   }
 }
 
-export { TopTopicsItem, TopTopics, SearchTopicsItem };
+export { TopTopicsItem, TopTopicsService, SearchTopicsItem };

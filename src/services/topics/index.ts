@@ -4,7 +4,7 @@ import { throwErrorWhenResponseNotOk } from '@/util/error';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 import { useAuthStore } from '@/stores/AuthStore';
-import { SearchTopicsItem } from '@/services/topics/TopTopics';
+import { SearchTopicsItem } from '@/services/topics/TopTopicsService';
 
 class TopicItem {
   @Expose()
