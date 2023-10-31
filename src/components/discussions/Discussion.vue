@@ -24,10 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Opinion, type OpinionData } from '@/services/opinions';
+import { type OpinionData } from '@/services/opinions';
 import { useSearchOpinionStore } from '@/stores/SearchOpinionStore';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import { useNewOpinionStore } from '@/stores/NewOpinionStore';
+import { OpinionService } from '@/services/opinions/OpinionService';
 
 export default defineComponent({
   name: 'Discussion',
@@ -83,7 +84,8 @@ export default defineComponent({
     }
   },
   async created() {
-    const opinions = await Opinion.fetchFromTopic(this.topicId);
+    const opinionService = new OpinionService();
+    const opinions = await opinionService.fetchAllInTopic(this.topicId);
     this.opinions.push(
       ...opinions.filter((opinion: OpinionData) => {
         return opinion.agreeType === this.agreeingType;

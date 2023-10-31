@@ -60,12 +60,13 @@
 import { defineComponent } from 'vue';
 import ReferredOpinionComponent from '@/components/opinions/ReferredOpinion.vue';
 import ReferToOpinionComponent from '@/components/opinions/ReferToOpinion.vue';
-import { Opinion, type OpinionData, type OpinionWithReferenceItem } from '@/services/opinions';
+import { type OpinionData, type OpinionWithReferenceItem } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
 import AddingToOpinion from '@/components/opinions/AddingToOpinion.vue';
 import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
 import { useAuthStore } from '@/stores/AuthStore';
+import { OpinionService } from '@/services/opinions/OpinionService';
 
 export default defineComponent({
   name: 'OpinionItem',
@@ -97,9 +98,8 @@ export default defineComponent({
   },
   watch: {
     opinionId(newOpinionId: number) {
-      console.log('new:', newOpinionId);
-      Opinion.fetch(newOpinionId).then((opinion: OpinionWithReferenceItem) => {
-        console.log('new:', opinion);
+      const opinionService = new OpinionService();
+      opinionService.fetch(newOpinionId).then((opinion: OpinionWithReferenceItem) => {
         this.assignOpinion(opinion);
       });
     }
@@ -146,7 +146,8 @@ export default defineComponent({
     }
   },
   async created() {
-    const opinion = await Opinion.fetch(this.opinionId);
+    const opinionService = new OpinionService();
+    const opinion = await opinionService.fetch(this.opinionId);
     this.assignOpinion(opinion);
   }
 });
