@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <Header :class="$style.header" @show-login="switchLoginForm" />
+    <Header :class="$style.header" />
     <section>
       <Aside :class="$style.aside" />
       <main ref="main">
@@ -9,11 +9,11 @@
         </div>
       </main>
     </section>
-    <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
-      <RegisterForm v-show="isShowRegisterForm" />
-      <LoginForm v-show="isShowLoginForm" />
-      <FindAccountForm v-show="isShowFindAccountForm" />
-      <FindPasswordForm v-show="isShowFindPasswordForm" />
+    <div v-if="authFormStore.isShow" @mousedown.left="authFormStore.hide">
+      <RegisterForm v-show="authFormStore.isShowRegister()" />
+      <LoginForm v-show="authFormStore.isShowLogin()" @close-form="authFormStore.hide" />
+      <FindAccountForm v-show="authFormStore.isShowFindAccount()" />
+      <FindPasswordForm v-show="authFormStore.isShowFindPassword()" />
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@ import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
-import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import { useAuthFormStore } from '@/stores/AuthFormStore';
 import FindAccountForm from '@/components/auth/FindAccountForm.vue';
 import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
 
@@ -44,35 +44,6 @@ export default defineComponent({
     return {
       authFormStore: useAuthFormStore()
     };
-  },
-  computed: {
-    isShowAuthForm() {
-      return this.authFormStore.isShow;
-    },
-    isShowLoginForm() {
-      return this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.Login;
-    },
-    isShowRegisterForm() {
-      return (
-        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.Register
-      );
-    },
-    isShowFindAccountForm() {
-      return (
-        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.FindAccount
-      );
-    },
-    isShowFindPasswordForm() {
-      return (
-        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.FindPassword
-      );
-    }
-  },
-  methods: {
-    hideAuthForm() {
-      const store = useAuthFormStore();
-      store.hide();
-    }
   }
 });
 </script>

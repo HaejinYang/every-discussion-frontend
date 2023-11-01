@@ -7,7 +7,7 @@ enum eAuthForm {
   FindPassword = 3
 }
 
-const useAuthFromStore = defineStore('auth-form-store', {
+const useAuthFormStore = defineStore('auth-form-store', {
   state: () => {
     return { isShow: false, selectedAuthForm: eAuthForm.Login as eAuthForm };
   },
@@ -18,8 +18,20 @@ const useAuthFromStore = defineStore('auth-form-store', {
     show(form: eAuthForm) {
       this.isShow = true;
       this.selectedAuthForm = form;
+    },
+    isShowLogin() {
+      return this.isShow && this.selectedAuthForm === eAuthForm.Login;
+    },
+    isShowRegister() {
+      return this.isShow && this.selectedAuthForm === eAuthForm.Register;
+    },
+    isShowFindAccount() {
+      return this.isShow && this.selectedAuthForm === eAuthForm.FindAccount;
+    },
+    isShowFindPassword() {
+      return this.isShow && this.selectedAuthForm === eAuthForm.FindPassword;
     }
   }
 });
 
-export { useAuthFromStore, eAuthForm };
+export { useAuthFormStore, eAuthForm };
