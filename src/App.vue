@@ -45,7 +45,6 @@ import { defineComponent } from 'vue';
 import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
-import { useRootWheelStore } from '@/stores/RootWheelStore';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
 import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
@@ -64,10 +63,6 @@ export default defineComponent({
     RouterView
   },
   computed: {
-    isDisabledWheel() {
-      const store = useRootWheelStore();
-      return store.isDisabled;
-    },
     isShowAuthForm() {
       const store = useAuthFromStore();
       return store.isShow;
