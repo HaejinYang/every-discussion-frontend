@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 // @ts-ignore
+import './assets/base.scss';
 import App from './App.vue';
 import router from './router';
 
