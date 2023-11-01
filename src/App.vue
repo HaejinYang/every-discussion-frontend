@@ -10,32 +10,10 @@
       </main>
     </section>
     <div v-if="isShowAuthForm" @mousedown.left="hideAuthForm">
-      <RegisterForm
-        @switch-login-form="switchLoginForm"
-        @switch-find-account-form="switchFindAccountForm"
-        @switch-find-password-form="switchFindPasswordForm"
-        @register-success="switchLoginForm"
-        v-show="isShowRegisterForm"
-      />
-      <LoginForm
-        @switch-register-form="switchRegisterForm"
-        @switch-find-account-form="switchFindAccountForm"
-        @switch-find-password-form="switchFindPasswordForm"
-        @close-form="hideAuthForm"
-        v-show="isShowLoginForm"
-      />
-      <FindAccountForm
-        @switch-register-form="switchRegisterForm"
-        @switch-login-form="switchLoginForm"
-        @switch-find-password-form="switchFindPasswordForm"
-        v-show="isShowFindAccountForm"
-      />
-      <FindPasswordForm
-        @switch-register-form="switchRegisterForm"
-        @switch-login-form="switchLoginForm"
-        @switch-find-account-form="switchFindAccountForm"
-        v-show="isShowFindPasswordForm"
-      />
+      <RegisterForm v-show="isShowRegisterForm" />
+      <LoginForm v-show="isShowLoginForm" />
+      <FindAccountForm v-show="isShowFindAccountForm" />
+      <FindPasswordForm v-show="isShowFindPasswordForm" />
     </div>
   </div>
 </template>
@@ -47,7 +25,7 @@ import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import RegisterForm from '@/components/auth/RegisterForm.vue';
-import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 import FindAccountForm from '@/components/auth/FindAccountForm.vue';
 import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
 
@@ -62,47 +40,37 @@ export default defineComponent({
     Header,
     RouterView
   },
+  data() {
+    return {
+      authFormStore: useAuthFormStore()
+    };
+  },
   computed: {
     isShowAuthForm() {
-      const store = useAuthFromStore();
-      return store.isShow;
+      return this.authFormStore.isShow;
     },
     isShowLoginForm() {
-      const store = useAuthFromStore();
-      return store.isShow && store.selectedAuthForm === eAuthForm.Login;
+      return this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.Login;
     },
     isShowRegisterForm() {
-      const store = useAuthFromStore();
-      return store.isShow && store.selectedAuthForm === eAuthForm.Register;
+      return (
+        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.Register
+      );
     },
     isShowFindAccountForm() {
-      const store = useAuthFromStore();
-      return store.isShow && store.selectedAuthForm === eAuthForm.FindAccount;
+      return (
+        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.FindAccount
+      );
     },
     isShowFindPasswordForm() {
-      const store = useAuthFromStore();
-      return store.isShow && store.selectedAuthForm === eAuthForm.FindPassword;
+      return (
+        this.authFormStore.isShow && this.authFormStore.selectedAuthForm === eAuthForm.FindPassword
+      );
     }
   },
   methods: {
-    switchLoginForm() {
-      const store = useAuthFromStore();
-      store.show(eAuthForm.Login);
-    },
-    switchRegisterForm() {
-      const store = useAuthFromStore();
-      store.show(eAuthForm.Register);
-    },
-    switchFindAccountForm() {
-      const store = useAuthFromStore();
-      store.show(eAuthForm.FindAccount);
-    },
-    switchFindPasswordForm() {
-      const store = useAuthFromStore();
-      store.show(eAuthForm.FindPassword);
-    },
     hideAuthForm() {
-      const store = useAuthFromStore();
+      const store = useAuthFormStore();
       store.hide();
     }
   }
