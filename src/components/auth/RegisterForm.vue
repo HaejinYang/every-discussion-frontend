@@ -34,10 +34,7 @@
       />
       <div :class="$style['register-from-footer']">
         <LoginAndRegisterSwitch select="login" />
-        <FindAccountAndPasswordSwitch
-          @switch-find-account-form="switchFindAccountForm"
-          @switch-find-password-form="switchFindPasswordForm"
-        />
+        <FindAccountAndPasswordSwitch />
       </div>
       <div :class="$style['register-btn-wrapper']">
         <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
@@ -170,12 +167,6 @@ export default defineComponent({
     }, 500);
   },
   methods: {
-    switchFindAccountForm() {
-      this.$emit('switch-find-account-form');
-    },
-    switchFindPasswordForm() {
-      this.$emit('switch-find-password-form');
-    },
     onClickRegisterForm() {
       this.isFailRegister = false;
     },

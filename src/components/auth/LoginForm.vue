@@ -20,10 +20,7 @@
       />
       <div :class="$style['login-from-footer']">
         <LoginAndRegisterSwitch select="register" />
-        <FindAccountAndPasswordSwitch
-          @switch-find-account-form="switchFindAccountForm"
-          @switch-find-password-form="switchFindPasswordForm"
-        />
+        <FindAccountAndPasswordSwitch />
       </div>
       <div :class="$style['login-btn-wrapper']">
         <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
@@ -95,12 +92,6 @@ export default defineComponent({
     }
   },
   methods: {
-    switchFindAccountForm() {
-      this.$emit('switch-find-account-form');
-    },
-    switchFindPasswordForm() {
-      this.$emit('switch-find-password-form');
-    },
     async onClickLogin() {
       if (this.submitStep === eProcessStep.Wait) {
         return;

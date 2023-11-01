@@ -9,10 +9,7 @@
       </div>
       <div :class="$style['footer']">
         <LoginAndRegisterSwitch />
-        <FindAccountAndPasswordSwitch
-          @switch-find-password-form="switchFindPasswordForm"
-          select="password"
-        />
+        <FindAccountAndPasswordSwitch select="password" />
       </div>
 
       <div :class="$style['submit']">
@@ -100,10 +97,6 @@ export default defineComponent({
         reportError(getErrorMessage(e));
         this.submitStep = eProcessStep.Fail;
       }
-    },
-    switchFindPasswordForm() {
-      this.clear();
-      this.$emit('switch-find-password-form');
     },
     inputName(name: string) {
       this.name = name;

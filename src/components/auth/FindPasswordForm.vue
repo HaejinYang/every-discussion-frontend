@@ -31,10 +31,7 @@
       </div>
       <div :class="$style['option']">
         <LoginAndRegisterSwitch />
-        <FindAccountAndPasswordSwitch
-          @switch-find-account-form="switchFindAccountForm"
-          select="account"
-        />
+        <FindAccountAndPasswordSwitch select="account" />
       </div>
       <div :class="$style['submit']">
         <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
@@ -215,10 +212,6 @@ export default defineComponent({
         }
         return;
       }
-    },
-    switchFindAccountForm() {
-      this.clear();
-      this.$emit('switch-find-account-form');
     },
     inputEmail(mail: string) {
       this.mail = mail;

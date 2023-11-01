@@ -1,12 +1,10 @@
 <template>
   <span :class="$style['find-account-and-password-switch']">
-    <small v-if="select === 'both' || select === 'account'" @mousedown.left="switchFindAccountForm"
+    <small v-if="isShowFindAccount" @mousedown.left="authFormStore.show(eAuthForm.FindAccount)"
       >아이디 {{ select === 'account' ? '찾기' : '' }}</small
     >
     <small v-if="select === 'both'"> / </small>
-    <small
-      v-if="select === 'both' || select === 'password'"
-      @mousedown.left="switchFindPasswordForm"
+    <small v-if="isShowFindPassword" @mousedown.left="authFormStore.show(eAuthForm.FindPassword)"
       >비밀번호 찾기</small
     >
   </span>
@@ -14,8 +12,10 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
+import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
 
 type FindAccountAndPasswordSelect = 'account' | 'password' | 'both';
+
 export default {
   name: 'FindAccountAndPasswordSwitch',
   props: {
@@ -25,12 +25,20 @@ export default {
       default: 'both'
     }
   },
-  methods: {
-    switchFindAccountForm() {
-      this.$emit('switch-find-account-form');
+  data() {
+    return {
+      authFormStore: useAuthFromStore()
+    };
+  },
+  computed: {
+    eAuthForm() {
+      return eAuthForm;
     },
-    switchFindPasswordForm() {
-      this.$emit('switch-find-password-form');
+    isShowFindAccount() {
+      return this.select === 'both' || this.select === 'account';
+    },
+    isShowFindPassword() {
+      return this.select === 'both' || this.select === 'password';
     }
   }
 };
