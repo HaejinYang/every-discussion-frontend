@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 
 type FindAccountAndPasswordSelect = 'account' | 'password' | 'both';
 
@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      authFormStore: useAuthFromStore()
+      authFormStore: useAuthFormStore()
     };
   },
   computed: {

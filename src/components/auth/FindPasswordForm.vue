@@ -49,6 +49,7 @@ import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswo
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { AuthService } from '@/services/auth';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 
 enum eProcessStep {
   Init = 0,
@@ -204,7 +205,8 @@ export default defineComponent({
           this.submitStep = eProcessStep.Success;
 
           setTimeout(() => {
-            this.switchLoginForm();
+            const authFormStore = useAuthFormStore();
+            authFormStore.show(eAuthForm.Login);
           }, 1500);
         } catch (e) {
           reportError(getErrorMessage(e));

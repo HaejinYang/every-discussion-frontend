@@ -55,6 +55,7 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'LoginForm',
+  emits: ['close-form'],
   components: {
     LabeledInputText,
     LoginAndRegisterSwitch,

@@ -47,7 +47,7 @@ import { type TopicItem, TopicService } from '@/services/topics';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
 import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useAuthStore } from '@/stores/AuthStore';
-import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 import { useNewOpinionStore } from '@/stores/NewOpinionStore';
 
 export default defineComponent({
@@ -89,7 +89,7 @@ export default defineComponent({
     displayRegisterOpinion(type: AgreeingType) {
       const authStore = useAuthStore();
       if (!authStore.isAuth) {
-        const authFormStore = useAuthFromStore();
+        const authFormStore = useAuthFormStore();
         authFormStore.show(eAuthForm.Login);
 
         return;

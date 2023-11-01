@@ -64,7 +64,7 @@ import { type LinkedOpinion, type OpinionData } from '@/services/opinions';
 import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
 import AddingToOpinion from '@/components/opinions/AddingToOpinion.vue';
-import { eAuthForm, useAuthFromStore } from '@/stores/AuthFormStore';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { OpinionService } from '@/services/opinions/OpinionService';
 
@@ -125,7 +125,7 @@ export default defineComponent({
       this.referred = opinion.referred;
     },
     onClickRegisterOpinion(type: 'agree' | 'disagree') {
-      const authFormStore = useAuthFromStore();
+      const authFormStore = useAuthFormStore();
       const authSrote = useAuthStore();
       if (!authSrote.isAuth) {
         authFormStore.show(eAuthForm.Login);
