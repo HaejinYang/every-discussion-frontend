@@ -1,48 +1,46 @@
 <template>
-  <div :class="$style.container">
-    <div :class="$style['register-form']" @mousedown.left.stop="onClickRegisterForm">
-      <div>
-        <p :class="$style.title">회원가입</p>
-      </div>
-      <LabeledInputText
-        @input-text="inputEmail"
-        label-text="이메일 계정"
-        input-type="text"
-        :is-show-warn-text="isDuplicatedEmail || !isEmailForm"
-        :warn-text="invalidEmailWarnText"
-      />
-      <LabeledInputText
-        @input-text="inputName"
-        label-text="이름"
-        input-type="text"
-        :is-show-warn-text="isDuplicatedName"
-        warn-text="이름 중복"
-      />
-      <LabeledInputText
-        @input-text="inputPassword"
-        label-text="비밀번호"
-        input-type="password"
-        :is-show-warn-text="isPasswordShort"
-        warn-text="비밀번호 길이 8보다 짧음"
-      />
-      <LabeledInputText
-        @input-text="inputPasswordConfirm"
-        label-text="비밀번호 확인"
-        input-type="password"
-        :is-show-warn-text="!isPasswordSame"
-        warn-text="비밀번호 불일치"
-      />
-      <div :class="$style['register-from-footer']">
-        <LoginAndRegisterSwitch select="login" />
-        <FindAccountAndPasswordSwitch select="both" />
-      </div>
-      <div :class="$style['register-btn-wrapper']">
-        <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
-          {{ submitBtnMsg[submitStep] }}
-        </button>
-        <WaitButton v-show="isSubmitWaiting" />
-        <small>{{ isFailRegister ? '정보를 다시확인해주세요' : '' }}</small>
-      </div>
+  <div :class="$style['register-form']" @mousedown.left.stop="onClickRegisterForm">
+    <div>
+      <p :class="$style.title">회원가입</p>
+    </div>
+    <LabeledInputText
+      @input-text="inputEmail"
+      label-text="이메일 계정"
+      input-type="text"
+      :is-show-warn-text="isDuplicatedEmail || !isEmailForm"
+      :warn-text="invalidEmailWarnText"
+    />
+    <LabeledInputText
+      @input-text="inputName"
+      label-text="이름"
+      input-type="text"
+      :is-show-warn-text="isDuplicatedName"
+      warn-text="이름 중복"
+    />
+    <LabeledInputText
+      @input-text="inputPassword"
+      label-text="비밀번호"
+      input-type="password"
+      :is-show-warn-text="isPasswordShort"
+      warn-text="비밀번호 길이 8보다 짧음"
+    />
+    <LabeledInputText
+      @input-text="inputPasswordConfirm"
+      label-text="비밀번호 확인"
+      input-type="password"
+      :is-show-warn-text="!isPasswordSame"
+      warn-text="비밀번호 불일치"
+    />
+    <div :class="$style['register-from-footer']">
+      <LoginAndRegisterSwitch select="login" />
+      <FindAccountAndPasswordSwitch select="both" />
+    </div>
+    <div :class="$style['register-btn-wrapper']">
+      <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
+        {{ submitBtnMsg[submitStep] }}
+      </button>
+      <WaitButton v-show="isSubmitWaiting" />
+      <small>{{ isFailRegister ? '정보를 다시확인해주세요' : '' }}</small>
     </div>
   </div>
 </template>
@@ -57,6 +55,7 @@ import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 
 enum eProcessStep {
   Init = 0,
@@ -186,7 +185,8 @@ export default defineComponent({
         });
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
-          this.$emit('register-success');
+          const authFormStore = useAuthFormStore();
+          authFormStore.show(eAuthForm.Login);
         }, 2000);
       } catch (e) {
         this.isFailRegister = true;
@@ -211,83 +211,70 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-
+.register-form {
+  padding: 1rem;
+  width: 360px;
+  background-color: white;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
 
-  .register-form {
-    padding: 1rem;
-    width: 360px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+  > * {
+    width: 90%;
+    margin: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: $border-weak-line;
+  }
 
-    > * {
-      width: 90%;
-      margin: 0.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: $border-weak-line;
+  > *:first-child {
+    border-bottom: none;
+  }
+
+  .register-btn-wrapper {
+    border-bottom: none;
+    position: relative;
+    padding-bottom: 0;
+
+    > small {
+      color: red;
     }
 
-    > *:first-child {
-      border-bottom: none;
-    }
-
-    .register-btn-wrapper {
-      border-bottom: none;
-      position: relative;
-      padding-bottom: 0;
-
-      > small {
-        color: red;
-      }
-
-      .register-form-btn {
-        width: 100%;
-        padding: 0.5rem;
-        border: none;
-        color: white;
-        font-weight: bold;
-        background-color: $primary-color;
-        filter: brightness(100%);
-        min-height: 2.2rem;
-        border-radius: 5px;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
-      }
-    }
-
-    .register-from-footer {
-      border-bottom: none;
-
-      span:first-child {
-        float: left;
-      }
-
-      span:last-child {
-        float: right;
-      }
-    }
-
-    .title {
-      text-align: center;
+    .register-form-btn {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      color: white;
       font-weight: bold;
-      border-bottom: none;
+      background-color: $primary-color;
+      filter: brightness(100%);
+      min-height: 2.2rem;
+      border-radius: 5px;
+
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
+      }
     }
+  }
+
+  .register-from-footer {
+    border-bottom: none;
+
+    span:first-child {
+      float: left;
+    }
+
+    span:last-child {
+      float: right;
+    }
+  }
+
+  .title {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: none;
   }
 }
 </style>

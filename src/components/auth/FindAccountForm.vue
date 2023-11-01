@@ -1,24 +1,22 @@
 <template>
-  <div :class="$style['container']">
-    <div :class="$style['form']" @mousedown.left.stop="onClickForm">
-      <div :class="$style['header']">
-        <p>아이디 찾기</p>
-      </div>
-      <div :class="$style['body']">
-        <LabeledInputText @input-text="inputName" label-text="이름" input-type="text" />
-      </div>
-      <div :class="$style['footer']">
-        <LoginAndRegisterSwitch select="both" />
-        <FindAccountAndPasswordSwitch select="password" />
-      </div>
+  <div :class="$style['find-account-form']" @mousedown.left.stop="onClickForm">
+    <div :class="$style['header']">
+      <p>아이디 찾기</p>
+    </div>
+    <div :class="$style['body']">
+      <LabeledInputText @input-text="inputName" label-text="이름" input-type="text" />
+    </div>
+    <div :class="$style['footer']">
+      <LoginAndRegisterSwitch select="both" />
+      <FindAccountAndPasswordSwitch select="password" />
+    </div>
 
-      <div :class="$style['submit']">
-        <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
-        <WaitButton v-show="isSubmitWaiting" />
-        <div :class="$style['result-box']" v-if="isSubmitSuccess">
-          <small>이메일은 다음과 같습니다.</small><br />
-          <small>{{ email }}</small>
-        </div>
+    <div :class="$style['submit']">
+      <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
+      <WaitButton v-show="isSubmitWaiting" />
+      <div :class="$style['result-box']" v-if="isSubmitSuccess">
+        <small>이메일은 다음과 같습니다.</small><br />
+        <small>{{ email }}</small>
       </div>
     </div>
   </div>
@@ -106,88 +104,75 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-
+.find-account-form {
+  padding: 1rem;
+  width: 360px;
+  background-color: white;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
 
-  .form {
-    padding: 1rem;
-    width: 360px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+  > * {
+    width: 90%;
+    margin: 0.5rem;
+  }
 
-    > * {
-      width: 90%;
-      margin: 0.5rem;
-    }
-
-    .header {
-      > p {
-        text-align: center;
-        font-weight: bold;
-        border-bottom: none;
-      }
-    }
-
-    .body {
-    }
-
-    .footer {
+  .header {
+    > p {
+      text-align: center;
+      font-weight: bold;
       border-bottom: none;
+    }
+  }
 
-      span:first-child {
-        float: left;
+  .body {
+  }
+
+  .footer {
+    border-bottom: none;
+
+    span:first-child {
+      float: left;
+    }
+
+    span:last-child {
+      float: right;
+    }
+  }
+
+  .submit {
+    border-bottom: none;
+    position: relative;
+    padding-bottom: 0;
+
+    .result-box {
+      > small {
+        color: black;
+        font-weight: bold;
       }
 
-      span:last-child {
-        float: right;
+      > small:first-of-type {
+        color: gray;
+        font-weight: normal;
       }
     }
 
-    .submit {
-      border-bottom: none;
-      position: relative;
-      padding-bottom: 0;
+    > button {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      color: white;
+      font-weight: bold;
+      background-color: $primary-color;
+      filter: brightness(100%);
+      min-height: 2.2rem;
+      border-radius: 5px;
 
-      .result-box {
-        > small {
-          color: black;
-          font-weight: bold;
-        }
-
-        > small:first-of-type {
-          color: gray;
-          font-weight: normal;
-        }
-      }
-
-      > button {
-        width: 100%;
-        padding: 0.5rem;
-        border: none;
-        color: white;
-        font-weight: bold;
-        background-color: $primary-color;
-        filter: brightness(100%);
-        min-height: 2.2rem;
-        border-radius: 5px;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
       }
     }
   }

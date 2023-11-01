@@ -1,34 +1,32 @@
 <template>
-  <div :class="$style['container']">
-    <div :class="$style['login-form']" @mousedown.left.stop="onClickLoginForm">
-      <div>
-        <p :class="$style.title">로그인</p>
-      </div>
-      <LabeledInputText
-        @input-text="inputEmail"
-        label-text="이메일 계정"
-        input-type="text"
-        :is-show-warn-text="!isValidEmailForm"
-        warn-text="잘못된 메일 형식"
-      />
-      <LabeledInputText
-        @input-text="inputPassword"
-        label-text="비밀번호"
-        input-type="password"
-        :is-show-warn-text="!isValidPasswordForm"
-        warn-text="비밀번호 길이가 8보다 짧음"
-      />
-      <div :class="$style['login-from-footer']">
-        <LoginAndRegisterSwitch select="register" />
-        <FindAccountAndPasswordSwitch select="both" />
-      </div>
-      <div :class="$style['login-btn-wrapper']">
-        <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
-          {{ submitBtnMsg[submitStep] }}
-        </button>
-        <WaitButton v-show="isSubmitWaiting" />
-        <small>{{ isFailLogin ? '정보를 다시확인해주세요' : '' }}</small>
-      </div>
+  <div :class="$style['login-form']" @mousedown.left.stop="onClickLoginForm">
+    <div>
+      <p :class="$style.title">로그인</p>
+    </div>
+    <LabeledInputText
+      @input-text="inputEmail"
+      label-text="이메일 계정"
+      input-type="text"
+      :is-show-warn-text="!isValidEmailForm"
+      warn-text="잘못된 메일 형식"
+    />
+    <LabeledInputText
+      @input-text="inputPassword"
+      label-text="비밀번호"
+      input-type="password"
+      :is-show-warn-text="!isValidPasswordForm"
+      warn-text="비밀번호 길이가 8보다 짧음"
+    />
+    <div :class="$style['login-from-footer']">
+      <LoginAndRegisterSwitch select="register" />
+      <FindAccountAndPasswordSwitch select="both" />
+    </div>
+    <div :class="$style['login-btn-wrapper']">
+      <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">
+        {{ submitBtnMsg[submitStep] }}
+      </button>
+      <WaitButton v-show="isSubmitWaiting" />
+      <small>{{ isFailLogin ? '정보를 다시확인해주세요' : '' }}</small>
     </div>
   </div>
 </template>
@@ -44,6 +42,7 @@ import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswo
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { AuthService } from '@/services/auth';
+import { useAuthFormStore } from '@/stores/AuthFormStore';
 
 enum eProcessStep {
   Init = 0,
@@ -55,7 +54,6 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'LoginForm',
-  emits: ['close-form'],
   components: {
     LabeledInputText,
     LoginAndRegisterSwitch,
@@ -104,7 +102,8 @@ export default defineComponent({
         const user = await auth.login({ email: this.email, password: this.password });
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
-          this.$emit('close-form');
+          const authFormStore = useAuthFormStore();
+          authFormStore.hide();
         }, 1000);
       } catch (e) {
         reportError(getErrorMessage(e));
@@ -150,83 +149,70 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-
+.login-form {
+  padding: 1rem;
+  width: 360px;
+  background-color: white;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
 
-  .login-form {
-    padding: 1rem;
-    width: 360px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+  > * {
+    width: 90%;
+    margin: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: $border-weak-line;
+  }
 
-    > * {
-      width: 90%;
-      margin: 0.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: $border-weak-line;
-    }
+  > *:first-child {
+    border-bottom: none;
+  }
 
-    > *:first-child {
-      border-bottom: none;
-    }
+  .login-btn-wrapper {
+    border-bottom: none;
+    position: relative;
+    padding-bottom: 0;
 
-    .login-btn-wrapper {
-      border-bottom: none;
-      position: relative;
-      padding-bottom: 0;
-
-      .login-form-btn {
-        width: 100%;
-        min-height: 2.2rem;
-        padding: 0.5rem;
-        border: none;
-        color: white;
-        font-weight: bold;
-        background-color: $primary-color;
-        filter: brightness(100%);
-        border-radius: 5px;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
-      }
-
-      > small {
-        color: red;
-      }
-    }
-
-    .login-from-footer {
-      border-bottom: none;
-
-      span:first-child {
-        float: left;
-      }
-
-      span:last-child {
-        float: right;
-      }
-    }
-
-    .title {
-      text-align: center;
+    .login-form-btn {
+      width: 100%;
+      min-height: 2.2rem;
+      padding: 0.5rem;
+      border: none;
+      color: white;
       font-weight: bold;
-      border-bottom: none;
+      background-color: $primary-color;
+      filter: brightness(100%);
+      border-radius: 5px;
+
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
+      }
     }
+
+    > small {
+      color: red;
+    }
+  }
+
+  .login-from-footer {
+    border-bottom: none;
+
+    span:first-child {
+      float: left;
+    }
+
+    span:last-child {
+      float: right;
+    }
+  }
+
+  .title {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: none;
   }
 }
 </style>

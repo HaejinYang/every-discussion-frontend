@@ -9,12 +9,7 @@
         </div>
       </main>
     </section>
-    <div v-if="authFormStore.isShow" @mousedown.left="authFormStore.hide">
-      <RegisterForm v-show="authFormStore.isShowRegister()" />
-      <LoginForm v-show="authFormStore.isShowLogin()" @close-form="authFormStore.hide" />
-      <FindAccountForm v-show="authFormStore.isShowFindAccount()" />
-      <FindPasswordForm v-show="authFormStore.isShowFindPassword()" />
-    </div>
+    <AuthForm />
   </div>
 </template>
 
@@ -23,27 +18,15 @@ import { defineComponent } from 'vue';
 import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
-import LoginForm from '@/components/auth/LoginForm.vue';
-import RegisterForm from '@/components/auth/RegisterForm.vue';
-import { useAuthFormStore } from '@/stores/AuthFormStore';
-import FindAccountForm from '@/components/auth/FindAccountForm.vue';
-import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
+import AuthForm from '@/components/auth/AuthForm.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    FindPasswordForm,
-    FindAccountForm,
-    RegisterForm,
-    LoginForm,
+    AuthForm,
     Aside,
     Header,
     RouterView
-  },
-  data() {
-    return {
-      authFormStore: useAuthFormStore()
-    };
   }
 });
 </script>

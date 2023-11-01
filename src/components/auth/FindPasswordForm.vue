@@ -1,42 +1,40 @@
 <template>
-  <div :class="$style['container']">
-    <div :class="$style['form']" @mousedown.left.stop="onClickForm">
-      <div :class="$style['header']">
-        <p>비밀번호 변경</p>
-      </div>
-      <div :class="$style['body']">
-        <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
-        <LabeledInputText
-          v-if="isSentEmail"
-          label-text="인증번호"
-          input-type="text"
-          @input-text="inputVerifyToken"
-        />
-        <LabeledInputText
-          v-if="isVerified"
-          @input-text="inputPassword"
-          label-text="새로운 비밀번호"
-          input-type="password"
-          :isShowWarnText="isPasswordShort"
-          warn-text="비밀번호 길이 8보다 짧음"
-        />
-        <LabeledInputText
-          v-if="isVerified"
-          @input-text="inputPasswordConfirm"
-          label-text="새로운 비밀번호 확인"
-          input-type="password"
-          :isShowWarnText="isPasswordDifferent"
-          warn-text="비밀번호 불일치"
-        />
-      </div>
-      <div :class="$style['option']">
-        <LoginAndRegisterSwitch select="both" />
-        <FindAccountAndPasswordSwitch select="account" />
-      </div>
-      <div :class="$style['submit']">
-        <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
-        <WaitButton v-show="isSubmitWaiting" />
-      </div>
+  <div :class="$style['find-password-form']" @mousedown.left.stop="onClickForm">
+    <div :class="$style['header']">
+      <p>비밀번호 변경</p>
+    </div>
+    <div :class="$style['body']">
+      <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
+      <LabeledInputText
+        v-if="isSentEmail"
+        label-text="인증번호"
+        input-type="text"
+        @input-text="inputVerifyToken"
+      />
+      <LabeledInputText
+        v-if="isVerified"
+        @input-text="inputPassword"
+        label-text="새로운 비밀번호"
+        input-type="password"
+        :isShowWarnText="isPasswordShort"
+        warn-text="비밀번호 길이 8보다 짧음"
+      />
+      <LabeledInputText
+        v-if="isVerified"
+        @input-text="inputPasswordConfirm"
+        label-text="새로운 비밀번호 확인"
+        input-type="password"
+        :isShowWarnText="isPasswordDifferent"
+        warn-text="비밀번호 불일치"
+      />
+    </div>
+    <div :class="$style['option']">
+      <LoginAndRegisterSwitch select="both" />
+      <FindAccountAndPasswordSwitch select="account" />
+    </div>
+    <div :class="$style['submit']">
+      <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
+      <WaitButton v-show="isSubmitWaiting" />
     </div>
   </div>
 </template>
@@ -232,88 +230,75 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-
+.find-password-form {
+  padding: 1rem;
+  width: 360px;
+  background-color: white;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
 
-  .form {
-    padding: 1rem;
-    width: 360px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+  > * {
+    width: 90%;
+    margin: 0.5rem;
+  }
 
-    > * {
-      width: 90%;
-      margin: 0.5rem;
-    }
-
-    .header {
-      > p {
-        text-align: center;
-        font-weight: bold;
-        border-bottom: none;
-      }
-    }
-
-    .body {
-    }
-
-    .option {
+  .header {
+    > p {
+      text-align: center;
+      font-weight: bold;
       border-bottom: none;
+    }
+  }
 
-      span:first-child {
-        float: left;
+  .body {
+  }
+
+  .option {
+    border-bottom: none;
+
+    span:first-child {
+      float: left;
+    }
+
+    span:last-child {
+      float: right;
+    }
+  }
+
+  .submit {
+    border-bottom: none;
+    position: relative;
+    padding-bottom: 0;
+
+    .result-box {
+      > small {
+        color: black;
+        font-weight: bold;
       }
 
-      span:last-child {
-        float: right;
+      > small:first-of-type {
+        color: gray;
+        font-weight: normal;
       }
     }
 
-    .submit {
-      border-bottom: none;
-      position: relative;
-      padding-bottom: 0;
+    > button {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      color: white;
+      font-weight: bold;
+      background-color: $primary-color;
+      filter: brightness(100%);
+      min-height: 2.2rem;
+      border-radius: 5px;
 
-      .result-box {
-        > small {
-          color: black;
-          font-weight: bold;
-        }
-
-        > small:first-of-type {
-          color: gray;
-          font-weight: normal;
-        }
-      }
-
-      > button {
-        width: 100%;
-        padding: 0.5rem;
-        border: none;
-        color: white;
-        font-weight: bold;
-        background-color: $primary-color;
-        filter: brightness(100%);
-        min-height: 2.2rem;
-        border-radius: 5px;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
       }
     }
   }
