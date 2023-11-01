@@ -4,22 +4,22 @@ enum eAuthForm {
   Login = 0,
   Register = 1,
   FindAccount = 2,
-  FindPassword = 3
+  FindPassword = 3,
+  NotSelected = 999
 }
 
-const useAuthFromStore = defineStore('auth-form-store', {
+const useAuthFormStore = defineStore('auth-form-store', {
   state: () => {
-    return { isShow: false, selectedAuthForm: eAuthForm.Login as eAuthForm };
+    return { selectedAuthForm: eAuthForm.NotSelected as eAuthForm };
   },
   actions: {
     hide() {
-      this.isShow = false;
+      this.selectedAuthForm = eAuthForm.NotSelected;
     },
     show(form: eAuthForm) {
-      this.isShow = true;
       this.selectedAuthForm = form;
     }
   }
 });
 
-export { useAuthFromStore, eAuthForm };
+export { useAuthFormStore, eAuthForm };

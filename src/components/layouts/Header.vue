@@ -13,7 +13,11 @@
     </div>
     <div>
       <div :class="$style['login-wrapper']">
-        <button v-if="!isLogin" :class="$style['login-btn']" @mousedown.left="onClickLogin">
+        <button
+          v-if="!isLogin"
+          :class="$style['login-btn']"
+          @mousedown.left="authFormStore.show(eAuthForm.Login)"
+        >
           로그인
         </button>
         <button
@@ -33,7 +37,7 @@
           @mouseleave="userMenuHoveredChanged(false)"
         >
           <ul>
-            <li @mousedown.lef="moveToMyInfo">프로필</li>
+            <li @mousedown.left="moveToMyInfo">프로필</li>
             <li @mousedown.left="onClickLogout">로그아웃</li>
           </ul>
         </div>
@@ -47,6 +51,7 @@ import { defineComponent } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionStore } from '@/stores/SearchOpinionStore';
 import { useAuthStore } from '@/stores/AuthStore';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 
 export default defineComponent({
   name: 'Header',
@@ -55,10 +60,14 @@ export default defineComponent({
     return {
       isUserMenuHovered: false,
       userMenuHoveredTimer: -1,
-      ignoreEmptyKeyword: false
+      ignoreEmptyKeyword: false,
+      authFormStore: useAuthFormStore()
     };
   },
   computed: {
+    eAuthForm() {
+      return eAuthForm;
+    },
     isDisplaySearchBar() {
       return this.$route.name === 'discussion';
     },

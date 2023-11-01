@@ -1,60 +1,58 @@
 <template>
-  <div :class="$style['container']">
-    <div :class="$style['form']" @mousedown.left.stop="onClickForm">
-      <div :class="$style['header']">
-        <p>비밀번호 변경</p>
+  <SubmitForm
+    :isSubmitWaiting="isSubmitWaiting"
+    submitResultMsg=""
+    :btnMsg="submitBtnMsg[submitStep]"
+    @on-submit="onClickFind"
+  >
+    <template v-slot:header>
+      <p :class="$style['title']">비밀번호 변경</p>
+    </template>
+
+    <template v-slot:content>
+      <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
+      <LabeledInputText
+        v-if="isSentEmail"
+        label-text="인증번호"
+        input-type="text"
+        @input-text="inputVerifyToken"
+      />
+      <LabeledInputText
+        v-if="isVerified"
+        @input-text="inputPassword"
+        label-text="새로운 비밀번호"
+        input-type="password"
+        :isShowWarnText="isPasswordShort"
+        warn-text="비밀번호 길이 8보다 짧음"
+      />
+      <LabeledInputText
+        v-if="isVerified"
+        @input-text="inputPasswordConfirm"
+        label-text="새로운 비밀번호 확인"
+        input-type="password"
+        :isShowWarnText="isPasswordDifferent"
+        warn-text="비밀번호 불일치"
+      />
+    </template>
+
+    <template v-slot:footer>
+      <div :class="$style['footer']">
+        <LoginAndRegisterSwitch select="both" />
+        <FindAccountAndPasswordSwitch select="account" />
       </div>
-      <div :class="$style['body']">
-        <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
-        <LabeledInputText
-          v-if="isSentEmail"
-          label-text="인증번호"
-          input-type="text"
-          @input-text="inputVerifyToken"
-        />
-        <LabeledInputText
-          v-if="isVerified"
-          @input-text="inputPassword"
-          label-text="새로운 비밀번호"
-          input-type="password"
-          :isShowWarnText="isPasswordShort"
-          warn-text="비밀번호 길이 8보다 짧음"
-        />
-        <LabeledInputText
-          v-if="isVerified"
-          @input-text="inputPasswordConfirm"
-          label-text="새로운 비밀번호 확인"
-          input-type="password"
-          :isShowWarnText="isPasswordDifferent"
-          warn-text="비밀번호 불일치"
-        />
-      </div>
-      <div :class="$style['option']">
-        <LoginAndRegisterSwitch
-          @switch-register-form="switchRegisterForm"
-          @switch-login-form="switchLoginForm"
-        />
-        <FindAccountAndPasswordSwitch
-          @switch-find-account-form="switchFindAccountForm"
-          select="account"
-        />
-      </div>
-      <div :class="$style['submit']">
-        <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
-        <WaitButton v-show="isSubmitWaiting" />
-      </div>
-    </div>
-  </div>
+    </template>
+  </SubmitForm>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { AuthService } from '@/services/auth';
+import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import SubmitForm from '@/components/common/submits/SubmitForm.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -72,10 +70,10 @@ enum eProcessStep {
 export default defineComponent({
   name: 'FindPasswordForm',
   components: {
+    SubmitForm,
     LabeledInputText,
     LoginAndRegisterSwitch,
-    FindAccountAndPasswordSwitch,
-    WaitButton
+    FindAccountAndPasswordSwitch
   },
   data() {
     return {
@@ -151,7 +149,6 @@ export default defineComponent({
       this.password = '';
       this.passwordConfirm = '';
     },
-    onClickForm() {},
     async onClickFind() {
       if (this.isPasswordDifferent) {
         return;
@@ -210,7 +207,9 @@ export default defineComponent({
           this.submitStep = eProcessStep.Success;
 
           setTimeout(() => {
-            this.switchLoginForm();
+            this.clear();
+            const authFormStore = useAuthFormStore();
+            authFormStore.show(eAuthForm.Login);
           }, 1500);
         } catch (e) {
           reportError(getErrorMessage(e));
@@ -218,18 +217,6 @@ export default defineComponent({
         }
         return;
       }
-    },
-    switchRegisterForm() {
-      this.clear();
-      this.$emit('switch-register-form');
-    },
-    switchLoginForm() {
-      this.clear();
-      this.$emit('switch-login-form');
-    },
-    switchFindAccountForm() {
-      this.clear();
-      this.$emit('switch-find-account-form');
     },
     inputEmail(mail: string) {
       this.mail = mail;
@@ -248,90 +235,21 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.title {
+  text-align: center;
+  font-weight: bold;
+  border-bottom: none;
+}
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.footer {
+  border-bottom: none;
 
-  .form {
-    padding: 1rem;
-    width: 360px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+  span:first-child {
+    float: left;
+  }
 
-    > * {
-      width: 90%;
-      margin: 0.5rem;
-    }
-
-    .header {
-      > p {
-        text-align: center;
-        font-weight: bold;
-        border-bottom: none;
-      }
-    }
-
-    .body {
-    }
-
-    .option {
-      border-bottom: none;
-
-      span:first-child {
-        float: left;
-      }
-
-      span:last-child {
-        float: right;
-      }
-    }
-
-    .submit {
-      border-bottom: none;
-      position: relative;
-      padding-bottom: 0;
-
-      .result-box {
-        > small {
-          color: black;
-          font-weight: bold;
-        }
-
-        > small:first-of-type {
-          color: gray;
-          font-weight: normal;
-        }
-      }
-
-      > button {
-        width: 100%;
-        padding: 0.5rem;
-        border: none;
-        color: white;
-        font-weight: bold;
-        background-color: $primary-color;
-        filter: brightness(100%);
-        min-height: 2.2rem;
-        border-radius: 5px;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
-      }
-    }
+  span:last-child {
+    float: right;
   }
 }
 </style>
