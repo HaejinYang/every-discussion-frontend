@@ -34,7 +34,7 @@
       />
       <div :class="$style['register-from-footer']">
         <LoginAndRegisterSwitch select="login" />
-        <FindAccountAndPasswordSwitch />
+        <FindAccountAndPasswordSwitch select="both" />
       </div>
       <div :class="$style['register-btn-wrapper']">
         <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">

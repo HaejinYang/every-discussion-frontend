@@ -20,7 +20,7 @@
       />
       <div :class="$style['login-from-footer']">
         <LoginAndRegisterSwitch select="register" />
-        <FindAccountAndPasswordSwitch />
+        <FindAccountAndPasswordSwitch select="both" />
       </div>
       <div :class="$style['login-btn-wrapper']">
         <button :class="$style['login-form-btn']" @mousedown.left.stop="onClickLogin">

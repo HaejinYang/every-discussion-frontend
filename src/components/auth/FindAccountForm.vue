@@ -8,7 +8,7 @@
         <LabeledInputText @input-text="inputName" label-text="이름" input-type="text" />
       </div>
       <div :class="$style['footer']">
-        <LoginAndRegisterSwitch />
+        <LoginAndRegisterSwitch select="both" />
         <FindAccountAndPasswordSwitch select="password" />
       </div>
 

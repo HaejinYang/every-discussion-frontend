@@ -30,7 +30,7 @@
         />
       </div>
       <div :class="$style['option']">
-        <LoginAndRegisterSwitch />
+        <LoginAndRegisterSwitch select="both" />
         <FindAccountAndPasswordSwitch select="account" />
       </div>
       <div :class="$style['submit']">
