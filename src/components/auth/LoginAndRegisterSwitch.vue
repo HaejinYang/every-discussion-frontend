@@ -1,21 +1,23 @@
 <template>
-  <span :class="$style['login-and-register-switch']">
-    <small v-if="isShowRegister" @mousedown.left="authFormStore.show(eAuthForm.Register)"
-      >회원가입</small
-    >
-    <small v-if="select === 'both'"> / </small>
-    <small v-if="isShowLogin" @mousedown.left="authFormStore.show(eAuthForm.Login)">로그인</small>
-  </span>
+  <SmallSwitchLeftOrRight
+    rightText="로그인"
+    leftText="회원가입"
+    :select="currentSelect"
+    @on-click-left-switch="authFormStore.show(eAuthForm.Register)"
+    @on-click-right-switch="authFormStore.show(eAuthForm.Login)"
+  />
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import SmallSwitchLeftOrRight from '@/components/common/switch/SmallSwitchLeftOrRight.vue';
 
 type LoginAndRegisterSelect = 'login' | 'register' | 'both';
 
 export default {
   name: 'LoginAndRegisterSwitch',
+  components: { SmallSwitchLeftOrRight },
   props: {
     select: {
       type: String as PropType<LoginAndRegisterSelect>,
@@ -29,34 +31,22 @@ export default {
     };
   },
   computed: {
+    currentSelect() {
+      if (this.select === 'register') {
+        return 'left';
+      }
+
+      if (this.select === 'login') {
+        return 'right';
+      }
+
+      return 'both';
+    },
     eAuthForm() {
       return eAuthForm;
-    },
-    isShowRegister() {
-      return this.select === 'both' || this.select === 'register';
-    },
-    isShowLogin() {
-      return this.select === 'both' || this.select === 'login';
     }
   }
 };
 </script>
 
-<style module lang="scss">
-.login-and-register-switch {
-  color: gray;
-  font-weight: lighter;
-
-  > small {
-    &:hover {
-      cursor: pointer;
-      color: blue;
-    }
-
-    &:nth-of-type(even) {
-      cursor: default;
-      color: gray;
-    }
-  }
-}
-</style>
+<style module lang="scss"></style>

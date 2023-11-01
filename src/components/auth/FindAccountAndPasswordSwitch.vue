@@ -1,23 +1,23 @@
 <template>
-  <span :class="$style['find-account-and-password-switch']">
-    <small v-if="isShowFindAccount" @mousedown.left="authFormStore.show(eAuthForm.FindAccount)"
-      >아이디 {{ select === 'account' ? '찾기' : '' }}</small
-    >
-    <small v-if="select === 'both'"> / </small>
-    <small v-if="isShowFindPassword" @mousedown.left="authFormStore.show(eAuthForm.FindPassword)"
-      >비밀번호 찾기</small
-    >
-  </span>
+  <SmallSwitchLeftOrRight
+    :leftText="currentFindAccountText"
+    rightText="비밀번호 찾기"
+    :select="currentSelect"
+    @on-click-left-switch="authFormStore.show(eAuthForm.FindAccount)"
+    @on-click-right-switch="authFormStore.show(eAuthForm.FindPassword)"
+  />
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import SmallSwitchLeftOrRight from '@/components/common/switch/SmallSwitchLeftOrRight.vue';
 
 type FindAccountAndPasswordSelect = 'account' | 'password' | 'both';
 
 export default {
   name: 'FindAccountAndPasswordSwitch',
+  components: { SmallSwitchLeftOrRight },
   props: {
     select: {
       type: String as PropType<FindAccountAndPasswordSelect>,
@@ -31,34 +31,29 @@ export default {
     };
   },
   computed: {
+    currentSelect() {
+      if (this.select === 'account') {
+        return 'left';
+      }
+
+      if (this.select === 'password') {
+        return 'right';
+      }
+
+      return 'both';
+    },
+    currentFindAccountText() {
+      if (this.select === 'account' || this.select === 'password') {
+        return '아이디 찾기';
+      }
+
+      return '아이디';
+    },
     eAuthForm() {
       return eAuthForm;
-    },
-    isShowFindAccount() {
-      return this.select === 'both' || this.select === 'account';
-    },
-    isShowFindPassword() {
-      return this.select === 'both' || this.select === 'password';
     }
   }
 };
 </script>
 
-<style module lang="scss">
-.find-account-and-password-switch {
-  color: gray;
-  font-weight: lighter;
-
-  > small {
-    &:hover {
-      cursor: pointer;
-      color: blue;
-    }
-
-    &:nth-of-type(even) {
-      cursor: default;
-      color: gray;
-    }
-  }
-}
-</style>
+<style module lang="scss"></style>
