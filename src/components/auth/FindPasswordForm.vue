@@ -1,9 +1,15 @@
 <template>
-  <div :class="$style['find-password-form']" @mousedown.left.stop="onClickForm">
-    <div :class="$style['header']">
-      <p>비밀번호 변경</p>
-    </div>
-    <div :class="$style['body']">
+  <SubmitForm
+    :isSubmitWaiting="isSubmitWaiting"
+    submitResultMsg=""
+    :btnMsg="submitBtnMsg[submitStep]"
+    @on-submit="onClickFind"
+  >
+    <template v-slot:header>
+      <p :class="$style['title']">비밀번호 변경</p>
+    </template>
+
+    <template v-slot:content>
       <LabeledInputText label-text="이메일" input-type="text" @input-text="inputEmail" />
       <LabeledInputText
         v-if="isSentEmail"
@@ -27,27 +33,26 @@
         :isShowWarnText="isPasswordDifferent"
         warn-text="비밀번호 불일치"
       />
-    </div>
-    <div :class="$style['option']">
-      <LoginAndRegisterSwitch select="both" />
-      <FindAccountAndPasswordSwitch select="account" />
-    </div>
-    <div :class="$style['submit']">
-      <button @mousedown.left.stop="onClickFind">{{ submitBtnMsg[submitStep] }}</button>
-      <WaitButton v-show="isSubmitWaiting" />
-    </div>
-  </div>
+    </template>
+
+    <template v-slot:footer>
+      <div :class="$style['footer']">
+        <LoginAndRegisterSwitch select="both" />
+        <FindAccountAndPasswordSwitch select="account" />
+      </div>
+    </template>
+  </SubmitForm>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { AuthService } from '@/services/auth';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import SubmitForm from '@/components/common/submits/SubmitForm.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -65,10 +70,10 @@ enum eProcessStep {
 export default defineComponent({
   name: 'FindPasswordForm',
   components: {
+    SubmitForm,
     LabeledInputText,
     LoginAndRegisterSwitch,
-    FindAccountAndPasswordSwitch,
-    WaitButton
+    FindAccountAndPasswordSwitch
   },
   data() {
     return {
@@ -144,7 +149,6 @@ export default defineComponent({
       this.password = '';
       this.passwordConfirm = '';
     },
-    onClickForm() {},
     async onClickFind() {
       if (this.isPasswordDifferent) {
         return;
@@ -203,6 +207,7 @@ export default defineComponent({
           this.submitStep = eProcessStep.Success;
 
           setTimeout(() => {
+            this.clear();
             const authFormStore = useAuthFormStore();
             authFormStore.show(eAuthForm.Login);
           }, 1500);
@@ -230,77 +235,21 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.find-password-form {
-  padding: 1rem;
-  width: 360px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
+.title {
+  text-align: center;
+  font-weight: bold;
+  border-bottom: none;
+}
 
-  > * {
-    width: 90%;
-    margin: 0.5rem;
+.footer {
+  border-bottom: none;
+
+  span:first-child {
+    float: left;
   }
 
-  .header {
-    > p {
-      text-align: center;
-      font-weight: bold;
-      border-bottom: none;
-    }
-  }
-
-  .body {
-  }
-
-  .option {
-    border-bottom: none;
-
-    span:first-child {
-      float: left;
-    }
-
-    span:last-child {
-      float: right;
-    }
-  }
-
-  .submit {
-    border-bottom: none;
-    position: relative;
-    padding-bottom: 0;
-
-    .result-box {
-      > small {
-        color: black;
-        font-weight: bold;
-      }
-
-      > small:first-of-type {
-        color: gray;
-        font-weight: normal;
-      }
-    }
-
-    > button {
-      width: 100%;
-      padding: 0.5rem;
-      border: none;
-      color: white;
-      font-weight: bold;
-      background-color: $primary-color;
-      filter: brightness(100%);
-      min-height: 2.2rem;
-      border-radius: 5px;
-
-      &:hover {
-        cursor: pointer;
-        filter: brightness(85%);
-      }
-    }
+  span:last-child {
+    float: right;
   }
 }
 </style>

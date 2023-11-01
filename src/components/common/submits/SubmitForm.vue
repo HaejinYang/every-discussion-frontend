@@ -61,7 +61,6 @@ export default defineComponent({
   > * {
     width: 90%;
     padding-bottom: 0.5rem;
-    border-bottom: $border-weak-line;
   }
 
   > *:first-child {
@@ -73,9 +72,14 @@ export default defineComponent({
   }
 
   .content {
+    > * {
+      border-bottom: $border-weak-line;
+    }
   }
 
   .footer {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 
   .submit {

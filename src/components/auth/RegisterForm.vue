@@ -1,48 +1,53 @@
 <template>
-  <div :class="$style['register-form']" @mousedown.left.stop="onClickRegisterForm">
-    <div>
-      <p :class="$style.title">회원가입</p>
-    </div>
-    <LabeledInputText
-      @input-text="inputEmail"
-      label-text="이메일 계정"
-      input-type="text"
-      :is-show-warn-text="isDuplicatedEmail || !isEmailForm"
-      :warn-text="invalidEmailWarnText"
-    />
-    <LabeledInputText
-      @input-text="inputName"
-      label-text="이름"
-      input-type="text"
-      :is-show-warn-text="isDuplicatedName"
-      warn-text="이름 중복"
-    />
-    <LabeledInputText
-      @input-text="inputPassword"
-      label-text="비밀번호"
-      input-type="password"
-      :is-show-warn-text="isPasswordShort"
-      warn-text="비밀번호 길이 8보다 짧음"
-    />
-    <LabeledInputText
-      @input-text="inputPasswordConfirm"
-      label-text="비밀번호 확인"
-      input-type="password"
-      :is-show-warn-text="!isPasswordSame"
-      warn-text="비밀번호 불일치"
-    />
-    <div :class="$style['register-from-footer']">
-      <LoginAndRegisterSwitch select="login" />
-      <FindAccountAndPasswordSwitch select="both" />
-    </div>
-    <div :class="$style['register-btn-wrapper']">
-      <button :class="$style['register-form-btn']" @mousedown.left="submitRegister">
-        {{ submitBtnMsg[submitStep] }}
-      </button>
-      <WaitButton v-show="isSubmitWaiting" />
-      <small>{{ isFailRegister ? '정보를 다시확인해주세요' : '' }}</small>
-    </div>
-  </div>
+  <SubmitForm
+    :isSubmitWaiting="isSubmitWaiting"
+    :submitResultMsg="registerResultMsg"
+    :btnMsg="submitBtnMsg[submitStep]"
+    @mousedown.left.stop="onClickRegisterForm"
+    @on-submit="onSubmitRegister"
+  >
+    <template v-slot:header>
+      <p :class="$style['title']">회원가입</p>
+    </template>
+
+    <template v-slot:content>
+      <LabeledInputText
+        @input-text="inputEmail"
+        label-text="이메일 계정"
+        input-type="text"
+        :is-show-warn-text="isDuplicatedEmail || !isEmailForm"
+        :warn-text="invalidEmailWarnText"
+      />
+      <LabeledInputText
+        @input-text="inputName"
+        label-text="이름"
+        input-type="text"
+        :is-show-warn-text="isDuplicatedName"
+        warn-text="이름 중복"
+      />
+      <LabeledInputText
+        @input-text="inputPassword"
+        label-text="비밀번호"
+        input-type="password"
+        :is-show-warn-text="isPasswordShort"
+        warn-text="비밀번호 길이 8보다 짧음"
+      />
+      <LabeledInputText
+        @input-text="inputPasswordConfirm"
+        label-text="비밀번호 확인"
+        input-type="password"
+        :is-show-warn-text="!isPasswordSame"
+        warn-text="비밀번호 불일치"
+      />
+    </template>
+
+    <template v-slot:footer>
+      <div :class="$style['footer']">
+        <LoginAndRegisterSwitch select="login" />
+        <FindAccountAndPasswordSwitch select="both" />
+      </div>
+    </template>
+  </SubmitForm>
 </template>
 
 <script lang="ts">
@@ -51,11 +56,11 @@ import { debounce } from '@/util/timing';
 import { UserService } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
 import { isEmailValid } from '@/util/validation';
-import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import SubmitForm from '@/components/common/submits/SubmitForm.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -67,10 +72,10 @@ enum eProcessStep {
 export default defineComponent({
   name: 'RegisterForm',
   components: {
+    SubmitForm,
     LabeledInputText,
     LoginAndRegisterSwitch,
-    FindAccountAndPasswordSwitch,
-    WaitButton
+    FindAccountAndPasswordSwitch
   },
   data() {
     return {
@@ -79,7 +84,6 @@ export default defineComponent({
       password: '',
       passwordConfirm: '',
       isPasswordSame: true,
-      isFailRegister: false,
       isDuplicatedEmail: false,
       isEmailForm: true,
       isDuplicatedName: false,
@@ -90,6 +94,27 @@ export default defineComponent({
       debouncedCheckEmail: (...args: any[]): void => {},
       debouncedCheckName: (...args: any[]): void => {}
     };
+  },
+  computed: {
+    registerResultMsg() {
+      if (this.submitStep === eProcessStep.Fail) {
+        return '정보를 다시확인해주세요';
+      }
+
+      return '';
+    },
+    isSubmitWaiting() {
+      return this.submitStep === eProcessStep.Wait;
+    },
+    invalidEmailWarnText() {
+      if (this.isDuplicatedEmail) {
+        return '이메일 중복';
+      }
+
+      if (!this.isEmailForm) {
+        return '잘못된 이메일 형식';
+      }
+    }
   },
   watch: {
     password() {
@@ -108,20 +133,6 @@ export default defineComponent({
       this.isDuplicatedEmail = false;
       this.isEmailForm = true;
       this.debouncedCheckEmail();
-    }
-  },
-  computed: {
-    isSubmitWaiting() {
-      return this.submitStep === eProcessStep.Wait;
-    },
-    invalidEmailWarnText() {
-      if (this.isDuplicatedEmail) {
-        return '이메일 중복';
-      }
-
-      if (!this.isEmailForm) {
-        return '잘못된 이메일 형식';
-      }
     }
   },
   created() {
@@ -167,9 +178,11 @@ export default defineComponent({
   },
   methods: {
     onClickRegisterForm() {
-      this.isFailRegister = false;
+      if (this.submitStep === eProcessStep.Fail) {
+        this.submitStep = eProcessStep.Init;
+      }
     },
-    async submitRegister() {
+    async onSubmitRegister() {
       if (this.submitStep === eProcessStep.Wait) {
         return;
       }
@@ -189,7 +202,6 @@ export default defineComponent({
           authFormStore.show(eAuthForm.Login);
         }, 2000);
       } catch (e) {
-        this.isFailRegister = true;
         this.submitStep = eProcessStep.Fail;
         reportError(getErrorMessage(e));
       }
@@ -211,70 +223,21 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.register-form {
-  padding: 1rem;
-  width: 360px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
+.footer {
+  border-bottom: none;
 
-  > * {
-    width: 90%;
-    margin: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: $border-weak-line;
+  span:first-child {
+    float: left;
   }
 
-  > *:first-child {
-    border-bottom: none;
+  span:last-child {
+    float: right;
   }
+}
 
-  .register-btn-wrapper {
-    border-bottom: none;
-    position: relative;
-    padding-bottom: 0;
-
-    > small {
-      color: red;
-    }
-
-    .register-form-btn {
-      width: 100%;
-      padding: 0.5rem;
-      border: none;
-      color: white;
-      font-weight: bold;
-      background-color: $primary-color;
-      filter: brightness(100%);
-      min-height: 2.2rem;
-      border-radius: 5px;
-
-      &:hover {
-        cursor: pointer;
-        filter: brightness(85%);
-      }
-    }
-  }
-
-  .register-from-footer {
-    border-bottom: none;
-
-    span:first-child {
-      float: left;
-    }
-
-    span:last-child {
-      float: right;
-    }
-  }
-
-  .title {
-    text-align: center;
-    font-weight: bold;
-    border-bottom: none;
-  }
+.title {
+  text-align: center;
+  font-weight: bold;
+  border-bottom: none;
 }
 </style>
