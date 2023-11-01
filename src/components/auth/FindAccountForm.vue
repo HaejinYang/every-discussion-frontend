@@ -8,10 +8,7 @@
         <LabeledInputText @input-text="inputName" label-text="이름" input-type="text" />
       </div>
       <div :class="$style['footer']">
-        <LoginAndRegisterSwitch
-          @switch-register-form="switchRegisterForm"
-          @switch-login-form="switchLoginForm"
-        />
+        <LoginAndRegisterSwitch />
         <FindAccountAndPasswordSwitch
           @switch-find-password-form="switchFindPasswordForm"
           select="password"
@@ -103,14 +100,6 @@ export default defineComponent({
         reportError(getErrorMessage(e));
         this.submitStep = eProcessStep.Fail;
       }
-    },
-    switchRegisterForm() {
-      this.clear();
-      this.$emit('switch-register-form');
-    },
-    switchLoginForm() {
-      this.clear();
-      this.$emit('switch-login-form');
     },
     switchFindPasswordForm() {
       this.clear();

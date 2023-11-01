@@ -30,10 +30,7 @@
         />
       </div>
       <div :class="$style['option']">
-        <LoginAndRegisterSwitch
-          @switch-register-form="switchRegisterForm"
-          @switch-login-form="switchLoginForm"
-        />
+        <LoginAndRegisterSwitch />
         <FindAccountAndPasswordSwitch
           @switch-find-account-form="switchFindAccountForm"
           select="account"
@@ -218,14 +215,6 @@ export default defineComponent({
         }
         return;
       }
-    },
-    switchRegisterForm() {
-      this.clear();
-      this.$emit('switch-register-form');
-    },
-    switchLoginForm() {
-      this.clear();
-      this.$emit('switch-login-form');
     },
     switchFindAccountForm() {
       this.clear();

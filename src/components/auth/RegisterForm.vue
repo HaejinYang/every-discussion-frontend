@@ -33,7 +33,7 @@
         warn-text="비밀번호 불일치"
       />
       <div :class="$style['register-from-footer']">
-        <LoginAndRegisterSwitch @switch-login-form="switchToLoginForm" select="login" />
+        <LoginAndRegisterSwitch select="login" />
         <FindAccountAndPasswordSwitch
           @switch-find-account-form="switchFindAccountForm"
           @switch-find-password-form="switchFindPasswordForm"
@@ -178,9 +178,6 @@ export default defineComponent({
     },
     onClickRegisterForm() {
       this.isFailRegister = false;
-    },
-    switchToLoginForm() {
-      this.$emit('switch-login-form');
     },
     async submitRegister() {
       if (this.submitStep === eProcessStep.Wait) {

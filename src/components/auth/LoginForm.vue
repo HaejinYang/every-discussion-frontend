@@ -19,7 +19,7 @@
         warn-text="비밀번호 길이가 8보다 짧음"
       />
       <div :class="$style['login-from-footer']">
-        <LoginAndRegisterSwitch @switch-register-form="switchRegisterForm" select="register" />
+        <LoginAndRegisterSwitch select="register" />
         <FindAccountAndPasswordSwitch
           @switch-find-account-form="switchFindAccountForm"
           @switch-find-password-form="switchFindPasswordForm"
@@ -95,9 +95,6 @@ export default defineComponent({
     }
   },
   methods: {
-    switchRegisterForm() {
-      this.$emit('switch-register-form');
-    },
     switchFindAccountForm() {
       this.$emit('switch-find-account-form');
     },
