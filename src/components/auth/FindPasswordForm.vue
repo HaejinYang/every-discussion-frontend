@@ -139,6 +139,16 @@ export default defineComponent({
       if (this.submitStep === eProcessStep.VerifiedFail) {
         this.submitStep = eProcessStep.EmailSent;
       }
+    },
+    password() {
+      if (this.submitStep === eProcessStep.Fail) {
+        this.submitStep = eProcessStep.Verified;
+      }
+    },
+    passwordConfirm() {
+      if (this.submitStep === eProcessStep.Fail) {
+        this.submitStep = eProcessStep.Verified;
+      }
     }
   },
   methods: {

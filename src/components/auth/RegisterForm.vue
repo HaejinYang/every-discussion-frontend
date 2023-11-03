@@ -3,7 +3,7 @@
     :isSubmitWaiting="isSubmitWaiting"
     :submitResultMsg="registerResultMsg"
     :btnMsg="submitBtnMsg[submitStep]"
-    @mousedown.left.stop="onClickRegisterForm"
+    @mousedown.left="onClickRegisterForm"
     @on-submit="onSubmitRegister"
   >
     <template v-slot:header>
