@@ -12,9 +12,10 @@ export default defineComponent({
   emits: ['on-click-white-space'],
   methods: {
     onClickModalContainer(event: Event) {
-      if (event.target === event.currentTarget) {
-        this.$emit('on-click-white-space');
+      if (event.target !== event.currentTarget) {
+        return;
       }
+      this.$emit('on-click-white-space');
     }
   }
 });

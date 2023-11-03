@@ -1,11 +1,12 @@
 <template>
-  <div :class="$style.container" @mousedown.left="moveToDiscussion">
+  <div :class="$style.container" @mousedown.left="moveToDiscussion($event)">
     <div :class="$style['title-wrapper']">
       <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
       <img
         :class="[$style.more, isFold ? null : $style.rotate]"
         src="@/assets/caret.svg"
-        @mousedown.left.stop="onClickMore"
+        @mousedown.left="onClickMore($event)"
+        ref="caret"
       />
     </div>
     <div :class="[$style.info, isShowTopicInfo ? $style.show : null]">
@@ -52,10 +53,17 @@ export default defineComponent({
     }
   },
   methods: {
-    moveToDiscussion() {
-      this.$router.push({ path: `/discussion/${this.topic.id}` });
+    moveToDiscussion(event: Event) {
+      const more = this.$refs['caret'] as HTMLElement | undefined;
+      if (event.target !== more) {
+        this.$router.push({ path: `/discussion/${this.topic.id}` });
+      }
     },
-    onClickMore() {
+    onClickMore(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       this.$emit('on-click-more', this.index);
     }
   }

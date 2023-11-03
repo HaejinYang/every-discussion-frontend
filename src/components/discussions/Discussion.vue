@@ -11,7 +11,7 @@
       :class="$style.opinion"
       v-for="(opinion, index) in displayedOpinions"
       :key="opinion.id"
-      @mousedown.left.stop="onClickOpinion(index, opinion.id)"
+      @mousedown.left="onClickOpinion(index, opinion.id)"
       ref="opinions"
     >
       <p>

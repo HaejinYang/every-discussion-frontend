@@ -1,22 +1,22 @@
 <template>
-  <div :class="$style['container']">
-    <OpinionWriter
+  <ModalContainer @on-click-white-space="onClickPage">
+    <OpinionWriterForm
       @on-submit-form="onSubmit"
       :type="type"
       :isShowWait="isShowWait"
       :submitBtnMsg="processingStepMsg[processingStep]"
-      :headerTitle="headerTitle"
-      @on-click-close="onClickClose"
+      :headerTitle="title"
       @on-click-form="onClickForm"
     />
-  </div>
+  </ModalContainer>
 </template>
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import OpinionWriter from '@/components/opinions/OpinionWriterForm.vue';
+import OpinionWriterForm from '@/components/opinions/OpinionWriterForm.vue';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
+import ModalContainer from '@/components/common/modals/ModalContainer.vue';
 
 enum eProcess {
   Init = 0,
@@ -27,7 +27,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'AddingToOpinion',
-  components: { OpinionWriter },
+  emits: ['result', 'on-click-close'],
   props: {
     targetOpinionId: {
       type: Number,
@@ -40,8 +40,13 @@ export default defineComponent({
     topicId: {
       type: Number,
       required: true
+    },
+    title: {
+      type: String,
+      required: true
     }
   },
+  components: { OpinionWriterForm, ModalContainer },
   data() {
     return {
       processingStep: eProcess.Init as eProcess,
@@ -51,17 +56,10 @@ export default defineComponent({
   computed: {
     isShowWait() {
       return this.processingStep === eProcess.Wait;
-    },
-    headerTitle() {
-      if (this.type === 'agree') {
-        return '보강';
-      }
-
-      return '반박';
     }
   },
   methods: {
-    onClickClose() {
+    onClickPage() {
       this.$emit('on-click-close');
     },
     onClickForm() {
@@ -99,12 +97,4 @@ export default defineComponent({
 });
 </script>
 
-<style module lang="scss">
-.container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
-</style>
+<style module lang="scss"></style>

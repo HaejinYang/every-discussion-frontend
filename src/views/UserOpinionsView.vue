@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style['container']" @mousedown.left="onClickPage">
+  <div :class="$style['container']">
     <div :class="$style['info']" v-for="item in topicWithOpinions" :key="item.topic.id">
       <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
         <span>참여토론</span>
@@ -19,9 +19,7 @@
           <p>
             추천 {{ opinion.like }}, 비추천 {{ opinion.dislike }}
             <span
-              ><button @mousedown.left.stop="onClickModify(opinion, item.topic.id)">
-                수정
-              </button></span
+              ><button @mousedown.left="onClickModify(opinion, item.topic.id)">수정</button></span
             >
             <span><button @mousedown.left="onClickRemove(opinion.id)">삭제</button></span>
           </p>
@@ -32,16 +30,16 @@
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
-    <div :class="$style['modify-opinion']">
-      <ModifyOpinion
-        v-if="isShowModifyOpinion"
-        :prevTitle="modifyOpinionParam.prevTitle"
-        :prevContent="modifyOpinionParam.prevContent"
-        :opinionId="modifyOpinionParam.opinionId"
-        :agreeingType="modifyOpinionParam.agreeingType"
-        @update-opinion="onUpdateOpinion"
-      />
-    </div>
+
+    <ModifyOpinion
+      v-if="isShowModifyOpinion"
+      :prevTitle="modifyOpinionParam.prevTitle"
+      :prevContent="modifyOpinionParam.prevContent"
+      :opinionId="modifyOpinionParam.opinionId"
+      :agreeingType="modifyOpinionParam.agreeingType"
+      @update-opinion="onUpdateOpinion"
+      @on-click-white-space="onClickPage"
+    />
   </div>
 </template>
 
@@ -59,6 +57,7 @@ import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { debounce } from '@/util/timing';
 import ModifyOpinion from '@/components/opinions/ModifyOpinion.vue';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
+import ModalContainer from '@/components/common/modals/ModalContainer.vue';
 
 enum eProcess {
   Init = 0,
@@ -70,7 +69,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { ModifyOpinion, RegisterOpinion, Header, WaitButton, Discussion },
+  components: { ModalContainer, ModifyOpinion, RegisterOpinion, Header, WaitButton, Discussion },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
@@ -231,15 +230,6 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  .modify-opinion {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 80%;
-
-    transform: translate(-40%, -50%);
-  }
 
   .wait {
     position: relative;

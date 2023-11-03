@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container" @mousedown.left="onClickPage">
+  <div :class="$style.container" @mousedown.left="onClickPage($event)">
     <div :class="$style.wrapper">
       <div :class="$style.box">
         <div :class="$style['refer-opinion']" v-if="referTo !== null">
@@ -34,8 +34,8 @@
             </div>
           </div>
           <div :class="$style['register-opinion']" v-if="opinion !== null">
-            <button @mousedown.left.stop="onClickRegisterOpinion('agree')">보강</button>
-            <button @mousedown.left.stop="onClickRegisterOpinion('disagree')">반박</button>
+            <button @mousedown.left="onClickRegisterOpinion('agree')">보강</button>
+            <button @mousedown.left="onClickRegisterOpinion('disagree')">반박</button>
           </div>
         </div>
         <div :class="$style['related-opinions']" v-if="referred.length !== 0">
@@ -49,6 +49,7 @@
         :type="registerOpinionType"
         :targetOpinionId="opinion.id"
         :topicId="topicId"
+        :title="addingToOpinionTitle"
         @result="onRecvResultAddingToOpinion"
         @on-click-close="onClickAddingToOpinionClose"
       />
@@ -93,7 +94,8 @@ export default defineComponent({
       opinion: null as LinkedOpinion | null,
       referred: [] as OpinionData[],
       isDisplayRegisterOpinion: false,
-      registerOpinionType: 'agree' as 'agree' | 'disagree'
+      registerOpinionType: 'agree' as 'agree' | 'disagree',
+      addingToOpinionTitle: ''
     };
   },
   watch: {
@@ -115,7 +117,11 @@ export default defineComponent({
         }, 1000);
       }
     },
-    onClickPage() {
+    onClickPage(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       this.isDisplayRegisterOpinion = false;
       this.$emit('on-click-anywhere');
     },
@@ -132,12 +138,20 @@ export default defineComponent({
       } else {
         this.isDisplayRegisterOpinion = true;
         this.registerOpinionType = type;
+        if (this.registerOpinionType === 'agree') {
+          this.addingToOpinionTitle = '보강';
+        } else {
+          this.addingToOpinionTitle = '반박';
+        }
 
         if (this.opinion) {
           if (this.opinion.agreeType === 'disagree') {
             if (type === 'agree') {
+              this.addingToOpinionTitle = '보강';
               this.registerOpinionType = 'disagree';
             } else {
+              this.addingToOpinionTitle = '반박';
+
               this.registerOpinionType = 'agree';
             }
           }
