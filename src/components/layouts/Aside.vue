@@ -35,8 +35,8 @@
       <div><span>@2023 모두의토론</span></div>
 
       <div>
-        <img src="@/assets/github.svg" @mousedown.left.stop="onClickGoGithub" />
-        <img src="@/assets/blog.svg" @mousedown.left.stop="onClickGoBlog" />
+        <img src="@/assets/github.svg" @mousedown.left="onClickGoGithub" />
+        <img src="@/assets/blog.svg" @mousedown.left="onClickGoBlog" />
       </div>
     </footer>
   </aside>
