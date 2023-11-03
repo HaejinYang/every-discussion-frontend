@@ -2,21 +2,31 @@
   <div :class="$style.container">
     <div :class="$style['content']">
       <div :class="$style['title']" @mousedown.left="onClickTitle">
-        <h1>{{ topic?.title }}</h1>
+        <h1>{{ isShowDiscussion ? topic?.title : '' }}</h1>
         <div :class="[$style['spread'], isFold ? $style.show : null]">
           <img src="@/assets/caret.svg" alt="참조" />
         </div>
       </div>
       <div :class="[$style['opinions'], isFold ? $style.short : null]">
         <div :class="$style['agree']">
-          <Discussion agreeingType="agree" :topicId="topicId" />
+          <Discussion
+            agreeingType="agree"
+            :topicId="topicId"
+            :isShow="isShowDiscussion"
+            @on-load-completion="onLoadDiscussions('agree')"
+          />
           <div :class="$style['submit-agree']">
             <button @mousedown.left="displayRegisterOpinion('agree')">의견제시</button>
           </div>
         </div>
 
         <div :class="$style['disagree']">
-          <Discussion agreeingType="disagree" :topicId="topicId" />
+          <Discussion
+            agreeingType="disagree"
+            :topicId="topicId"
+            :isShow="isShowDiscussion"
+            @on-load-completion="onLoadDiscussions('disagree')"
+          />
           <div :class="$style['submit-disagree']">
             <button @mousedown.left="displayRegisterOpinion('disagree')">의견제시</button>
           </div>
@@ -64,10 +74,15 @@ export default defineComponent({
       isDisplayingRegisterForm: false,
       topic: null as TopicItem | null,
       opinionTypeOfRegistering: 'agree' as AgreeingType,
-      isShowReferenceOfRegistering: false
+      isShowReferenceOfRegistering: false,
+      isLoadDiscussionAgree: false,
+      isLoadDiscussionDisagree: false
     };
   },
   computed: {
+    isShowDiscussion() {
+      return this.isLoadDiscussionDisagree && this.isLoadDiscussionAgree;
+    },
     topicId() {
       return parseInt(this.id);
     },
@@ -86,6 +101,15 @@ export default defineComponent({
   },
 
   methods: {
+    onLoadDiscussions(at: 'agree' | 'disagree') {
+      if (at === 'agree') {
+        this.isLoadDiscussionAgree = true;
+      }
+
+      if (at === 'disagree') {
+        this.isLoadDiscussionDisagree = true;
+      }
+    },
     displayRegisterOpinion(type: AgreeingType) {
       const authStore = useAuthStore();
       if (!authStore.isAuth) {
@@ -165,7 +189,8 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 400px;
+        min-width: 300px;
+        max-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
         border-radius: 5px;
@@ -176,7 +201,8 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 400px;
+        min-width: 300px;
+        max-height: 400px;
         padding: 1rem;
         border: $border-normal-line;
         border-radius: 5px;
