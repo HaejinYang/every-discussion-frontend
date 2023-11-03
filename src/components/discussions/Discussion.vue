@@ -1,5 +1,8 @@
 <template>
-  <div :class="[$style.container, agreeingType === 'agree' ? $style.agree : $style.disagree]">
+  <div
+    v-show="isShow"
+    :class="[$style.container, agreeingType === 'agree' ? $style.agree : $style.disagree]"
+  >
     <div :class="$style.title">
       <span>{{ agreeingType === 'agree' ? '찬성' : '반대' }}</span>
     </div>
@@ -32,6 +35,7 @@ import { OpinionService } from '@/services/opinions/OpinionService';
 
 export default defineComponent({
   name: 'Discussion',
+  emits: ['on-load-completion'],
   props: {
     agreeingType: {
       type: String,
@@ -39,6 +43,10 @@ export default defineComponent({
     },
     topicId: {
       type: Number,
+      required: true
+    },
+    isShow: {
+      type: Boolean,
       required: true
     }
   },
@@ -92,6 +100,8 @@ export default defineComponent({
       })
     );
     this.displayOpinions();
+
+    this.$emit('on-load-completion');
   },
   mounted() {
     this.checkNewOpiniontimerId = window.setInterval(this.addNewOpinion, 1000);
@@ -105,9 +115,8 @@ export default defineComponent({
 <style module lang="scss">
 .container {
   background-color: #eee;
-  max-width: 300px;
-  min-width: 300px;
-  max-height: 400px;
+  width: 300px;
+  height: 400px;
   overflow-y: auto;
   border-radius: 5px;
 
