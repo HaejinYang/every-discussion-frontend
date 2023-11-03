@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container">
+  <div :class="$style.container" @wheel="handleScroll($event)">
     <header>
       <p>모든토론주제</p>
       <SearchBar
@@ -49,6 +49,20 @@ export default defineComponent({
     };
   },
   methods: {
+    async getNext() {
+      await this.moreTopics();
+    },
+    async handleScroll(event: Event) {
+      if (this.isWaitingMoreTopics) {
+        return;
+      }
+
+      const { scrollHeight, scrollTop, clientHeight } = event.target as HTMLElement;
+      console.log(scrollHeight, scrollTop, clientHeight);
+      if (scrollHeight >= scrollTop + clientHeight) {
+        this.getNext();
+      }
+    },
     selectTopicIndex(index: number) {
       this.selectedTopicIndex = index;
     },
