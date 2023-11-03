@@ -1,11 +1,13 @@
 <template>
-  <div :class="$style.container" @mousedown.left="moveToDiscussion">
-    <div :class="$style['title-wrapper']">
-      <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
+  <div :class="$style.container" @mousedown.left="moveToDiscussion($event)">
+    <div :class="$style['title-wrapper']" @mousedown.left="moveToDiscussion($event)">
+      <p :class="$style.title" @mousedown.left="moveToDiscussion($event)">
+        {{ topic.id }}.{{ topic.title }}
+      </p>
       <img
         :class="[$style.more, isFold ? null : $style.rotate]"
         src="@/assets/caret.svg"
-        @mousedown.left.stop="onClickMore"
+        @mousedown.left="onClickMore($event)"
       />
     </div>
     <div :class="[$style.info, isShowTopicInfo ? $style.show : null]">
@@ -52,10 +54,18 @@ export default defineComponent({
     }
   },
   methods: {
-    moveToDiscussion() {
+    moveToDiscussion(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       this.$router.push({ path: `/discussion/${this.topic.id}` });
     },
-    onClickMore() {
+    onClickMore(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       this.$emit('on-click-more', this.index);
     }
   }

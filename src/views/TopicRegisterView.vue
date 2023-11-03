@@ -28,9 +28,9 @@
       </div>
 
       <div :class="$style['btn-create-wrapper']">
-        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic">
+        <button :class="$style['btn-create']" @mousedown.left.prevent="submitTopic($event)">
           {{ submitBtnMessags[submitStep] }}
-          <a href="#" v-if="isRegisterSuccess" @mousedown.left.stop="moveToTopic"> 토론 바로가기</a>
+          <a href="#" v-if="isRegisterSuccess" @mousedown.left="moveToTopic"> 토론 바로가기</a>
         </button>
         <WaitButton v-show="isWait" />
       </div>
@@ -93,7 +93,11 @@ export default defineComponent({
     description(newDescription: string) {}
   },
   methods: {
-    async submitTopic() {
+    async submitTopic(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       if (this.submitStep === eProcessStep.Wait || this.submitStep === eProcessStep.Success) {
         return;
       }
