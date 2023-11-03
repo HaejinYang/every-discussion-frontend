@@ -1,34 +1,34 @@
 <template>
-  <div :class="$style['container']" @mousedown.left.stop="onClickClose">
-    <div :class="$style['box']" @mousedown.left.stop="onClickForm">
-      <div :class="$style['header']">
-        <h3>
-          {{ headerTitle }}
-        </h3>
-      </div>
-      <div :class="$style['content-title']">
-        <textarea
-          placeholder="의견 제목"
-          :value="contentTitle"
-          @input="(event) => (contentTitle = (event.target as HTMLTextAreaElement)?.value)"
-        />
-      </div>
-      <div :class="$style['content-body']">
-        <textarea
-          placeholder="본문"
-          :value="contentBody"
-          @input="(event) => (contentBody = (event.target as HTMLTextAreaElement).value)"
-        />
-      </div>
-      <div :class="$style['submit-wrapper']">
-        <button
-          :class="type === 'agree' ? $style['agree'] : $style['disagree']"
-          @mousedown.left="onClickSubmit"
-        >
-          {{ submitBtnMsg }}
-        </button>
-        <WaitButton v-if="isShowWait" />
-      </div>
+  <div :class="$style['opinion-writer-form']">
+    <div :class="$style['header']">
+      <h3>
+        {{ headerTitle }}
+      </h3>
+    </div>
+    <div :class="$style['content-title']">
+      <textarea
+        placeholder="의견 제목"
+        :value="contentTitle"
+        @input="(event) => (contentTitle = (event.target as HTMLTextAreaElement)?.value)"
+        @mousedown.left="onClickForm($event)"
+      />
+    </div>
+    <div :class="$style['content-body']">
+      <textarea
+        placeholder="본문"
+        :value="contentBody"
+        @input="(event) => (contentBody = (event.target as HTMLTextAreaElement).value)"
+        @mousedown.left="onClickForm($event)"
+      />
+    </div>
+    <div :class="$style['submit-wrapper']">
+      <button
+        :class="type === 'agree' ? $style['agree'] : $style['disagree']"
+        @mousedown.left="onClickSubmit"
+      >
+        {{ submitBtnMsg }}
+      </button>
+      <WaitButton v-if="isShowWait" />
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@ import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 export default defineComponent({
   name: 'OpinionWriterForm',
   components: { WaitButton },
-  emits: ['on-click-close', 'on-click-form', 'on-submit-form'],
+  emits: ['on-submit-form', 'on-click-form'],
   props: {
     headerTitle: {
       type: String,
@@ -76,10 +76,11 @@ export default defineComponent({
     };
   },
   methods: {
-    onClickClose() {
-      this.$emit('on-click-close');
-    },
-    onClickForm() {
+    onClickForm(event: Event) {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
       this.$emit('on-click-form');
     },
     onClickSubmit() {
@@ -93,63 +94,51 @@ export default defineComponent({
 </script>
 
 <style module lang="scss">
-.container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+.opinion-writer-form {
+  padding: 1rem;
+  width: 60%;
+  background-color: white;
+  border: $border-normal-line;
+  border-radius: 5px;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .header {
+    text-align: center;
+  }
 
-  .box {
-    padding: 1rem;
-    width: 60%;
-    background-color: white;
-    border: $border-normal-line;
-    border-radius: 5px;
+  .submit-wrapper {
+    position: relative;
+    text-align: center;
 
-    .header {
-      text-align: center;
-    }
-
-    .submit-wrapper {
-      position: relative;
-      text-align: center;
-
-      > button {
-        width: 100%;
-        padding: 1rem;
-        border: none;
-        color: white;
-        font-size: 1rem;
-        font-weight: bold;
-        border-radius: 5px;
-        min-height: 3.3rem;
-
-        &:hover {
-          cursor: pointer;
-          filter: brightness(85%);
-        }
-      }
-    }
-
-    .content-title,
-    .content-body {
+    > button {
+      width: 100%;
       padding: 1rem;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 5px;
+      min-height: 3.3rem;
 
-      > textarea {
-        width: 100%;
-        height: 100px;
-        border: 1px solid gray;
-        border-radius: 5px;
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
       }
+    }
+  }
 
-      > input {
-        margin-left: 0.5rem;
-      }
+  .content-title,
+  .content-body {
+    padding: 1rem;
+
+    > textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid gray;
+      border-radius: 5px;
+    }
+
+    > input {
+      margin-left: 0.5rem;
     }
   }
 }

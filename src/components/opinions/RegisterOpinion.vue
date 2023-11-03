@@ -1,7 +1,6 @@
 <template>
-  <div :class="$style['container']">
+  <ModalContainer @on-click-white-space="onClickPage">
     <OpinionWriterForm
-      @on-click-close="disableForm"
       @on-click-form="onClickForm"
       @on-submit-form="onSubmit"
       :type="agreeingType"
@@ -9,7 +8,7 @@
       :submitBtnMsg="submitMsg[submitStep]"
       :headerTitle="headerTitle"
     />
-  </div>
+  </ModalContainer>
 </template>
 
 <script lang="ts">
@@ -19,6 +18,7 @@ import { getErrorMessage } from '@/util/error';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import OpinionWriterForm from '@/components/opinions/OpinionWriterForm.vue';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
+import ModalContainer from '@/components/common/modals/ModalContainer.vue';
 
 enum eProcess {
   Init = 0,
@@ -29,7 +29,8 @@ enum eProcess {
 
 export default defineComponent({
   name: 'RegisterOpinion',
-  components: { OpinionWriterForm, WaitButton },
+  emits: ['remove-form', 'register-opinion'],
+  components: { ModalContainer, OpinionWriterForm, WaitButton },
   props: {
     agreeingType: {
       type: String as PropType<AgreeingType>,
@@ -60,6 +61,9 @@ export default defineComponent({
     }
   },
   methods: {
+    onClickPage() {
+      this.disableForm();
+    },
     disableForm() {
       this.$emit('remove-form');
     },
@@ -99,7 +103,4 @@ export default defineComponent({
 });
 </script>
 
-<style module lang="scss">
-.container {
-}
-</style>
+<style module lang="scss"></style>

@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style['container']">
+  <ModalContainer @on-click-white-space="onClickPage">
     <OpinionWriterForm
       @on-submit-form="onClickSubmit"
       @on-click-form="onClickForm"
@@ -10,7 +10,7 @@
       :defaultContent="prevContent"
       :defaultTitle="prevTitle"
     />
-  </div>
+  </ModalContainer>
 </template>
 
 <script lang="ts">
@@ -18,6 +18,7 @@ import { defineComponent, type PropType } from 'vue';
 import OpinionWriterForm from '@/components/opinions/OpinionWriterForm.vue';
 import { getErrorMessage } from '@/util/error';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
+import ModalContainer from '@/components/common/modals/ModalContainer.vue';
 
 enum eProcessStep {
   Init = 0,
@@ -28,7 +29,8 @@ enum eProcessStep {
 
 export default defineComponent({
   name: 'ModifyOpinion',
-  components: { OpinionWriterForm },
+  emits: ['on-click-white-space', 'update-opinion'],
+  components: { ModalContainer, OpinionWriterForm },
   props: {
     opinionId: {
       type: Number,
@@ -59,6 +61,9 @@ export default defineComponent({
     }
   },
   methods: {
+    onClickPage(event: Event) {
+      this.$emit('on-click-white-space');
+    },
     onClickForm() {
       if (this.processingStep === eProcessStep.Fail) {
         this.processingStep = eProcessStep.Init;
@@ -92,7 +97,4 @@ export default defineComponent({
 });
 </script>
 
-<style module lang="scss">
-.container {
-}
-</style>
+<style module lang="scss"></style>
