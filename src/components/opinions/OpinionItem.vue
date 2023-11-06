@@ -14,7 +14,9 @@
             v-if="opinion !== null"
           >
             <div>
-              <p>선택의견</p>
+              <div :class="$style['header-box']">
+                <div :class="$style['header']"><p>선택의견</p></div>
+              </div>
               <fieldset>
                 <legend>타이틀</legend>
                 <p>{{ opinion.title }}</p>
@@ -189,6 +191,12 @@ export default defineComponent({
         overflow: auto;
         margin: 3rem;
         border-radius: 5px;
+        transition: all 300ms ease-in-out 0s;
+
+        &:hover {
+          width: 500px;
+          border: $border-strong-white-line;
+        }
 
         &::-webkit-scrollbar {
           display: none;
@@ -209,8 +217,12 @@ export default defineComponent({
           div {
             padding: 0.5rem;
 
-            > p {
-              text-align: center;
+            .header-box {
+              position: relative;
+
+              .header {
+                text-align: center;
+              }
             }
 
             fieldset {
