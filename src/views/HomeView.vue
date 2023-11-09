@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container" @wheel="handleScroll($event)">
+  <div :class="$style.container">
     <header>
       <p>모든토론주제</p>
       <SearchBar
@@ -35,6 +35,8 @@ import { type TopicItem } from '@/services/topics';
 import { searchTopics } from '@/services/searches';
 import { type TopTopicsItem, TopTopicsService } from '@/services/topics/TopTopicsService';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
+import { useMainScrollStore } from '@/stores/MainScrollStore';
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
   name: 'HomeView',
@@ -45,23 +47,26 @@ export default defineComponent({
       selectedTopicIndex: -1,
       isWaitingMoreTopics: false,
       nextTopicsUrl: '',
-      searchKeyword: ''
+      searchKeyword: '',
+      isScrollEnd: storeToRefs(useMainScrollStore()).isEnd
     };
   },
-  methods: {
-    async getNext() {
-      await this.moreTopics();
-    },
-    async handleScroll(event: Event) {
+  watch: {
+    isScrollEnd(newValue: boolean) {
+      if (!newValue) {
+        return;
+      }
+
       if (this.isWaitingMoreTopics) {
         return;
       }
 
-      const { scrollHeight, scrollTop, clientHeight } = event.target as HTMLElement;
-      console.log(scrollHeight, scrollTop, clientHeight);
-      if (scrollHeight >= scrollTop + clientHeight) {
-        this.getNext();
-      }
+      this.getNext();
+    }
+  },
+  methods: {
+    async getNext() {
+      await this.moreTopics();
     },
     selectTopicIndex(index: number) {
       this.selectedTopicIndex = index;

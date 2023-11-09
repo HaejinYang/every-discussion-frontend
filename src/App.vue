@@ -3,7 +3,7 @@
     <Header :class="$style.header" />
     <section>
       <Aside :class="$style.aside" />
-      <main ref="main">
+      <main ref="main" @scroll="handleScroll($event)">
         <div :class="$style['main-item']">
           <RouterView />
         </div>
@@ -19,6 +19,7 @@ import Header from '@/components/layouts/Header.vue';
 import Aside from '@/components/layouts/Aside.vue';
 import { RouterView } from 'vue-router';
 import AuthForm from '@/components/auth/AuthForm.vue';
+import { useMainScrollStore } from '@/stores/MainScrollStore';
 
 export default defineComponent({
   name: 'App',
@@ -27,6 +28,13 @@ export default defineComponent({
     Aside,
     Header,
     RouterView
+  },
+  methods: {
+    handleScroll(event: Event) {
+      const { scrollHeight, scrollTop, clientHeight } = event.target as HTMLElement;
+      const store = useMainScrollStore();
+      store.move(scrollHeight, scrollTop, clientHeight);
+    }
   }
 });
 </script>
