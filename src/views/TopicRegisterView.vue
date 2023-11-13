@@ -13,9 +13,9 @@
             :value="title"
             @input="(event) => (title = (event.target as HTMLTextAreaElement).value)"
           />
-          <SimilarTopics :topics="similarTopics" />
+          <WaitButton v-show="isSearchingSimliarTopics" position="right" color="black" />
         </div>
-        <WaitButton v-show="isSearchingSimliarTopics" position="right" color="black" />
+        <SimilarTopics :topics="similarTopics" />
       </div>
       <div :class="$style['topic-description-wrapper']">
         <input
