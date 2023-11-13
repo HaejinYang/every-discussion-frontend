@@ -90,10 +90,6 @@ export default defineComponent({
       this.topics.push(...topics.data);
       this.isWaitingMoreTopics = false;
       this.nextTopicsUrl = topics.nextPageUrl;
-
-      setTimeout(() => {
-        this.moveMouseIntoMoreButton();
-      }, 0);
     },
     moveMouseIntoMoreButton() {
       const buttonRef = this.$refs['more-button'] as HTMLElement | undefined;
