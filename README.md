@@ -1,15 +1,16 @@
 # 개요
 
-토론 웹 서비스 모두의 토론의 프론트엔드 레포지토리이다.
+모두의 토론의 프론트엔드 레포지토리이다.
 [백엔드 바로가기](https://github.com/HaejinYang/every-discussion-backend)
-
-# 목업
-
-프로젝트 진행 전 구상을 위한 [목업](https://ovenapp.io/view/vHYglcf3PXrqDKcqUOXYsBKKf7CJflvs/OvHxh)
 
 # 기술 스택
 
-vue3, typescript를 기반으로, 상태 관리를 위해 pinia를 사용하였음.
+typescript, Vue.js 3, pinia
+
+# 목업
+
+프로젝트 진행 전 구상을 위한 목업이다. 자세한 내용은 다음 [링크](https://ovenapp.io/view/vHYglcf3PXrqDKcqUOXYsBKKf7CJflvs/OvHxh)에서 확인 가능하다.
+![목업](./references/mockup.png)
 
 # 구현
 
