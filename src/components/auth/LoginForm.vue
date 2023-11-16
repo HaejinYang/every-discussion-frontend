@@ -34,8 +34,8 @@
           <FindAccountAndPasswordSwitch select="both" />
         </div>
         <div :class="$style['keep-auth']">
-          <label><small>로그인 유지 </small></label>
-          <input type="checkbox" v-model="isCheckedKeepLoggedIn" />
+          <label for="check-keep-logged-in"><small>로그인 유지 </small></label>
+          <input type="checkbox" v-model="isCheckedKeepLoggedIn" id="check-keep-logged-in" />
         </div>
       </div>
     </template>
@@ -115,7 +115,11 @@ export default defineComponent({
       this.submitStep = eProcessStep.Wait;
       try {
         const auth = new AuthService();
-        const user = await auth.login({ email: this.email, password: this.password });
+        const user = await auth.login({
+          email: this.email,
+          password: this.password,
+          isKeepLoggedIn: this.isCheckedKeepLoggedIn
+        });
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
           const authFormStore = useAuthFormStore();
