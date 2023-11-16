@@ -29,8 +29,14 @@
 
     <template v-slot:footer>
       <div :class="$style['footer']">
-        <LoginAndRegisterSwitch select="register" />
-        <FindAccountAndPasswordSwitch select="both" />
+        <div :class="$style['switch-auth']">
+          <LoginAndRegisterSwitch select="register" />
+          <FindAccountAndPasswordSwitch select="both" />
+        </div>
+        <div :class="$style['keep-auth']">
+          <label for="check-keep-logged-in"><small>로그인 유지 </small></label>
+          <input type="checkbox" v-model="isCheckedKeepLoggedIn" id="check-keep-logged-in" />
+        </div>
       </div>
     </template>
   </SubmitForm>
@@ -74,7 +80,8 @@ export default defineComponent({
       submitBtnMsg: ['로그인', '', '로그인 성공', '이메일 인증이 필요합니다', '로그인 실패'],
       submitStep: eProcessStep.Init as eProcessStep,
       debouncedEmailCheck: (...args: any[]): void => {},
-      debouncedPasswordCheck: (...args: any[]): void => {}
+      debouncedPasswordCheck: (...args: any[]): void => {},
+      isCheckedKeepLoggedIn: false
     };
   },
   computed: {
@@ -108,7 +115,11 @@ export default defineComponent({
       this.submitStep = eProcessStep.Wait;
       try {
         const auth = new AuthService();
-        const user = await auth.login({ email: this.email, password: this.password });
+        const user = await auth.login({
+          email: this.email,
+          password: this.password,
+          isKeepLoggedIn: this.isCheckedKeepLoggedIn
+        });
         this.submitStep = eProcessStep.Success;
         setTimeout(() => {
           const authFormStore = useAuthFormStore();
@@ -166,13 +177,22 @@ export default defineComponent({
 
 .footer {
   border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 
-  > *:first-child {
-    float: left;
+  .switch-auth {
+    display: flex;
+    justify-content: space-between;
   }
 
-  > *:last-child {
-    float: right;
+  .keep-auth {
+    color: gray;
+    font-weight: lighter;
+
+    > input {
+      vertical-align: -2px;
+    }
   }
 }
 </style>

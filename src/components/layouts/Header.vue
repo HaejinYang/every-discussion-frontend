@@ -119,6 +119,10 @@ export default defineComponent({
     moveToMyInfo() {
       this.$router.push('/user/profile');
     }
+  },
+  mounted() {
+    const store = useAuthStore();
+    store.initialize();
   }
 });
 </script>

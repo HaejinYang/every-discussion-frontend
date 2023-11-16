@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { UserItem } from '@/services/users';
 
 class AuthService {
-  async login(loginParam: { email: string; password: string }) {
+  async login(loginParam: { email: string; password: string; isKeepLoggedIn: boolean }) {
     const URI = '/api/auth/login';
     const response = await fetchApi(URI, {
       method: 'POST',
@@ -22,7 +22,7 @@ class AuthService {
     const user: UserItem = plainToInstance(UserItem, result.data);
 
     const authStore = useAuthStore();
-    authStore.login(user);
+    authStore.login(user, loginParam.isKeepLoggedIn);
 
     return user;
   }
