@@ -59,6 +59,7 @@ left: 0; top: 0; right: 0; bottom: 0;
 ```
 
 위 속성을 적용하여, 부모 엘리먼트(position이 relative인)의 공간을 전부 확보하면서 브라우저의 변화에도 따라갈 수 있는 메인을 만들 수 있었다.
+flex대신 헤더와 어사이드에 `position: fixed` 프로퍼티를 적용하고 width, height, top 등의 프로퍼티를 정해서 구현할 수도 있다.
 
 #### 결과
 
