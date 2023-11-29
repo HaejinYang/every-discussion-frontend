@@ -135,7 +135,7 @@ export default defineComponent({
     onClickRegisterOpinion(type: 'agree' | 'disagree') {
       const authFormStore = useAuthFormStore();
       const authSrote = useAuthStore();
-      if (!authSrote.isAuth) {
+      if (!authSrote.authInfo.isAuth) {
         authFormStore.show(eAuthForm.Login);
       } else {
         this.isDisplayRegisterOpinion = true;

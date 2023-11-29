@@ -1,67 +1,60 @@
 import { defineStore } from 'pinia';
 import { type UserItem } from '@/services/users';
 import { AuthService } from '@/services/auth';
-
-type useAuthStoreState = {
-  isAuth: boolean;
-  isKeepLoggedIn: boolean;
-  user: UserItem;
-};
+import { useStorage } from '@vueuse/core';
 
 export const useAuthStore = defineStore('auth-store', {
   state: () => {
     return {
-      isAuth: false,
-      isKeepLoggedIn: false,
-      user: {
+      authInfo: useStorage(
+        'user',
+        {
+          isAuth: false,
+          isKeepLoggedIn: false,
+          user: {
+            id: -1,
+            email: '',
+            token: '',
+            role: -1,
+            name: '',
+            topicsCount: 0,
+            opinionsCount: 0
+          }
+        },
+        localStorage
+      )
+    };
+  },
+  actions: {
+    login(user: UserItem, isKeepLoggedIn = false) {
+      this.authInfo.isAuth = true;
+      this.authInfo.isKeepLoggedIn = isKeepLoggedIn;
+      this.authInfo.user = user;
+    },
+    logout() {
+      this.authInfo.isAuth = false;
+      this.authInfo.isKeepLoggedIn = false;
+      const auth = new AuthService();
+      auth.logout();
+    },
+    update(updates: Partial<UserItem>) {
+      this.authInfo.user = {
+        ...this.authInfo.user,
+        ...updates
+      };
+    },
+    invalidate() {
+      this.authInfo.isAuth = false;
+      this.authInfo.isKeepLoggedIn = false;
+      this.authInfo.user = {
         id: -1,
         email: '',
         token: '',
-        role: -1
-      }
-    } as useAuthStoreState;
-  },
-  actions: {
-    initialize() {
-      const store = localStorage.getItem('keepLoggedIn');
-      if (store) {
-        const authInfo = JSON.parse(store) as useAuthStoreState;
-        if (authInfo.isKeepLoggedIn) {
-          this.isAuth = true;
-          this.user = authInfo.user;
-        }
-      } else {
-        localStorage.setItem('keepLoggedIn', JSON.stringify(this.$state));
-      }
-    },
-    login(user: UserItem, isKeepLoggedIn = false) {
-      this.isAuth = true;
-      this.isKeepLoggedIn = isKeepLoggedIn;
-      this.user = user;
-
-      if (this.isKeepLoggedIn) {
-        localStorage.setItem('keepLoggedIn', JSON.stringify(this.$state));
-      }
-    },
-    logout() {
-      this.isAuth = false;
-      this.isKeepLoggedIn = false;
-      const auth = new AuthService();
-      auth.logout().then((user: UserItem) => {
-        localStorage.setItem('keepLoggedIn', JSON.stringify(this.$state));
-      });
-    },
-    delete() {
-      this.isAuth = false;
-      this.isKeepLoggedIn = false;
-    },
-    update(updates: Partial<UserItem>) {
-      this.user = {
-        ...this.user,
-        ...updates
+        role: -1,
+        name: '',
+        topicsCount: 0,
+        opinionsCount: 0
       };
-
-      localStorage.setItem('keepLoggedIn', JSON.stringify(this.$state));
     }
   }
 });

@@ -62,7 +62,7 @@ router.beforeEach((to, from) => {
     case 'topic-register':
     // fall-through
     case 'user-profile':
-      if (!authStore.isAuth) {
+      if (!authStore.authInfo.isAuth) {
         const authFormStore = useAuthFormStore();
         authFormStore.show(eAuthForm.Login);
 

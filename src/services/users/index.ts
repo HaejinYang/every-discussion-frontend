@@ -73,7 +73,7 @@ class UserService {
       method: 'PUT',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authStore.user.token}`,
+        Authorization: `Bearer ${authStore.authInfo.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(updates)
@@ -112,7 +112,7 @@ class UserService {
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authStore.user.token}`,
+        Authorization: `Bearer ${authStore.authInfo.user.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ password })
