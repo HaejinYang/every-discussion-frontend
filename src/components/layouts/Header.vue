@@ -1,12 +1,11 @@
 <template>
   <header :class="$style.container">
-    <div :class="$style.title" @mousedown.left="onClickTitle">
+    <div :class="$style['title']" @mousedown.left="onClickTitle">
       <span>모두의토론</span>
     </div>
     <div v-if="isDisplaySearchBar">
       <SearchBar
         placeholder="의견을 검색하세요"
-        @on-search-complete="onSearchCompleted"
         :onInputSearch="onInputSearch"
         :ignoreEmptyKeyword="ignoreEmptyKeyword"
       />
@@ -86,7 +85,6 @@ export default defineComponent({
 
       return true;
     },
-    onSearchCompleted(result: boolean) {},
     onClickTitle() {
       this.$router.push('/');
     },
@@ -121,8 +119,10 @@ export default defineComponent({
     }
   },
   mounted() {
-    // const store = useAuthStore();
-    // store.initialize();
+    const store = useAuthStore();
+    if (!store.authInfo.isKeepLoggedIn) {
+      store.invalidate();
+    }
   }
 });
 </script>
@@ -155,7 +155,7 @@ export default defineComponent({
       min-width: 100px;
       border: $border-weak-line;
       background-color: white;
-      box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+      box-shadow: rgba(0, 0, 0, 0.06) 0 2px 8px;
       padding: 0.5rem;
       border-radius: 5px;
 

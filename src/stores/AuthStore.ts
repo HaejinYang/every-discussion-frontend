@@ -37,14 +37,23 @@ export const useAuthStore = defineStore('auth-store', {
       const auth = new AuthService();
       auth.logout();
     },
-    delete() {
-      this.authInfo.isAuth = false;
-      this.authInfo.isKeepLoggedIn = false;
-    },
     update(updates: Partial<UserItem>) {
       this.authInfo.user = {
         ...this.authInfo.user,
         ...updates
+      };
+    },
+    invalidate() {
+      this.authInfo.isAuth = false;
+      this.authInfo.isKeepLoggedIn = false;
+      this.authInfo.user = {
+        id: -1,
+        email: '',
+        token: '',
+        role: -1,
+        name: '',
+        topicsCount: 0,
+        opinionsCount: 0
       };
     }
   }

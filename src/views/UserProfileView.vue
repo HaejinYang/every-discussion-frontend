@@ -58,7 +58,7 @@
         <div :class="$style['item']">
           <div :class="$style['password-wrapper']">
             <input
-              :class="$style.password"
+              :class="$style['password']"
               type="password"
               id="password"
               placeholder=" "
@@ -72,7 +72,7 @@
         <div :class="$style['item']">
           <div :class="$style['password-wrapper']">
             <input
-              :class="$style.password"
+              :class="$style['password']"
               type="password"
               id="password-confirm"
               placeholder=" "
@@ -106,7 +106,7 @@
         <div :class="$style['item']">
           <div :class="$style['password-wrapper']">
             <input
-              :class="$style.password"
+              :class="$style['password']"
               type="password"
               id="password-check"
               placeholder=" "
@@ -174,7 +174,7 @@ export default defineComponent({
       userInfoModifyMsg: ['수정하기', '', '수정하기', '수정 실패'],
       userQuitStep: eProcess.Init as eProcess,
       userQuitMsg: ['탈퇴하기', '', '탈퇴 성공', '탈퇴 실패'],
-      debouncedCheckPassword: (...args: any[]): void => {}
+      debouncedCheckPassword: (): void => {}
     };
   },
   computed: {
@@ -276,7 +276,7 @@ export default defineComponent({
         await userService.delete(this.passwordCheck);
 
         const authStore = useAuthStore();
-        authStore.delete();
+        authStore.invalidate();
         this.userQuitStep = eProcess.Success;
 
         this.$router.push('/');
