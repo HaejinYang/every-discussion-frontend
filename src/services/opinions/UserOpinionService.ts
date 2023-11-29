@@ -21,13 +21,16 @@ interface UpdateOpinionParam {
 class UserOpinionService {
   async fetchAllInTopic(topicId: number) {
     const authStore = useAuthStore();
-    const response = await fetchApi(`/api/users/${authStore.user.id}/topics/${topicId}/opinions`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${authStore.user.token}`
+    const response = await fetchApi(
+      `/api/users/${authStore.authInfo.user.id}/topics/${topicId}/opinions`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${authStore.authInfo.user.token}`
+        }
       }
-    });
+    );
 
     throwErrorWhenResponseNotOk(response);
 
@@ -43,7 +46,7 @@ class UserOpinionService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authStore.user.token}`
+        Authorization: `Bearer ${authStore.authInfo.user.token}`
       },
       credentials: 'include',
       body: JSON.stringify(opinion)
@@ -62,7 +65,7 @@ class UserOpinionService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authStore.user.token}`
+        Authorization: `Bearer ${authStore.authInfo.user.token}`
       },
       credentials: 'include',
       body: JSON.stringify({ title: opinion.title, content: opinion.content })
@@ -80,7 +83,7 @@ class UserOpinionService {
     const response = await fetchApi(`/api/opinions/${opinionId}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${authStore.user.token}`
+        Authorization: `Bearer ${authStore.authInfo.user.token}`
       },
       credentials: 'include'
     });

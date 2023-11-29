@@ -34,7 +34,7 @@ class AuthService {
       method: 'POST',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${authStore.user.token}`
+        Authorization: `Bearer ${authStore.authInfo.user.token}`
       }
     });
 

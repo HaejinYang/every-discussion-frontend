@@ -56,19 +56,19 @@ export default defineComponent({
   computed: {
     isLogin() {
       const authStore = useAuthStore();
-      return authStore.isAuth;
+      return authStore.authInfo.isAuth;
     },
     name() {
       const authStore = useAuthStore();
-      return authStore.user.name;
+      return authStore.authInfo.user.name;
     },
     topicsCount() {
       const authStore = useAuthStore();
-      return authStore.user.topicsCount;
+      return authStore.authInfo.user.topicsCount;
     },
     opinionsCount() {
       const authStore = useAuthStore();
-      return authStore.user.opinionsCount;
+      return authStore.authInfo.user.opinionsCount;
     }
   },
   methods: {

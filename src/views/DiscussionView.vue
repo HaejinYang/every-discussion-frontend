@@ -112,7 +112,7 @@ export default defineComponent({
     },
     displayRegisterOpinion(type: AgreeingType) {
       const authStore = useAuthStore();
-      if (!authStore.isAuth) {
+      if (!authStore.authInfo.isAuth) {
         const authFormStore = useAuthFormStore();
         authFormStore.show(eAuthForm.Login);
 

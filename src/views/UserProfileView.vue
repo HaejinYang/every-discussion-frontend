@@ -303,7 +303,7 @@ export default defineComponent({
         this.userInfoModifyStep = eProcess.Success;
       } catch (e) {
         reportError(getErrorMessage(e));
-        this.userName = authStore.user.name;
+        this.userName = authStore.authInfo.user.name;
         this.userInfoModifyStep = eProcess.Fail;
       } finally {
         this.isModifyMode = false;
@@ -311,7 +311,7 @@ export default defineComponent({
     },
     onClickModifyCancel() {
       const authStore = useAuthStore();
-      this.userName = authStore.user.name;
+      this.userName = authStore.authInfo.user.name;
       this.isModifyMode = false;
     },
     onClickQuitInput() {
@@ -322,8 +322,8 @@ export default defineComponent({
   },
   created() {
     const authStore = useAuthStore();
-    this.userName = authStore.user.name;
-    this.userEmail = authStore.user.email;
+    this.userName = authStore.authInfo.user.name;
+    this.userEmail = authStore.authInfo.user.email;
 
     this.debouncedCheckPassword = debounce(() => {
       this.canModifyPassword = false;

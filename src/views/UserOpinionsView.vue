@@ -179,14 +179,14 @@ export default defineComponent({
     }, 3000);
 
     const authStore = useAuthStore();
-    if (!authStore.isAuth) {
+    if (!authStore.authInfo.isAuth) {
       this.$router.push('/error/인증이 필요합니다.');
 
       return;
     }
 
     this.step = eProcess.Wait;
-    const userId = authStore.user.id;
+    const userId = authStore.authInfo.user.id;
     try {
       const topicService = new TopicService();
       const topics = await topicService.fetchByUser(userId);

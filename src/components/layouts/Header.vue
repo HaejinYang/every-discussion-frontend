@@ -73,7 +73,7 @@ export default defineComponent({
     },
     isLogin() {
       const authStore = useAuthStore();
-      return authStore.isAuth;
+      return authStore.authInfo.isAuth;
     },
     isShowUserMenu() {
       return this.isLogin && this.isUserMenuHovered;
@@ -121,8 +121,8 @@ export default defineComponent({
     }
   },
   mounted() {
-    const store = useAuthStore();
-    store.initialize();
+    // const store = useAuthStore();
+    // store.initialize();
   }
 });
 </script>
