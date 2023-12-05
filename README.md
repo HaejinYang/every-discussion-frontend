@@ -1,16 +1,24 @@
 # 개요
 
-모두의 토론의 프론트엔드 레포지토리이다.
+모두의 토론의 프론트엔드 레포지토리이다. [실행링크](https://www.every-discussion.com:56003/)
+
 [백엔드 바로가기](https://github.com/HaejinYang/every-discussion-backend)
 
 # 기술 스택
 
-Vue.js 3, TypeScript, Pinia
+- Vue.js 3, TypeScript, Pinia
+- AWS Lightsail, Docker
 
 # 목업
 
 프로젝트 진행 전 구상을 위한 목업이다. 카카오 오븐으로 개발할 페이지를 구상했다. 자세한 내용은 다음 [링크](https://ovenapp.io/view/vHYglcf3PXrqDKcqUOXYsBKKf7CJflvs/OvHxh)에서 확인 가능하다.
 ![목업](./references/mockup.png)
+
+# 배포
+
+[실행링크](https://www.every-discussion.com:56003/) 
+
+AWS Lightsail을 이용하여 배포하였다. 인스턴스 위에 웹 서버를 세팅된 도커 컨테이너를 올리고 개발 코드를 빌드하여 그 결과물을 서빙하도록 하였다. [과정을 정리한 링크](https://crmerry.tistory.com/228)
 
 # 구현
 
@@ -37,6 +45,8 @@ Vue.js 3, TypeScript, Pinia
 ![내정보](./references/내정보.gif)
 
 ## 구현중 해결한 문제
+
+[다음 링크](https://crmerry.tistory.com/228)에서 정리 하였다.
 
 ### 문제 1. 고정된 헤더와 어사이드를 유지하며 메인에 스크롤 적용
 
