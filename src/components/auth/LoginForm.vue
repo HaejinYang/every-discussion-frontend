@@ -8,6 +8,7 @@
   >
     <template v-slot:header>
       <p :class="$style['title']">로그인</p>
+      <small>테스트용 아이디와 비밀번호가 적용되어있습니다.</small>
     </template>
 
     <template v-slot:content>
@@ -17,6 +18,7 @@
         input-type="text"
         :is-show-warn-text="!isValidEmailForm"
         warn-text="잘못된 메일 형식"
+        default-text="hprice@example.com"
       />
       <LabeledInputText
         @input-text="inputPassword"
@@ -24,6 +26,7 @@
         input-type="password"
         :is-show-warn-text="!isValidPasswordForm"
         warn-text="비밀번호 길이가 8보다 짧음"
+        default-text="123412345"
       />
     </template>
 

@@ -36,7 +36,11 @@ export default defineComponent({
     isShowWarnText: {
       type: Boolean,
       default: false
-    }
+    },
+    defaultText: {
+      type: String,
+      required: false
+    },
   },
   data() {
     return {
@@ -58,6 +62,7 @@ export default defineComponent({
     const store = useUniqueIdStore();
     const id = store.getId();
     this.inputId = `input-id-${id}`;
+    this.inputText = this.defaultText ?? '';
   }
 });
 </script>
