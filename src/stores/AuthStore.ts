@@ -1,40 +1,59 @@
 import { defineStore } from 'pinia';
 import { type UserItem } from '@/services/users';
 import { AuthService } from '@/services/auth';
+import { useStorage } from '@vueuse/core';
 
 export const useAuthStore = defineStore('auth-store', {
   state: () => {
     return {
-      isAuth: false,
-      user: {
-        id: -1,
-        email: '',
-        token: '',
-        role: -1
-      } as UserItem
+      authInfo: useStorage(
+        'user',
+        {
+          isAuth: false,
+          isKeepLoggedIn: false,
+          user: {
+            id: -1,
+            email: '',
+            token: '',
+            role: -1,
+            name: '',
+            topicsCount: 0,
+            opinionsCount: 0
+          }
+        },
+        localStorage
+      )
     };
   },
   actions: {
-    login(user: UserItem) {
-      this.isAuth = true;
-      this.user = user;
-
-      console.log('login', user);
+    login(user: UserItem, isKeepLoggedIn = false) {
+      this.authInfo.isAuth = true;
+      this.authInfo.isKeepLoggedIn = isKeepLoggedIn;
+      this.authInfo.user = user;
     },
     logout() {
-      this.isAuth = false;
+      this.authInfo.isAuth = false;
+      this.authInfo.isKeepLoggedIn = false;
       const auth = new AuthService();
-      auth.logout().then((user: UserItem) => {
-        console.log('logout', user);
-      });
-    },
-    delete() {
-      this.isAuth = false;
+      auth.logout();
     },
     update(updates: Partial<UserItem>) {
-      this.user = {
-        ...this.user,
+      this.authInfo.user = {
+        ...this.authInfo.user,
         ...updates
+      };
+    },
+    invalidate() {
+      this.authInfo.isAuth = false;
+      this.authInfo.isKeepLoggedIn = false;
+      this.authInfo.user = {
+        id: -1,
+        email: '',
+        token: '',
+        role: -1,
+        name: '',
+        topicsCount: 0,
+        opinionsCount: 0
       };
     }
   }
