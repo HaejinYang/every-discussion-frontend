@@ -1,6 +1,7 @@
 <template>
   <header :class="$style.container">
     <div :class="$style['title']" @mousedown.left="onClickTitle">
+      <img src="@/assets/logo.webp" :class="$style['logo']" alt="logo">
       <span>모두의토론</span>
     </div>
     <div v-if="isDisplaySearchBar">
@@ -129,6 +130,14 @@ export default defineComponent({
 
 <style module lang="scss">
 .container {
+  .logo {
+    position: absolute;
+    left: 0;
+    top: -3px;
+    width: 50px;
+    height: auto;
+  }
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -141,6 +150,10 @@ export default defineComponent({
     &:hover {
       cursor: pointer;
       font-weight: bold;
+    }
+
+    > span {
+      margin-left: 35px;
     }
   }
 
