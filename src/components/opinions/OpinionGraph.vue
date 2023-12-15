@@ -59,6 +59,7 @@ const eventHandlers: vNG.EventHandlers = {
   },
 }
 
+// @ts-ignore
 const configs = reactive(
     vNG.defineConfigs({
       view: {
@@ -68,7 +69,7 @@ const configs = reactive(
           createSimulation: (d3, nodes, edges) => {
             // d3-force parameters
             const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id((d: unknown) => {
-              if(typeof d === 'object' && d !== null && 'id' in d) {
+              if (typeof d === 'object' && d !== null && 'id' in d) {
                 return d.id;
               }
 
@@ -102,6 +103,36 @@ const configs = reactive(
           visible: true,
         },
       },
+      edge: {
+        normal: {
+          width: 3,
+          color: "#aaaaaa",
+          dasharray: "0",
+          linecap: "butt",
+          animate: false,
+          animationSpeed: 50,
+        },
+        marker: {
+          source: {
+            type: "none",
+            width: 4,
+            height: 4,
+            margin: -1,
+            offset: 0,
+            units: "strokeWidth",
+            color: null,
+          },
+          target: {
+            type: "arrow",
+            width: 4,
+            height: 4,
+            margin: -1,
+            offset: 0,
+            units: "strokeWidth",
+            color: null,
+          },
+        },
+      }
     })
 )
 
