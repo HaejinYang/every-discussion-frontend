@@ -1,4 +1,6 @@
 import { createApp } from 'vue';
+import VNetworkGraph from "v-network-graph"
+import "v-network-graph/lib/style.css"
 import { createPinia } from 'pinia';
 
 // @ts-ignore
@@ -15,6 +17,7 @@ if (import.meta.env.MODE === 'production') {
 
 const app = createApp(App);
 
+app.use(VNetworkGraph);
 app.use(createPinia());
 app.use(router);
 
