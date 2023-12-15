@@ -3,11 +3,10 @@
     <div :class="$style['content']">
       <div :class="$style['title']" @mousedown.left="onClickTitle">
         <h1>{{ isShowDiscussion ? topic?.title : '' }}</h1>
-        <div :class="[$style['spread'], isShowOpinionDetail ? $style.show : null]">
-          <img src="@/assets/caret.svg" alt="참조" />
-        </div>
       </div>
-      <button @click.left="switchListOrGraph" :class="$style['goto-graph']">{{isShowOpinionList ? "그래프 보기" : "리스트 보기"}}</button>
+      <div :class="$style['goto-graph']">
+        <button @click.left="switchListOrGraph" >{{isShowOpinionList ? "그래프 보기" : "리스트 보기"}}</button>
+      </div>
       <div :class="[$style['opinions'], isShowOpinionList ? null : $style.short]">
         <div :class="$style['agree']">
           <Discussion
@@ -33,7 +32,9 @@
           </div>
         </div>
       </div>
-      <OpinionGraph v-show="isShowOpinionGraph" :topicId="id"/>
+      <div :class="[$style['graph'], isShowOpinionGraph ? null : $style.hide]">
+        <OpinionGraph v-show="isShowOpinionGraph" :topicId="id"/>
+      </div>
     </div>
   </div>
   <div>
@@ -174,18 +175,33 @@ export default defineComponent({
   align-items: center;
 
   .content {
-    .goto-graph {
-      border: none;
-      border-radius: 5px;
-      background-color: $primary-color;
-      padding: 0.5rem 1rem 0.5rem 1rem;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-      color: white;
+    .graph {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      min-width: 600px;
+      transition: all 1s ease-in-out;
+      opacity: 1;
+    }
 
-      &:hover {
-        cursor: pointer;
-        filter: brightness(85%);
+    .goto-graph {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      > button {
+        border: none;
+        border-radius: 5px;
+        background-color: $primary-color;
+        padding: 0.5rem 1rem 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: white;
+
+        &:hover {
+          cursor: pointer;
+          filter: brightness(85%);
+        }
       }
     }
 
@@ -305,5 +321,9 @@ export default defineComponent({
 
 .show {
   opacity: 1 !important;
+}
+
+.hide {
+  opacity: 0 !important;
 }
 </style>
