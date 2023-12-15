@@ -1,7 +1,7 @@
 import { fetchApi } from '@/util/network';
 import { throwErrorWhenResponseNotOk } from '@/util/error';
 import { plainToInstance } from 'class-transformer';
-import { LinkedOpinion, OpinionData } from '@/services/opinions/index';
+import {LinkedOpinion, OpinionData, OpinionGraph} from '@/services/opinions/index';
 
 class OpinionService {
   async fetch(opinionId: number) {
@@ -36,6 +36,21 @@ class OpinionService {
     const result = await response.json();
     const opinions: OpinionData[] = plainToInstance(OpinionData, <any[]>result.data);
     return opinions;
+  }
+
+  async fetchGraphInTopic(topicId: number) {
+    const URI = `/api/topics/${topicId}/graph`;
+    const response = await fetchApi(URI, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    throwErrorWhenResponseNotOk(response);
+
+    const result = await response.json();
+    const graph: OpinionGraph[] = plainToInstance(OpinionGraph, <any[]>result.data);
+    console.log(graph);
+    return graph;
   }
 }
 

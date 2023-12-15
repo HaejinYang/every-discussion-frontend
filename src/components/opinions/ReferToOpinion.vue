@@ -37,7 +37,7 @@ export default defineComponent({
     },
     moveToOpinion() {
       const store = useDiscussionStore();
-      store.displayOpinionDetailly(this.opinion.id);
+      store.showOpinionDetail(this.opinion.id);
     }
   }
 });
