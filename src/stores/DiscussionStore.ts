@@ -2,22 +2,26 @@ import { defineStore } from 'pinia';
 
 export const useDiscussionStore = defineStore('discussion-store', {
   state: () => {
-    return { isFoldOpinionList: false, selectedOpinionId: -1, isShowOpinionWhenRedirect: false };
+    return { isShowOpinionList: true, isShowOpinionGraph: false, isShowOpinionDetail: false, selectedOpinionId: -1, isShowOpinionWhenRedirect: false };
   },
   actions: {
-    foldList() {
-      this.isFoldOpinionList = true;
+    hideAll() {
+      this.isShowOpinionList = false;
+      this.isShowOpinionGraph = false;
+      this.isShowOpinionDetail = false;
     },
-    spreadList() {
-      this.isFoldOpinionList = false;
+    showOpinionList() {
+      this.hideAll();
+      this.isShowOpinionList = true;
     },
-    displayOpinionDetailly(opinionId: number) {
-      this.foldList();
-      this.selectedOpinionId = opinionId;
+    showOpinionDetail(selectedOpinionId: number) {
+      this.hideAll();
+      this.isShowOpinionDetail = true;
+      this.selectedOpinionId = selectedOpinionId;
     },
-    hideOpinionDetaily() {
-      this.spreadList();
-      this.selectedOpinionId = -1;
+    showOpinionGraph() {
+      this.hideAll();
+      this.isShowOpinionGraph = true;
     },
     setOpinionIdWhenRedirect(opinionId: number) {
       this.isShowOpinionWhenRedirect = true;

@@ -43,7 +43,7 @@ export default defineComponent({
     },
     moveToOpinion(id: number) {
       const store = useDiscussionStore();
-      store.displayOpinionDetailly(id);
+      store.showOpinionDetail(id);
     }
   }
 });

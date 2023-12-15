@@ -3,11 +3,12 @@
     <div :class="$style['content']">
       <div :class="$style['title']" @mousedown.left="onClickTitle">
         <h1>{{ isShowDiscussion ? topic?.title : '' }}</h1>
-        <div :class="[$style['spread'], isFold ? $style.show : null]">
+        <div :class="[$style['spread'], isShowOpinionDetail ? $style.show : null]">
           <img src="@/assets/caret.svg" alt="참조" />
         </div>
       </div>
-      <div :class="[$style['opinions'], isFold ? $style.short : null]">
+      <button @click.left="switchListOrGraph" :class="$style['goto-graph']">{{isShowOpinionList ? "그래프 보기" : "리스트 보기"}}</button>
+      <div :class="[$style['opinions'], isShowOpinionList ? null : $style.short]">
         <div :class="$style['agree']">
           <Discussion
             agreeingType="agree"
@@ -32,6 +33,7 @@
           </div>
         </div>
       </div>
+      <OpinionGraph v-show="isShowOpinionGraph" :topicId="id"/>
     </div>
   </div>
   <div>
@@ -59,10 +61,11 @@ import OpinionItem from '@/components/opinions/OpinionItem.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 import { useNewOpinionStore } from '@/stores/NewOpinionStore';
+import OpinionGraph from "@/components/opinions/OpinionGraph.vue";
 
 export default defineComponent({
   name: 'DiscussionView',
-  components: { OpinionItem, RegisterOpinion, Discussion },
+  components: {OpinionGraph, OpinionItem, RegisterOpinion, Discussion },
   props: {
     id: {
       type: String,
@@ -86,13 +89,17 @@ export default defineComponent({
     topicId() {
       return parseInt(this.id);
     },
-    isFold() {
-      const store = useDiscussionStore();
-      return store.isFoldOpinionList;
-    },
     isShowOpinionDetail() {
       const store = useDiscussionStore();
-      return store.selectedOpinionId !== -1;
+      return store.isShowOpinionDetail;
+    },
+    isShowOpinionList() {
+      const store = useDiscussionStore();
+      return store.isShowOpinionList;
+    },
+    isShowOpinionGraph() {
+      const store = useDiscussionStore();
+      return store.isShowOpinionGraph;
     },
     selectedOpinionId() {
       const store = useDiscussionStore();
@@ -101,6 +108,16 @@ export default defineComponent({
   },
 
   methods: {
+    switchListOrGraph() {
+      const store = useDiscussionStore();
+      if(store.isShowOpinionList) {
+        store.showOpinionGraph();
+      } else if(store.isShowOpinionGraph) {
+        store.showOpinionList();
+      } else {
+        store.showOpinionList();
+      }
+    },
     onLoadDiscussions(at: 'agree' | 'disagree') {
       if (at === 'agree') {
         this.isLoadDiscussionAgree = true;
@@ -127,7 +144,7 @@ export default defineComponent({
     },
     onClickTitle() {
       const store = useDiscussionStore();
-      store.hideOpinionDetaily();
+      store.showOpinionList();
     },
     onRegisterOpinion(opinion: OpinionData) {
       const store = useNewOpinionStore();
@@ -140,9 +157,9 @@ export default defineComponent({
 
     const store = useDiscussionStore();
     if (store.selectedOpinionId !== -1 && store.isShowOpinionWhenRedirect) {
-      store.displayOpinionDetailly(store.selectedOpinionId);
+      store.showOpinionDetail(store.selectedOpinionId);
     } else {
-      store.hideOpinionDetaily();
+      store.showOpinionList();
     }
     store.isShowOpinionWhenRedirect = false;
   }
@@ -157,9 +174,25 @@ export default defineComponent({
   align-items: center;
 
   .content {
+    .goto-graph {
+      border: none;
+      border-radius: 5px;
+      background-color: $primary-color;
+      padding: 0.5rem 1rem 0.5rem 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: white;
+
+      &:hover {
+        cursor: pointer;
+        filter: brightness(85%);
+      }
+    }
+
     .title {
       position: relative;
-      padding: 1rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
 
       &:hover {
         cursor: pointer;

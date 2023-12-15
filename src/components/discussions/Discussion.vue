@@ -3,12 +3,12 @@
     v-show="isShow"
     :class="[$style.container, agreeingType === 'agree' ? $style.agree : $style.disagree]"
   >
-    <div :class="$style.title">
+    <div :class="$style['title']">
       <span>{{ agreeingType === 'agree' ? '찬성' : '반대' }}</span>
     </div>
     <div
       v-if="displayedOpinions.length !== 0"
-      :class="$style.opinion"
+      :class="$style['opinion']"
       v-for="(opinion, index) in displayedOpinions"
       :key="opinion.id"
       @mousedown.left="onClickOpinion(index, opinion.id)"
@@ -19,7 +19,7 @@
       </p>
       <div>추천{{ opinion.like }} 비추천{{ opinion.dislike }}</div>
     </div>
-    <div v-else :class="$style.opinion">
+    <div v-else :class="$style['opinion']">
       <p>의견이 없습니다.</p>
     </div>
   </div>
@@ -78,7 +78,7 @@ export default defineComponent({
     },
     onClickOpinion(index: number, opinionId: number) {
       const store = useDiscussionStore();
-      store.displayOpinionDetailly(opinionId);
+      store.showOpinionDetail(opinionId);
     },
     addNewOpinion() {
       const store = useNewOpinionStore();
