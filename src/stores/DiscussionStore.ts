@@ -25,7 +25,7 @@ export const useDiscussionStore = defineStore('discussion-store', {
     },
     setOpinionIdWhenRedirect(opinionId: number) {
       this.isShowOpinionWhenRedirect = true;
-      this.selectedOpinionId = opinionId;
+      this.showOpinionDetail(opinionId);
     }
   }
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref, watch} from "vue";
 import {OpinionService} from "@/services/opinions/OpinionService";
-import {AgreeingType, OpinionGraph} from "@/services/opinions";
+import { AgreeingType, OpinionGraph} from "@/services/opinions";
 import * as vNG from "v-network-graph"
 import {
   ForceLayout,
@@ -9,16 +9,19 @@ import {
   ForceEdgeDatum,
 } from "v-network-graph/lib/force-layout"
 import {VNetworkGraph} from "v-network-graph";
+import {useDiscussionStore} from "@/stores/DiscussionStore";
+import {useRouter} from "vue-router";
 
 interface Props {
   topicId: string;
 }
-const props = defineProps<Props>();
 
 type GraphNode = {
   [index: string]: {
     name: string;
     agree: AgreeingType;
+    id: number;
+    size: number;
   }
 }
 
@@ -29,25 +32,22 @@ type GraphEdge = {
   }
 }
 
-const nodes = ref<GraphNode>({
-
-});
-
-const edges = ref<GraphEdge>({
-
-});
-
-const layouts = ref({nodes: {
-
-  }})
-
+const props = defineProps<Props>();
+const nodes = ref<GraphNode>({});
+const edges = ref<GraphEdge>({});
+const layouts = ref({nodes: {}})
+const router = useRouter();
 const nodeCount = ref(0);
-// initialize network
-buildNetwork(nodeCount.value, nodes.value, edges.value)
+const sizeOfNode = new Map<number, number>();
 
-watch(nodeCount, () => {
-  buildNetwork(nodeCount.value, nodes.value, edges.value)
-})
+const eventHandlers: vNG.EventHandlers = {
+  "node:click": ({ node }) => {
+    const topicId = parseInt(props.topicId);
+    router.push(`/discussion/${topicId}`);
+    const store = useDiscussionStore();
+    store.setOpinionIdWhenRedirect(nodes.value[node].id);
+  },
+}
 
 const configs = reactive(
     vNG.defineConfigs({
@@ -80,6 +80,7 @@ const configs = reactive(
       node: {
         normal: {
           color: n => (n.agree === "disagree" ? "#ff0000" : "#4466cc"),
+          radius: node => node.size,
         },
         label: {
           visible: true,
@@ -88,20 +89,38 @@ const configs = reactive(
     })
 )
 
+buildNetwork(nodeCount.value, nodes.value, edges.value)
+
+watch(nodeCount, () => {
+  buildNetwork(nodeCount.value, nodes.value, edges.value)
+})
+
 onMounted(async  () => {
   const opinionService = new OpinionService();
   const opinionsData: OpinionGraph[] = await opinionService.fetchGraphInTopic(parseInt(props.topicId));
   let isMostFocusingNode = true;
+
+  /**
+   * 의견(A) <--- 참조된 의견(B) x N
+   * A를 노드로 등록함
+   */
+  opinionsData.forEach(opinion => {
+    sizeOfNode.set(opinion.referToId, opinion.count);
+
+    createNode(opinion.referToId, opinion.title, opinion.agreeType);
+  });
+
+  /**
+   * 의견(A) <--- 참조된 의견(B) x N
+   * B를 노드로 등록하고 엣지를 생성함.
+   * A가 이미 등록되어 있어도 상관은없음.
+   */
   opinionsData.forEach(graph => {
     graph.opinions.forEach(opinion => {
-      const nodeName = "node"+opinion.id.toString();
-      nodes.value[nodeName] = {
-        name: opinion.title.slice(0,10) + "...",
-        agree: opinion.agreeType,
-      };
+      createNode(opinion.id, opinion.title, opinion.agreeType);
 
       if(isMostFocusingNode) {
-        layouts.value.nodes[nodeName] = {
+        layouts.value.nodes[getNodeName(opinion.id)] = {
           x: 0,
           y: 0,
           fixed: true,
@@ -111,13 +130,34 @@ onMounted(async  () => {
 
       const edgeName = "edge"+opinion.id.toString();
       edges.value[edgeName] = {
-        source: nodeName,
+        source: getNodeName(opinion.id),
         target: "node"+graph.referToId.toString()
       };
     })
   })
 });
 
+function getNodeName(id: number) {
+  return "node"+id.toString();
+}
+
+function createNode(id: number, title: string, agreeType: AgreeingType) {
+  const defaultNodeSize = 5;
+  const centralizeNodeSizeMultiply = 2;
+
+  const nodeName = getNodeName(id);
+  let size = defaultNodeSize;
+  if(sizeOfNode.has(id)) {
+    size = size * centralizeNodeSizeMultiply * sizeOfNode.get(id);
+  }
+
+  nodes.value[nodeName] = {
+    name: title.slice(0,10) + "...",
+    agree: agreeType,
+    id: id,
+    size: size
+  };
+}
 
 function buildNetwork(count: number, nodes: vNG.Nodes, edges: vNG.Edges) {
   const idNums = [...Array(count)].map((_, i) => i)
@@ -150,6 +190,7 @@ function buildNetwork(count: number, nodes: vNG.Nodes, edges: vNG.Edges) {
       :edges="edges"
       :configs="configs"
       :layouts="layouts"
+      :event-handlers="eventHandlers"
   />
 </template>
 

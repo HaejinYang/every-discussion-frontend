@@ -58,6 +58,10 @@ class OpinionGraph {
   @Type(() => AbbrOpinion)
   @Expose()
   opinions: AbbrOpinion[];
+  @Expose({ name: 'agree_type' })
+  agreeType: AgreeingType;
+  @Expose()
+  title: string;
 }
 
 export { type AgreeingType, OpinionData, LinkedOpinion, OpinionGraph, AbbrOpinion };
