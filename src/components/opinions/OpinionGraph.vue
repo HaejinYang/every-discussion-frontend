@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref, watch} from "vue";
 import {OpinionService} from "@/services/opinions/OpinionService";
-import { AgreeingType, OpinionGraph} from "@/services/opinions";
+import { type AgreeingType, OpinionGraph} from "@/services/opinions";
 import * as vNG from "v-network-graph"
 import {
   ForceLayout,
-  ForceNodeDatum,
-  ForceEdgeDatum,
+  type ForceNodeDatum,
+  type ForceEdgeDatum,
 } from "v-network-graph/lib/force-layout"
 import {VNetworkGraph} from "v-network-graph";
 import {useDiscussionStore} from "@/stores/DiscussionStore";
@@ -32,10 +32,20 @@ type GraphEdge = {
   }
 }
 
+type GraphLayout = {
+  nodes: {
+    [index: string]: {
+      x: number;
+      y: number;
+      fixed: boolean;
+    }
+  }
+}
+
 const props = defineProps<Props>();
 const nodes = ref<GraphNode>({});
 const edges = ref<GraphEdge>({});
-const layouts = ref({nodes: {}})
+const layouts = ref<GraphLayout>({nodes: {}})
 const router = useRouter();
 const nodeCount = ref(0);
 const sizeOfNode = new Map<number, number>();
@@ -57,7 +67,13 @@ const configs = reactive(
           positionFixedByClickWithAltKey: true,
           createSimulation: (d3, nodes, edges) => {
             // d3-force parameters
-            const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id(d => d.id)
+            const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id((d: unknown) => {
+              if(typeof d === 'object' && d !== null && 'id' in d) {
+                return d.id;
+              }
+
+              return '';
+            })
             return d3
                 .forceSimulation(nodes)
                 .force("edge", forceLink.distance(90).strength(0.2))
@@ -148,7 +164,7 @@ function createNode(id: number, title: string, agreeType: AgreeingType) {
   const nodeName = getNodeName(id);
   let size = defaultNodeSize;
   if(sizeOfNode.has(id)) {
-    size = size * centralizeNodeSizeMultiply * sizeOfNode.get(id);
+    size = size * centralizeNodeSizeMultiply * sizeOfNode.get(id)!;
   }
 
   nodes.value[nodeName] = {
