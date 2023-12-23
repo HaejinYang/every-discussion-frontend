@@ -42,7 +42,14 @@
         </div>
       </div>
     </template>
+
+    <template v-slot:extra>
+      <div v-if="submitStep === eProcessStep.Unauthenticated">
+        <button :class="$style['resend-btn']">인증 메일 보내기</button>
+      </div>
+    </template>
   </SubmitForm>
+
 </template>
 
 <script lang="ts">
@@ -196,6 +203,19 @@ export default defineComponent({
     > input {
       vertical-align: -2px;
     }
+  }
+}
+
+.resend-btn {
+  background-color: $wait-color;
+  color: lightgray;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: none;
+  margin-top: 0.5rem;
+  &:hover {
+    cursor: pointer;
+    color: white;
   }
 }
 </style>

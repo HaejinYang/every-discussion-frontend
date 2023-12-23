@@ -14,6 +14,9 @@
       <WaitAnimation v-show="isSubmitWaiting" />
       <small :class="$style['end']">{{ submitResultMsg }}</small>
     </div>
+    <div :class="$style['extra']">
+      <slot name="extra" />
+    </div>
   </div>
 </template>
 
@@ -77,7 +80,7 @@ export default defineComponent({
     }
   }
 
-  .footer {
+  .footer, .extra {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
