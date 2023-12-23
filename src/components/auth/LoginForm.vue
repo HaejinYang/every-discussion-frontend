@@ -44,8 +44,9 @@
     </template>
 
     <template v-slot:extra>
-      <div v-if="submitStep === eProcessStep.Unauthenticated">
-        <button :class="$style['resend-btn']">인증 메일 보내기</button>
+      <div v-if="submitStep === eProcessStep.Unauthenticated" :class="$style['extra-send-auth']">
+        <button :class="$style['resend-btn']" @mousedown.left.stop="onClickSendAuthEmail">{{ authMailSendBtnMsg[authMailSendStep] }}</button>
+        <WaitAnimation v-show="isWaitAuthSendEmail" />
       </div>
     </template>
   </SubmitForm>
@@ -64,6 +65,7 @@ import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { AuthService } from '@/services/auth';
 import { useAuthFormStore } from '@/stores/AuthFormStore';
 import SubmitForm from '@/components/common/submits/SubmitForm.vue';
+import WaitAnimation from "@/components/common/animations/WaitAnimation.vue";
 
 enum eProcessStep {
   Init = 0,
@@ -73,9 +75,17 @@ enum eProcessStep {
   Fail = 4
 }
 
+enum eSendAuthMailStep {
+  Init = 0,
+  Wait = 1,
+  Success = 2,
+  Fail = 3
+}
+
 export default defineComponent({
   name: 'LoginForm',
   components: {
+    WaitAnimation,
     SubmitForm,
     LabeledInputText,
     LoginAndRegisterSwitch,
@@ -91,7 +101,9 @@ export default defineComponent({
       submitStep: eProcessStep.Init as eProcessStep,
       debouncedEmailCheck: (...args: any[]): void => {},
       debouncedPasswordCheck: (...args: any[]): void => {},
-      isCheckedKeepLoggedIn: false
+      isCheckedKeepLoggedIn: false,
+      authMailSendBtnMsg: ['인증 메일 보내기', '', '전송 성공', '전송 실패'],
+      authMailSendStep: eSendAuthMailStep.Init as eSendAuthMailStep,
     };
   },
   computed: {
@@ -104,6 +116,9 @@ export default defineComponent({
       }
 
       return '';
+    },
+    isWaitAuthSendEmail() {
+      return eSendAuthMailStep.Wait === this.authMailSendStep;
     }
   },
   watch: {
@@ -125,7 +140,7 @@ export default defineComponent({
       this.submitStep = eProcessStep.Wait;
       try {
         const auth = new AuthService();
-        const user = await auth.login({
+        await auth.login({
           email: this.email,
           password: this.password,
           isKeepLoggedIn: this.isCheckedKeepLoggedIn
@@ -149,12 +164,33 @@ export default defineComponent({
       if (this.submitStep !== eProcessStep.Wait) {
         this.submitStep = eProcessStep.Init;
       }
+
+      if(this.authMailSendStep !== eSendAuthMailStep.Wait) {
+        this.authMailSendStep = eSendAuthMailStep.Init;
+      }
     },
     inputPassword(password: string) {
       this.password = password;
     },
     inputEmail(mail: string) {
       this.email = mail;
+    },
+    async onClickSendAuthEmail() {
+      if(this.authMailSendStep === eSendAuthMailStep.Success ||
+          this.authMailSendStep === eSendAuthMailStep.Wait) {
+        return;
+      }
+
+      this.authMailSendStep = eSendAuthMailStep.Wait;
+
+      try {
+        const auth = new AuthService();
+        await auth.sendAuthEmail(this.email);
+        this.authMailSendStep = eSendAuthMailStep.Success;
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.authMailSendStep = eSendAuthMailStep.Fail;
+      }
     }
   },
   created() {
@@ -206,16 +242,25 @@ export default defineComponent({
   }
 }
 
+.extra-send-auth {
+  position: relative;
+  width: 150px;
+}
+
 .resend-btn {
   background-color: $wait-color;
   color: lightgray;
   padding: 0.5rem;
   border-radius: 5px;
   border: none;
-  margin-top: 0.5rem;
+  width: 100%;
+  min-height: 2.1rem;
+
   &:hover {
     cursor: pointer;
     color: white;
   }
 }
+
+
 </style>
