@@ -88,6 +88,20 @@ class AuthService {
 
     throwErrorWhenResponseNotOk(response);
   }
+
+  async sendAuthEmail(email: string) {
+    const URI = `/api/auth/email`;
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email})
+    });
+
+    throwErrorWhenResponseNotOk(response);
+  }
 }
 
 export { AuthService };
