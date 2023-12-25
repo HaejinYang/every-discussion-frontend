@@ -1,7 +1,7 @@
 import { fetchApi, objectToQueryString } from '@/util/network';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 import { useAuthStore } from '@/stores/AuthStore';
 
 class UserItem {

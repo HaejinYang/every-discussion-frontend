@@ -1,7 +1,7 @@
 import { Expose, plainToInstance, Type } from 'class-transformer';
 import { TopicItem } from '@/services/topics/index';
 import { fetchApi } from '@/util/network';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 
 class TopTopicsItem {
   @Expose({ name: 'current_page' })

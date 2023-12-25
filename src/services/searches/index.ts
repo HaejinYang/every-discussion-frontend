@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { fetchApi } from '@/util/network';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 import { TopTopicsItem } from '@/services/topics/TopTopicsService';
 
 const searchTopics = async (keyword: string): Promise<TopTopicsItem> => {
