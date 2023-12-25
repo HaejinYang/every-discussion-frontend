@@ -1,6 +1,6 @@
 import type { OpinionData } from '@/services/opinions';
 import { fetchApi } from '@/util/network';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 import 'reflect-metadata';
 import { Expose, plainToInstance } from 'class-transformer';
 import { useAuthStore } from '@/stores/AuthStore';

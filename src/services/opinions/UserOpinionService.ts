@@ -1,6 +1,6 @@
 import { type AgreeingType, LinkedOpinion, OpinionData } from '@/services/opinions/index';
 import { fetchApi } from '@/util/network';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 import { plainToInstance } from 'class-transformer';
 import { useAuthStore } from '@/stores/AuthStore';
 

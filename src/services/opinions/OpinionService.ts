@@ -1,5 +1,5 @@
 import { fetchApi } from '@/util/network';
-import { throwErrorWhenResponseNotOk } from '@/util/error';
+import throwErrorWhenResponseNotOk from '@/util/error/NetworkError';
 import { plainToInstance } from 'class-transformer';
 import {LinkedOpinion, OpinionData, OpinionGraph} from '@/services/opinions/index';
 

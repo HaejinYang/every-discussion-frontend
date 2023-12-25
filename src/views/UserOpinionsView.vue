@@ -8,7 +8,7 @@
         <p>의견정보{{ item.topic.opinionsCount }}</p>
       </div>
       <div :class="$style['opinions-wrapper']">
-        <div :class="$style.opinions" v-for="opinion in item.opinions" :key="opinion.id">
+        <div :class="$style['opinions']" v-for="opinion in item.opinions" :key="opinion.id">
           <p>의견 내용</p>
           <p
             :class="$style['opinion-content']"
@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div :class="$style.wait" v-show="isNotSuccesLoading">
+    <div :class="$style['wait']" v-show="isNotSuccesLoading">
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
@@ -47,17 +47,13 @@
 import { defineComponent } from 'vue';
 import { TopicItem, TopicService, type TopicWithOpinions } from '@/services/topics';
 import { LinkedOpinion, OpinionData } from '@/services/opinions';
-import Discussion from '@/components/discussions/Discussion.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { getErrorMessage } from '@/util/error';
 import { useDiscussionStore } from '@/stores/DiscussionStore';
-import Header from '@/App.vue';
-import RegisterOpinion from '@/components/opinions/RegisterOpinion.vue';
 import { debounce } from '@/util/timing';
 import ModifyOpinion from '@/components/opinions/ModifyOpinion.vue';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
-import ModalContainer from '@/components/common/modals/ModalContainer.vue';
 
 enum eProcess {
   Init = 0,
@@ -69,7 +65,7 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { ModalContainer, ModifyOpinion, RegisterOpinion, Header, WaitButton, Discussion },
+  components: { ModifyOpinion, WaitButton },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
