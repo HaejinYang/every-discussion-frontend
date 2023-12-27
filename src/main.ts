@@ -4,7 +4,7 @@ import "v-network-graph/lib/style.css"
 import { createPinia } from 'pinia';
 
 // @ts-ignore
-import './assets/base.scss';
+import './assets/style/base.scss';
 import App from './App.vue';
 import router from './router';
 
