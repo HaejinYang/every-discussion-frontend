@@ -1,11 +1,11 @@
 <template>
   <div :class="$style.container">
     <input :value="searchText" @input="updateSearchText" type="text" :placeholder="placeholder" />
-    <img :class="$style['search-icon']" src="@/assets/search.svg" />
+    <img :class="$style['search-icon']" src="@/assets/image/search.svg" />
     <img
       :class="$style['spinner-icon']"
       v-show="isShowSearchWaiting"
-      src="@/assets/spinner-black.svg"
+      src="../assets/image/spinner-black.svg"
     />
   </div>
 </template>

@@ -34,10 +34,10 @@ export default defineComponent({
   computed: {
     spinnerImgUrl() {
       if (this.color === 'black') {
-        return new URL('/src/assets/spinner-black.svg', import.meta.url).toString();
+        return new URL('/src/assets/image/spinner-black.svg', import.meta.url).toString();
       }
 
-      return new URL('/src/assets/spinner-white.svg', import.meta.url).toString();
+      return new URL('/src/assets/image/spinner-white.svg', import.meta.url).toString();
     }
   }
 });

@@ -4,7 +4,7 @@
       <p :class="$style.title">{{ topic.id }}.{{ topic.title }}</p>
       <img
         :class="[$style.more, isFold ? null : $style.rotate]"
-        src="@/assets/caret.svg"
+        src="@/assets/image/caret.svg"
         @mousedown.left="onClickMore($event)"
         ref="caret"
       />

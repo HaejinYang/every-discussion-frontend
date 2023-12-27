@@ -7,7 +7,7 @@
       @mousedown.left="onClickTopic(topic.id)"
     >
       <p>{{ topic.title.substring(0, 30) }}</p>
-      <img src="@/assets/shortcut.svg" />
+      <img src="@/assets/image/shortcut.svg" />
     </div>
   </div>
 </template>

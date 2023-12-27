@@ -1,7 +1,7 @@
 <template>
   <header :class="$style.container">
     <div :class="$style['title']" @mousedown.left="onClickTitle">
-      <img src="@/assets/logo.webp" :class="$style['logo']" alt="logo">
+      <img src="@/assets/image/logo.webp" :class="$style['logo']" alt="logo">
       <span>모두의토론</span>
     </div>
     <div v-if="isDisplaySearchBar">

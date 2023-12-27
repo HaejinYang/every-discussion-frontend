@@ -3,19 +3,19 @@
     <nav>
       <ul>
         <li @mousedown.left="onClickHomePage">
-          <img src="@/assets/home.svg" />
+          <img src="@/assets/image/home.svg" />
           <span>처음 화면</span>
         </li>
         <li @mousedown.left="onClickMyTopics">
-          <img src="@/assets/bookshelf.svg" />
+          <img src="@/assets/image/bookshelf.svg" />
           <span>참여한 토론</span>
         </li>
         <li @mousedown.left="onClickMyOpinions">
-          <img src="@/assets/book.svg" />
+          <img src="@/assets/image/book.svg" />
           <span>작성한 의견</span>
         </li>
         <li @mousedown.left="onClickRegisterTopic">
-          <img src="@/assets/pencil.svg" />
+          <img src="@/assets/image/pencil.svg" />
           <span>토론 생성</span>
         </li>
       </ul>
@@ -35,8 +35,8 @@
       <div><span>@2023 모두의토론</span></div>
 
       <div>
-        <img src="@/assets/github.svg" @mousedown.left="onClickGoGithub" />
-        <img src="@/assets/blog.svg" @mousedown.left="onClickGoBlog" />
+        <img src="@/assets/image/github.svg" @mousedown.left="onClickGoGithub" />
+        <img src="@/assets/image/blog.svg" @mousedown.left="onClickGoBlog" />
       </div>
     </footer>
   </aside>
