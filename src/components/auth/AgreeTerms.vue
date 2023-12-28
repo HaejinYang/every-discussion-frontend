@@ -4,8 +4,8 @@ import {computed, ref, watch} from "vue";
 
 const emits = defineEmits(['on-submit-terms-agree']);
 
-const serviceTermsAgree = ref<Boolean>(false);
-const privacyPolicyAgree = ref<Boolean>(false);
+const serviceTermsAgree = ref<boolean>(false);
+const privacyPolicyAgree = ref<boolean>(false);
 
 watch(serviceTermsAgree, (state) => {
   console.log(state);
