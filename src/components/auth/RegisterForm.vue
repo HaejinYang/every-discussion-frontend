@@ -1,5 +1,6 @@
 <template>
-  <SubmitForm
+  <AgreeTerms v-if="!termsAgreed" @on-submit-terms-agree="onSubmitTermsAgree"/>
+  <SubmitForm v-if="termsAgreed"
     :isSubmitWaiting="isSubmitWaiting"
     :submitResultMsg="registerResultMsg"
     :btnMsg="submitBtnMsg[submitStep]"
@@ -20,10 +21,10 @@
       />
       <LabeledInputText
         @input-text="inputName"
-        label-text="이름"
+        label-text="닉네임"
         input-type="text"
         :is-show-warn-text="isDuplicatedName"
-        warn-text="이름 중복"
+        warn-text="닉네임 중복"
       />
       <LabeledInputText
         @input-text="inputPassword"
@@ -61,6 +62,7 @@ import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
 import SubmitForm from '@/components/common/submits/SubmitForm.vue';
+import AgreeTerms from "@/components/auth/AgreeTerms.vue";
 
 enum eProcessStep {
   Init = 0,
@@ -72,6 +74,7 @@ enum eProcessStep {
 export default defineComponent({
   name: 'RegisterForm',
   components: {
+    AgreeTerms,
     SubmitForm,
     LabeledInputText,
     LoginAndRegisterSwitch,
@@ -90,9 +93,10 @@ export default defineComponent({
       isPasswordShort: false,
       submitBtnMsg: ['회원가입', '', '인증 메일 확인', '회원가입'],
       submitStep: eProcessStep.Init as eProcessStep,
-      debouncedCheckPassword: (...args: any[]): void => {},
-      debouncedCheckEmail: (...args: any[]): void => {},
-      debouncedCheckName: (...args: any[]): void => {}
+      termsAgreed: false,
+      debouncedCheckPassword: debounce(() => {}),
+      debouncedCheckEmail: debounce(() => {}),
+      debouncedCheckName: debounce(() => {})
     };
   },
   computed: {
@@ -114,6 +118,8 @@ export default defineComponent({
       if (!this.isEmailForm) {
         return '잘못된 이메일 형식';
       }
+
+      return '이메일 확인';
     }
   },
   watch: {
@@ -143,9 +149,9 @@ export default defineComponent({
       }
 
       if (
-        this.password === this.passwordConfirm ||
-        this.password.length === 0 ||
-        this.passwordConfirm.length === 0
+          this.password.length === 0 ||
+          this.passwordConfirm.length === 0 ||
+          this.password === this.passwordConfirm
       ) {
         this.isPasswordSame = true;
         return;
@@ -162,7 +168,7 @@ export default defineComponent({
 
       try {
         const userService = new UserService();
-        const result = await userService.isDuplicated({ email: this.email });
+        await userService.isDuplicated({ email: this.email });
       } catch (e) {
         this.isDuplicatedEmail = true;
       }
@@ -170,7 +176,7 @@ export default defineComponent({
     this.debouncedCheckName = debounce(async () => {
       try {
         const userService = new UserService();
-        const result = await userService.isDuplicated({ name: this.name });
+        await userService.isDuplicated({ name: this.name });
       } catch (e) {
         this.isDuplicatedName = true;
       }
@@ -190,7 +196,7 @@ export default defineComponent({
       this.submitStep = eProcessStep.Wait;
       try {
         const userService = new UserService();
-        const user = await userService.create({
+        await userService.create({
           email: this.email,
           name: this.name,
           password: this.password,
@@ -217,6 +223,9 @@ export default defineComponent({
     },
     inputPasswordConfirm(passwordConfirm: string) {
       this.passwordConfirm = passwordConfirm;
+    },
+    onSubmitTermsAgree() {
+      this.termsAgreed = true;
     }
   }
 });

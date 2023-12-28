@@ -1,6 +1,6 @@
 function debounce<T extends (...args: any[]) => any>(
   func: T,
-  delay: number
+  delay= 1000,
 ): (...args: Parameters<T>) => void {
   let timerId: ReturnType<typeof setTimeout> | null;
 
