@@ -17,11 +17,11 @@
       <div :class="$style['content']" v-show="isSelectedProfile">
         <h2>프로필</h2>
         <div :class="$style['item']">
-          <span :class="$style['label']">계정</span>
+          <span :class="$style['label']">이메일</span>
           <span :class="$style['value']">{{ userEmail }}</span>
         </div>
         <div :class="$style['item']">
-          <span :class="$style['label']">이름</span>
+          <span :class="$style['label']">닉네임</span>
           <span :class="$style['value']" v-if="!isModifyMode">{{ userName }}</span>
           <input
             type="text"

@@ -10,7 +10,7 @@
       <slot name="footer" />
     </div>
     <div :class="$style['submit']">
-      <button :class="$style['btn']" @mousedown.left="onSubmit">{{ btnMsg }}</button>
+      <button :class="$style['btn']" @mousedown.left="onSubmit" :disabled="!enableBtn">{{ btnMsg }}</button>
       <WaitAnimation v-show="isSubmitWaiting" />
       <small :class="$style['end']">{{ submitResultMsg }}</small>
     </div>
@@ -40,6 +40,10 @@ export default defineComponent({
     isSubmitWaiting: {
       type: Boolean,
       required: true
+    },
+    enableBtn: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {
@@ -105,6 +109,11 @@ export default defineComponent({
         cursor: pointer;
         filter: brightness(85%);
       }
+    }
+
+    .btn[disabled] {
+      filter: opacity(50%);
+      pointer-events: none;
     }
 
     .end {
