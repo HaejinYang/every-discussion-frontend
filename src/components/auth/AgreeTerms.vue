@@ -23,6 +23,14 @@ function onSubmitTermAgree() {
   emits("on-submit-terms-agree");
 }
 
+function onAgreeServicePolicy() {
+  serviceTermsAgree.value = !serviceTermsAgree.value
+}
+
+function onAgreePrivacyPolicy() {
+  privacyPolicyAgree.value = !privacyPolicyAgree.value
+}
+
 </script>
 
 <template>
@@ -31,7 +39,7 @@ function onSubmitTermAgree() {
       <p :class="$style['title']">약관 동의</p>
     </template>
     <template v-slot:content>
-      <p :class="$style['terms-header']">서비스 이용약관에 동의합니다. <input type="checkbox" v-model="serviceTermsAgree"></p>
+      <p :class="$style['terms-header']"><span @mousedown.left="onAgreeServicePolicy">서비스 이용약관에 동의합니다.</span> <input type="checkbox" v-model="serviceTermsAgree"></p>
     
       <pre :class="$style['terms-content']">
 모두의토론 회원 가입 약관
@@ -65,7 +73,7 @@ function onSubmitTermAgree() {
 9. 분쟁 해결
 서비스 이용 중 발생한 분쟁은 사이트 운영 정책 및 관련 법령에 따라 해결합니다.
       </pre>
-      <p :class="$style['terms-header']">개인정보 처리방침에 동의합니다. <input type="checkbox" v-model="privacyPolicyAgree"></p>
+      <p :class="$style['terms-header']"><span @mousedown.left="onAgreePrivacyPolicy">개인정보 처리방침에 동의합니다.</span> <input type="checkbox" v-model="privacyPolicyAgree"></p>
       <pre :class="$style['terms-content']">
 모두의토론 개인정보 처리 방침
 
@@ -106,6 +114,7 @@ extension.master.91@gmail.com
   text-align: center;
   font-weight: bold;
   border-bottom: none;
+  margin-bottom: 1rem;
 }
 
 .terms-header {
@@ -113,6 +122,10 @@ extension.master.91@gmail.com
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
+
+  > span {
+    cursor: pointer;
+  }
 }
 
 .terms-header:nth-of-type(2) {
@@ -122,8 +135,14 @@ extension.master.91@gmail.com
 .terms-content {
   width: 300px;
   height: 150px;
+  padding: 1rem;
   overflow: auto;
   white-space: pre-line;
+  border: $border-weak-line;
+  background-color: #fcfcfc;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 </style>
