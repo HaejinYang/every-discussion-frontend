@@ -23,8 +23,8 @@
         @input-text="inputName"
         label-text="닉네임"
         input-type="text"
-        :is-show-warn-text="isDuplicatedName"
-        warn-text="닉네임 중복"
+        :is-show-warn-text="isDuplicatedName || !isNameFormValid"
+        :warn-text="invalidNameWarnText"
       />
       <LabeledInputText
         @input-text="inputPassword"
@@ -56,7 +56,7 @@ import { defineComponent } from 'vue';
 import { debounce } from '@/util/timing';
 import { UserService } from '@/services/users';
 import { getErrorMessage } from '@/util/error';
-import { isEmailValid } from '@/util/validation';
+import {isEmailValid, isNameVaild} from '@/util/validation';
 import FindAccountAndPasswordSwitch from '@/components/auth/FindAccountAndPasswordSwitch.vue';
 import LoginAndRegisterSwitch from '@/components/auth/LoginAndRegisterSwitch.vue';
 import LabeledInputText from '@/components/common/inputs/LabeledInputText.vue';
@@ -90,6 +90,7 @@ export default defineComponent({
       isDuplicatedEmail: false,
       isEmailForm: true,
       isDuplicatedName: false,
+      isNameFormValid: true,
       isPasswordShort: false,
       submitBtnMsg: ['회원가입', '', '인증 메일 확인', '회원가입'],
       submitStep: eProcessStep.Init as eProcessStep,
@@ -120,6 +121,17 @@ export default defineComponent({
       }
 
       return '이메일 확인';
+    },
+    invalidNameWarnText() {
+      if(this.isDuplicatedName) {
+        return '닉네임 중복';
+      }
+
+      if(!this.isNameFormValid) {
+        return '20글자 제한, 특수문자 . 허용';
+      }
+
+      return '닉네임 확인';
     }
   },
   watch: {
@@ -133,6 +145,7 @@ export default defineComponent({
     },
     name() {
       this.isDuplicatedName = false;
+      this.isNameFormValid = true;
       this.debouncedCheckName();
     },
     email() {
@@ -166,6 +179,10 @@ export default defineComponent({
         return;
       }
 
+      if(this.email.length < 1) {
+        return;
+      }
+
       try {
         const userService = new UserService();
         await userService.isDuplicated({ email: this.email });
@@ -174,6 +191,15 @@ export default defineComponent({
       }
     }, 500);
     this.debouncedCheckName = debounce(async () => {
+      if(!isNameVaild(this.name)) {
+        this.isNameFormValid = false;
+        return;
+      }
+
+      if(this.name.length < 1) {
+        return;
+      }
+
       try {
         const userService = new UserService();
         await userService.isDuplicated({ name: this.name });

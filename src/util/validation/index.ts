@@ -9,4 +9,15 @@ function isEmailValid(email: string) {
   return emailRegex.test(email);
 }
 
-export { isEmailValid };
+function isNameVaild(name: string) {
+  if (name.length < 1) {
+    return true;
+  }
+
+  // Regular expression for a basic email validation
+  const reg = /^[A-Za-z0-9가-힣.]{1,20}$/;
+
+  return reg.test(name);
+}
+
+export { isEmailValid, isNameVaild };
