@@ -103,7 +103,7 @@ export default defineComponent({
       font-weight: bold;
       background-color: $primary-color;
       filter: brightness(100%);
-      border-radius: 5px;
+      border-radius: 12px;
 
       &:hover {
         cursor: pointer;

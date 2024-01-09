@@ -18,6 +18,7 @@ import RegisterForm from '@/components/auth/RegisterForm.vue';
 import LoginForm from '@/components/auth/LoginForm.vue';
 import FindAccountForm from '@/components/auth/FindAccountForm.vue';
 import FindPasswordForm from '@/components/auth/FindPasswordForm.vue';
+import KakaoLogin from "@/components/auth/login/KakaoLogin.vue";
 
 export default defineComponent({
   name: 'AuthForm',
