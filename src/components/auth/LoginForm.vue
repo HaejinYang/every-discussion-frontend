@@ -44,6 +44,7 @@
     </template>
 
     <template v-slot:extra>
+      <KakaoLogin />
       <div v-if="submitStep === eProcessStep.Unauthenticated" :class="$style['extra-send-auth']">
         <button :class="$style['resend-btn']" @mousedown.left.stop="onClickSendAuthEmail">{{ authMailSendBtnMsg[authMailSendStep] }}</button>
         <WaitAnimation v-show="isWaitAuthSendEmail" />
@@ -66,6 +67,7 @@ import { AuthService } from '@/services/auth';
 import { useAuthFormStore } from '@/stores/AuthFormStore';
 import SubmitForm from '@/components/common/submits/SubmitForm.vue';
 import WaitAnimation from "@/components/common/animations/WaitAnimation.vue";
+import KakaoLogin from "@/components/auth/login/KakaoLogin.vue";
 
 enum eProcessStep {
   Init = 0,
@@ -85,6 +87,7 @@ enum eSendAuthMailStep {
 export default defineComponent({
   name: 'LoginForm',
   components: {
+    KakaoLogin,
     WaitAnimation,
     SubmitForm,
     LabeledInputText,
