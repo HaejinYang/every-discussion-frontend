@@ -6,7 +6,7 @@ let isKakaoLoginEnabled = ref(true);
 
 onMounted(() => {
   if('Kakao' in window) {
-    const kakao = (window as any).kakao;
+    const kakao = (window as any).Kakao;
     // 카카오 로그인 초기화
     if (kakao.isInitialized()) {
       isKakaoLoginEnabled.value = true;
@@ -18,7 +18,7 @@ onMounted(() => {
 });
 function onClickLogin() {
   if('Kakao' in window) {
-    const kakao = (window as any).kakao;
+    const kakao = (window as any).Kakao;
     kakao.Auth.authorize({
       redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URI,
     });
