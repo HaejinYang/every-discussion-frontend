@@ -7,8 +7,12 @@ let isKakaoLoginEnabled = ref(true);
 onMounted(() => {
   if('Kakao' in window) {
     // 카카오 로그인 초기화
-    window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
-    isKakaoLoginEnabled.value = window.Kakao.isInitialized();
+    if (window.Kakao.isInitialized()) {
+      isKakaoLoginEnabled.value = true;
+    } else {
+      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+      isKakaoLoginEnabled.value = window.Kakao.isInitialized();
+    }
   }
 });
 function onClickLogin() {
