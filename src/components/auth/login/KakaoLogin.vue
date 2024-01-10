@@ -6,18 +6,20 @@ let isKakaoLoginEnabled = ref(true);
 
 onMounted(() => {
   if('Kakao' in window) {
+    const kakao = (window as any).kakao;
     // 카카오 로그인 초기화
-    if (window.Kakao.isInitialized()) {
+    if (kakao.isInitialized()) {
       isKakaoLoginEnabled.value = true;
     } else {
-      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
-      isKakaoLoginEnabled.value = window.Kakao.isInitialized();
+      kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+      isKakaoLoginEnabled.value = kakao.isInitialized();
     }
   }
 });
 function onClickLogin() {
   if('Kakao' in window) {
-    window.Kakao.Auth.authorize({
+    const kakao = (window as any).kakao;
+    kakao.Auth.authorize({
       redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URI,
     });
   }
