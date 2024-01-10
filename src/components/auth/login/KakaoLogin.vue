@@ -18,7 +18,7 @@ onMounted(() => {
 function onClickLogin() {
   if('Kakao' in window) {
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://127.0.0.1:56000/api/auth/register/kakao',
+      redirectUri: import.meta.env.VITE_KAKAO_REDIRECT_URI,
     });
   }
 }
