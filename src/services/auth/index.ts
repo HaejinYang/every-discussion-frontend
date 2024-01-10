@@ -27,6 +27,27 @@ class AuthService {
     return user;
   }
 
+  async loginByToken(token: string) {
+    const URI = '/api/auth/login/token';
+    const response = await fetchApi(URI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    throwErrorWhenResponseNotOk(response, true);
+
+    const result = await response.json();
+    const user: UserItem = plainToInstance(UserItem, result.data);
+
+    const authStore = useAuthStore();
+    authStore.login(user, false);
+
+    return user;
+  }
+
   async logout() {
     const authStore = useAuthStore();
     const URI = '/api/auth/logout';

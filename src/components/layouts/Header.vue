@@ -52,6 +52,8 @@ import SearchBar from '@/components/SearchBar.vue';
 import { useSearchOpinionStore } from '@/stores/SearchOpinionStore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { eAuthForm, useAuthFormStore } from '@/stores/AuthFormStore';
+import { useCookies } from '@vueuse/integrations/useCookies'
+import {AuthService} from "@/services/auth";
 
 export default defineComponent({
   name: 'Header',
@@ -61,7 +63,8 @@ export default defineComponent({
       isUserMenuHovered: false,
       userMenuHoveredTimer: -1,
       ignoreEmptyKeyword: false,
-      authFormStore: useAuthFormStore()
+      authFormStore: useAuthFormStore(),
+      cookies: useCookies(['login_token', 'abc'])
     };
   },
   computed: {
@@ -123,6 +126,14 @@ export default defineComponent({
     const store = useAuthStore();
     if (!store.authInfo.isKeepLoggedIn) {
       store.invalidate();
+    }
+
+    const login_token: string = this.cookies.get('login_token');
+    if(login_token) {
+      const authService = new AuthService();
+      authService.loginByToken(login_token).then(_ => {
+        this.cookies.remove('login_token');
+      });
     }
   }
 });
