@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style.search">
+    <div :class="$style['search']">
       <SearchBar
         placeholder="참여한 토론 주제 검색"
         @on-search-complete="onSearchCompleted"
@@ -9,7 +9,7 @@
       />
     </div>
     <div
-      :class="$style.wrapper"
+      :class="$style['wrapper']"
       v-for="topic in displayTopics"
       :key="topic.id"
       @mousedown.left="switchToDiscussion(topic.id)"
@@ -31,17 +31,22 @@
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
+    <div ref="target">
+
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { TopicItem } from '@/services/topics';
-import { TopicService } from '@/services/topics';
 import { useAuthStore } from '@/stores/AuthStore';
 import SearchBar from '@/components/SearchBar.vue';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { getErrorMessage } from '@/util/error';
+import {UserTopicsService} from "@/services/topics/UserTopicsService";
+import type {TopTopicsItem} from "@/services/topics/TopTopicsService";
+import {useIntersectionObserver} from "@vueuse/core";
 
 enum eProcess {
   Init = 0,
@@ -66,7 +71,10 @@ export default defineComponent({
         '',
         '토론 불러오기 실패.',
         '참여한 토론이 없습니다.'
-      ]
+      ],
+      isIntersecting: false,
+      userId: -1,
+      nextTopicsUrl: '',
     };
   },
   computed: {
@@ -75,6 +83,29 @@ export default defineComponent({
     },
     isNotSuccesLoading() {
       return this.step !== eProcess.Success;
+    }
+  },
+  watch: {
+    isIntersecting(newValue) {
+      if(newValue && this.nextTopicsUrl) {
+        this.step = eProcess.Wait;
+        const topicService = new UserTopicsService();
+        topicService.fetchNext(this.nextTopicsUrl).then((topics: TopTopicsItem) => {
+          if (topics.data.length < 1) {
+            this.step = eProcess.NoResult;
+
+            return;
+          }
+
+          this.nextTopicsUrl = topics.nextPageUrl;
+          this.topics = this.topics.concat(topics.data);
+          this.displayTopics = this.topics;
+          this.step = eProcess.Success;
+        }).catch((e) => {
+          this.step = eProcess.Fail;
+          reportError(getErrorMessage(e));
+        });
+      }
     }
   },
   methods: {
@@ -90,7 +121,7 @@ export default defineComponent({
       this.displayTopics = topics;
     }
   },
-  created() {
+  mounted() {
     const authStore = useAuthStore();
 
     if (!authStore.authInfo.isAuth) {
@@ -99,27 +130,32 @@ export default defineComponent({
       return;
     }
 
-    const userId = authStore.authInfo.user.id;
+    this.userId = authStore.authInfo.user.id;
+
+    useIntersectionObserver(
+        this.$refs.target as HTMLElement,
+        ([{isIntersecting}]) => {
+          this.isIntersecting = isIntersecting;
+        },
+    );
 
     this.step = eProcess.Wait;
-    const topicService = new TopicService();
-    topicService
-      .fetchByUser(userId)
-      .then((topics: TopicItem[]) => {
-        if (topics.length < 1) {
-          this.step = eProcess.NoResult;
+    const topicService = new UserTopicsService();
+    topicService.fetch(this.userId).then((topics: TopTopicsItem) => {
+      if (topics.data.length < 1) {
+        this.step = eProcess.NoResult;
 
-          return;
-        }
+        return;
+      }
 
-        this.topics = topics;
-        this.displayTopics = this.topics;
-        this.step = eProcess.Success;
-      })
-      .catch((e) => {
-        this.step = eProcess.Fail;
-        reportError(getErrorMessage(e));
-      });
+      this.nextTopicsUrl = topics.nextPageUrl;
+      this.topics= this.topics.concat(topics.data);
+      this.displayTopics = this.topics;
+      this.step = eProcess.Success;
+    }).catch((e) => {
+      this.step = eProcess.Fail;
+      reportError(getErrorMessage(e));
+    });
   }
 });
 </script>
