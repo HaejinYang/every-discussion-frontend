@@ -5,7 +5,7 @@
         placeholder="참여한 토론 주제 검색"
         @on-search-complete="onSearchCompleted"
         :onInputSearch="onInputSearch"
-        :ignoreEmptyKeyword="ignoreEmptyKeyword"
+        :ignoreEmptyKeyword="false"
       />
     </div>
     <div
@@ -27,12 +27,11 @@
         <span :class="$style['value']">{{ topic.opinionsCount }}</span>
       </div>
     </div>
+    <div ref="fetchMoreTarget">
+    </div>
     <div :class="$style['step']" v-show="isNotSuccesLoading">
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
-    </div>
-    <div ref="target">
-
     </div>
   </div>
 </template>
@@ -63,7 +62,6 @@ export default defineComponent({
     return {
       topics: [] as TopicItem[],
       displayTopics: [] as TopicItem[],
-      ignoreEmptyKeyword: false,
       step: eProcess.Init as eProcess,
       msg: [
         '토론을 불러오고 있습니다.',
@@ -75,6 +73,7 @@ export default defineComponent({
       isIntersecting: false,
       userId: -1,
       nextTopicsUrl: '',
+      isRightAfterSearch: false,
     };
   },
   computed: {
@@ -87,25 +86,27 @@ export default defineComponent({
   },
   watch: {
     isIntersecting(newValue) {
-      if(newValue && this.nextTopicsUrl) {
-        this.step = eProcess.Wait;
-        const topicService = new UserTopicsService();
-        topicService.fetchNext(this.nextTopicsUrl).then((topics: TopTopicsItem) => {
-          if (topics.data.length < 1) {
-            this.step = eProcess.NoResult;
-
-            return;
-          }
-
-          this.nextTopicsUrl = topics.nextPageUrl;
-          this.topics = this.topics.concat(topics.data);
-          this.displayTopics = this.topics;
-          this.step = eProcess.Success;
-        }).catch((e) => {
-          this.step = eProcess.Fail;
-          reportError(getErrorMessage(e));
-        });
+      if(!(newValue && this.nextTopicsUrl && !this.isRightAfterSearch)) {
+        return;
       }
+
+      this.step = eProcess.Wait;
+      const topicService = new UserTopicsService();
+      topicService.fetchNext(this.nextTopicsUrl).then((topics: TopTopicsItem) => {
+        if (topics.data.length < 1) {
+          this.step = eProcess.NoResult;
+
+          return;
+        }
+
+        this.nextTopicsUrl = topics.nextPageUrl;
+        this.topics = this.topics.concat(topics.data);
+        this.displayTopics = this.topics;
+        this.step = eProcess.Success;
+      }).catch((e) => {
+        this.step = eProcess.Fail;
+        reportError(getErrorMessage(e));
+      });
     }
   },
   methods: {
@@ -118,7 +119,11 @@ export default defineComponent({
       });
     },
     onSearchCompleted(topics: TopicItem[]) {
+      this.isRightAfterSearch = true;
       this.displayTopics = topics;
+      if(this.displayTopics.length === this.topics.length) {
+        this.isRightAfterSearch = false;
+      }
     }
   },
   mounted() {
@@ -133,8 +138,9 @@ export default defineComponent({
     this.userId = authStore.authInfo.user.id;
 
     useIntersectionObserver(
-        this.$refs.target as HTMLElement,
+        this.$refs.fetchMoreTarget as HTMLElement,
         ([{isIntersecting}]) => {
+          console.log(isIntersecting);
           this.isIntersecting = isIntersecting;
         },
     );

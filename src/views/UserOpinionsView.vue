@@ -1,6 +1,14 @@
 <template>
   <div :class="$style['container']">
-    <div :class="$style['info']" v-for="item in topicWithOpinions" :key="item.topic.id">
+    <div :class="$style['search']">
+      <SearchBar
+          placeholder="참여한 토론 주제 검색"
+          @on-search-complete="onSearchCompleted"
+          :onInputSearch="onInputSearch"
+          :ignoreEmptyKeyword="false"
+      />
+    </div>
+    <div :class="$style['info']" v-for="item in displayTopicWithOpinions" :key="item.topic.id">
       <div :class="$style['topic-info']" @mousedown.left="switchToDiscussion(item.topic.id)">
         <span>참여토론</span>
         <p>{{ item.topic.title }}</p>
@@ -26,11 +34,12 @@
         </div>
       </div>
     </div>
+    <div ref="fetchMoreTarget">
+    </div>
     <div :class="$style['wait']" v-show="isNotSuccesLoading">
       {{ msg[step] }}
       <WaitButton v-show="isWaitLoading" position="right" />
     </div>
-
     <ModifyOpinion
       v-if="isShowModifyOpinion"
       :prevTitle="modifyOpinionParam.prevTitle"
@@ -45,7 +54,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { TopicItem, TopicService, type TopicWithOpinions } from '@/services/topics';
+import { TopicItem, type TopicWithOpinions } from '@/services/topics';
 import { LinkedOpinion, OpinionData } from '@/services/opinions';
 import WaitButton from '@/components/common/animations/WaitAnimation.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -54,6 +63,9 @@ import { useDiscussionStore } from '@/stores/DiscussionStore';
 import { debounce } from '@/util/timing';
 import ModifyOpinion from '@/components/opinions/ModifyOpinion.vue';
 import { UserOpinionService } from '@/services/opinions/UserOpinionService';
+import {UserTopicsService} from "@/services/topics/UserTopicsService";
+import {useIntersectionObserver} from "@vueuse/core";
+import SearchBar from "@/components/SearchBar.vue";
 
 enum eProcess {
   Init = 0,
@@ -65,10 +77,11 @@ enum eProcess {
 
 export default defineComponent({
   name: 'MyOpinionsView',
-  components: { ModifyOpinion, WaitButton },
+  components: {SearchBar, ModifyOpinion, WaitButton },
   data() {
     return {
       topicWithOpinions: [] as TopicWithOpinions[],
+      displayTopicWithOpinions: [] as TopicWithOpinions[],
       step: eProcess.Init as eProcess,
       msg: [
         '의견을 가져오고 있습니다.',
@@ -91,7 +104,11 @@ export default defineComponent({
         prevContent: string;
         opinionId: number;
       },
-      debouncedCheckTopicWithOpinionsEmpty: (...args: any): void => {}
+      debouncedCheckTopicWithOpinionsEmpty: (...args: any): void => {},
+      isIntersecting: false,
+      nextPageUrl: "",
+      userId: -1,
+      isRightAfterSearch: false
     };
   },
   computed: {
@@ -100,6 +117,49 @@ export default defineComponent({
     },
     isNotSuccesLoading() {
       return this.step !== eProcess.Success;
+    }
+  },
+  watch: {
+    isIntersecting(newVal) {
+      if(!(newVal && this.nextPageUrl && !this.isRightAfterSearch)) {
+        return;
+      }
+
+      try {
+        const topicService = new UserTopicsService();
+        topicService.fetchNext(this.nextPageUrl).then((topics) => {
+          if (topics.data.length < 1) {
+            this.step = eProcess.NoResult;
+
+            return;
+          }
+
+          const userOpinionService = new UserOpinionService();
+          this.nextPageUrl = topics.nextPageUrl;
+          topics.data.map((topic: TopicItem) => {
+            userOpinionService.fetchAllInTopic(topic.id).then((opinions: LinkedOpinion[]) => {
+              if (opinions.length === 0) {
+                return;
+              }
+
+              const topicWithOpinions: TopicWithOpinions = {
+                topic: topic,
+                opinions: opinions
+              };
+
+              this.step = eProcess.Success;
+              this.topicWithOpinions.push(topicWithOpinions);
+              this.displayTopicWithOpinions = this.topicWithOpinions;
+              this.debouncedCheckTopicWithOpinionsEmpty();
+            });
+          });
+        });
+
+        this.debouncedCheckTopicWithOpinionsEmpty();
+      } catch (e) {
+        reportError(getErrorMessage(e));
+        this.step = eProcess.Fail;
+      }
     }
   },
   methods: {
@@ -165,9 +225,25 @@ export default defineComponent({
       setTimeout(() => {
         this.isShowModifyOpinion = false;
       }, 500);
+    },
+    onInputSearch(keyword: string) {
+      return this.topicWithOpinions.filter((topicWithOpinions: TopicWithOpinions) => {
+        const targets = topicWithOpinions.opinions.filter((opinion: OpinionData) => {
+          return opinion.title.includes(keyword);
+        });
+
+        return topicWithOpinions.topic.title.includes(keyword) || targets.length !== 0;
+      });
+    },
+    onSearchCompleted(topicWithOpinions: TopicWithOpinions[]) {
+      this.isRightAfterSearch = true;
+      this.displayTopicWithOpinions = topicWithOpinions;
+      if(this.displayTopicWithOpinions.length === this.topicWithOpinions.length) {
+        this.isRightAfterSearch = false;
+      }
     }
   },
-  async created() {
+  async mounted() {
     this.debouncedCheckTopicWithOpinionsEmpty = debounce(() => {
       if (this.topicWithOpinions.length === 0) {
         this.step = eProcess.NoResult;
@@ -182,19 +258,19 @@ export default defineComponent({
     }
 
     this.step = eProcess.Wait;
-    const userId = authStore.authInfo.user.id;
+    this.userId = authStore.authInfo.user.id;
     try {
-      const topicService = new TopicService();
-      const topics = await topicService.fetchByUser(userId);
-      if (topics.length < 1) {
+      const topicService = new UserTopicsService();
+      const topics = await topicService.fetch(this.userId);
+      if (topics.data.length < 1) {
         this.step = eProcess.NoResult;
 
         return;
       }
 
       const userOpinionService = new UserOpinionService();
-
-      topics.map((topic: TopicItem) => {
+      this.nextPageUrl = topics.nextPageUrl;
+      topics.data.map((topic: TopicItem) => {
         userOpinionService.fetchAllInTopic(topic.id).then((opinions: LinkedOpinion[]) => {
           if (opinions.length === 0) {
             return;
@@ -207,6 +283,7 @@ export default defineComponent({
 
           this.step = eProcess.Success;
           this.topicWithOpinions.push(topicWithOpinions);
+          this.displayTopicWithOpinions = this.topicWithOpinions;
           this.debouncedCheckTopicWithOpinionsEmpty();
         });
       });
@@ -216,6 +293,13 @@ export default defineComponent({
       reportError(getErrorMessage(e));
       this.step = eProcess.Fail;
     }
+
+    useIntersectionObserver(
+        this.$refs.fetchMoreTarget as HTMLElement,
+        ([{isIntersecting}]) => {
+          this.isIntersecting = isIntersecting;
+        },
+    );
   }
 });
 </script>
@@ -226,6 +310,11 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .search {
+    margin-top: 2rem;
+    min-width: 300px;
+  }
 
   .wait {
     position: relative;
