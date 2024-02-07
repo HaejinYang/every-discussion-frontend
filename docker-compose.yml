@@ -3,7 +3,6 @@ services:
   frontend:
     build: .
     ports:
-      - "0.0.0.0:${VITE_APP_PORT}:80"
       - "0.0.0.0:${VITE_APP_PORT_SSL}:443"
     volumes:
       - ./ssl:/etc/letsencrypt/live/every-discussion.com/
