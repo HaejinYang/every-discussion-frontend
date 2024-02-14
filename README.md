@@ -22,7 +22,7 @@
 
 # 개요
 
-모두의 토론의 프론트엔드 레포지토리이다. [실행링크](https://www.every-discussion.com:56003/)
+모두의 토론의 프론트엔드 레포지토리이다. [실행링크](https://www.every-discussion.com/)
 
 [백엔드 바로가기](https://github.com/HaejinYang/every-discussion-backend)
 
@@ -38,7 +38,7 @@
 
 # 배포
 
-[실행링크](https://www.every-discussion.com:56003/) 
+[실행링크](https://www.every-discussion.com/) 
 
 AWS Lightsail을 이용하여 배포하였다. 인스턴스 위에 웹 서버를 세팅된 도커 컨테이너를 올리고 개발 코드를 빌드하여 그 결과물을 서빙하도록 하였다. [과정을 정리한 링크](https://crmerry.tistory.com/228)
 
