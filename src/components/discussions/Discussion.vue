@@ -6,18 +6,19 @@
     <div :class="$style['title']">
       <span>{{ agreeingType === 'agree' ? '찬성' : '반대' }}</span>
     </div>
-    <div
-      v-if="displayedOpinions.length !== 0"
-      :class="$style['opinion']"
-      v-for="(opinion, index) in displayedOpinions"
-      :key="opinion.id"
-      @mousedown.left="onClickOpinion(index, opinion.id)"
-      ref="opinions"
-    >
-      <p>
-        {{ opinion.title }}
-      </p>
-      <div>추천{{ opinion.like }} 비추천{{ opinion.dislike }}</div>
+    <div v-if="displayedOpinions.length !== 0">
+      <div
+          :class="$style['opinion']"
+          v-for="(opinion, index) in displayedOpinions"
+          :key="opinion.id"
+          @mousedown.left="onClickOpinion(index, opinion.id)"
+          ref="opinions"
+      >
+        <p>
+          {{ opinion.title }}
+        </p>
+        <div>추천{{ opinion.like }} 비추천{{ opinion.dislike }}</div>
+      </div>
     </div>
     <div v-else :class="$style['opinion']">
       <p>의견이 없습니다.</p>
