@@ -104,6 +104,8 @@ export default defineComponent({
     this.$emit('on-load-completion');
   },
   mounted() {
+    const store = useSearchOpinionStore();
+    store.set("");
     this.checkNewOpiniontimerId = window.setInterval(this.addNewOpinion, 1000);
   },
   unmounted() {
