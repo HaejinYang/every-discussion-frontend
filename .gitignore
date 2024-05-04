@@ -34,3 +34,5 @@ coverage
 *.key
 /references/개인정보처리방침.txt
 /references/약관.txt
+
+docker/letsencrypt/live
